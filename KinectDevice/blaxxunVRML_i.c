@@ -6,7 +6,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0500 */
-/* at Wed Nov 30 17:52:04 2011
+/* at Thu Dec 01 21:22:24 2011
  */
 /* Compiler settings for .\blaxxunVRML.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)
