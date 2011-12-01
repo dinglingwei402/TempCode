@@ -1,0 +1,26 @@
+HKCR
+{
+	KinectDevice.Skeleton.1 = s 'Skeleton Class'
+	{
+		CLSID = s '{49B36E2B-4DD4-4E23-9B47-726CB2AECAB0}'
+	}
+	KinectDevice.Skeleton = s 'Skeleton Class'
+	{
+		CLSID = s '{49B36E2B-4DD4-4E23-9B47-726CB2AECAB0}'
+		CurVer = s 'KinectDevice.Skeleton.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {49B36E2B-4DD4-4E23-9B47-726CB2AECAB0} = s 'Skeleton Class'
+		{
+			ProgID = s 'KinectDevice.Skeleton.1'
+			VersionIndependentProgID = s 'KinectDevice.Skeleton'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			'TypeLib' = s '{21803967-5A64-4eb8-AB91-762DFE942059}'
+		}
+	}
+}

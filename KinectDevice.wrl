@@ -1,0 +1,365 @@
+#VRML V2.0 utf8
+
+EXTERNPROTO Background2D [
+	eventIn SFBool set_bind
+	exposedField SFColor backColor
+	exposedField MFString url
+	eventOut SFBool isBound
+]
+["urn:inet:bitmanagement.de:node:Background2D"]
+
+EXTERNPROTO Layer2D [
+	exposedField MFNode children
+	exposedField SFVec2f translation
+	exposedField SFVec2f size
+	exposedField SFNode background
+	exposedField SFNode viewport
+	eventIn MFNode addChildren
+	eventIn MFNode removeChildren
+]
+["urn:inet:bitmanagement.de:node:Layer2D"]
+
+
+EXTERNPROTO DeviceSensor [
+	exposedField SFBool enabled
+	exposedField SFString device
+	exposedField SFString eventType
+	eventOut SFNode event
+	eventOut SFBool isActive
+]
+["urn:inet:bitmanagement.de:node:DeviceSensor"]
+
+PROTO	OpenNIUser[
+	exposedField SFBool	enabled TRUE
+	exposedField SFInt32 playerID 0
+	exposedField SFBool isTracking FALSE 
+	exposedField SFBool isCalibrating FALSE
+	exposedField SFBool needPoseForCalibration FALSE
+	exposedField SFVec3f userCoM 0 0 0
+	exposedField SFVec3f XN_SKEL_POS_HEAD	0 0 0 
+	exposedField SFVec3f XN_SKEL_POS_NECK	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_TORSO	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_WAIST	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_LEFT_COLLAR	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_LEFT_SHOULDER	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_LEFT_ELBOW	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_LEFT_WRIST	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_LEFT_HAND	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_LEFT_FINGERTIP	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_RIGHT_COLLAR	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_RIGHT_SHOULDER	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_RIGHT_ELBOW	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_RIGHT_WRIST	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_RIGHT_HAND	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_RIGHT_FINGERTIP	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_LEFT_HIP	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_LEFT_KNEE	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_LEFT_ANKLE	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_LEFT_FOOT	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_RIGHT_HIP	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_RIGHT_KNEE	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_RIGHT_ANKLE	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_RIGHT_FOOT	0 0 0 
+	exposedField SFMatrix XN_SKEL_ORI_HEAD	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+	exposedField SFMatrix XN_SKEL_ORI_NECK	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_TORSO	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_WAIST	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_LEFT_COLLAR	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_LEFT_SHOULDER	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_LEFT_ELBOW	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_LEFT_WRIST	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_LEFT_HAND	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_LEFT_FINGERTIP	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_RIGHT_COLLAR	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_RIGHT_SHOULDER	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_RIGHT_ELBOW	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_RIGHT_WRIST	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_RIGHT_HAND	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_RIGHT_FINGERTIP	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_LEFT_HIP 	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+	exposedField SFMatrix XN_SKEL_ORI_LEFT_KNEE	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_LEFT_ANKLE	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_LEFT_FOOT	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_RIGHT_HIP	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_RIGHT_KNEE	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_RIGHT_ANKLE	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_RIGHT_FOOT	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+]{}
+
+PROTO OpenNIHandsTrack[
+	exposedField	SFBool	enabled TRUE
+	exposedField	SFString status "NOHAND"
+	exposedField	SFInt32	handID 0
+	exposedField	MFVec3f firstHandTrack 0 0 0
+	exposedField	MFVec3f	secondHandTrack 0 0 0
+	exposedField	SFVec2f	position 0 0 
+	exposedField	SFVec2f	secondHandposition 0 0 
+
+] {}
+
+PROTO OpenNIFloor[
+	exposedField	SFBool	enabled TRUE
+	exposedField	SFVec3f	point 0 20 0
+	exposedField	SFVec3f normal 0 10 0	
+] {}
+
+
+PROTO	KinectDev[
+	exposedField	SFNode  floor NULL
+	exposedField	SFNode	skeleton	NULL
+	exposedField	SFNode	handsTrack	NULL
+]{ }
+
+
+PROTO JName [	 
+	exposedField MFString string []	 
+	field SFFloat size 0.05
+]
+{
+	Shape {
+		appearance Appearance {material Material {diffuseColor 0 0 0}}
+		geometry Text {string IS string fontStyle FontStyle {
+			justify     "MIDDLE"
+			size IS size
+	    }} }
+}
+
+DEF kd KinectDev {
+	handsTrack DEF  hnz OpenNIHandsTrack{}
+	floor DEF flr OpenNIFloor {}
+	skeleton DEF  usr OpenNIUser {}
+}
+
+DEF	ds DeviceSensor	{
+	enabled	TRUE
+	device "KinectDev"
+	event USE kd
+}
+
+DEF	 tm TimeSensor {
+loop TRUE
+}
+
+#here to show handstrack
+
+#Shape {geometry Box {size 1280 960 960 }appearance Appearance {material Material {transparency 0.5}}}
+
+
+
+#VRML V2.0 utf8
+
+DEF	trans Transform	{
+translation	 0 0 -10
+children [
+	DEF	btn Shape {
+		geometry Sphere {
+			radius 1
+		}
+		appearance Appearance {
+			material Material {
+				diffuseColor 1 0 0 
+			}
+		}
+	}
+
+	DEF	ts TouchSensor {}
+
+]
+
+}
+
+
+Layer2D	{
+	translation	-0.45 0.4
+
+	children [
+	Shape {geometry DEF TXT Text {
+		string [										   ""
+			"HandsTrack.position"
+			"HandsTrack.secondHandposition"
+	   	 "" "" "" "" ""
+			"" "" "" "" ""
+			"" "" "" "" ""
+		]
+		fontStyle FontStyle	{size 0.05}
+	} }
+
+]}
+
+DEF scr Script	{
+	field SFNode ds USE	ds
+	field SFNode kd USE	kd
+	field  SFNode  hndz USE	hnz
+	field  SFNode  flr USE flr
+	field SFNode trans USE trans
+	field SFNode usr USE  usr
+
+	field SFNode TXT USE TXT
+
+	eventIn SFTime	getInfo
+	eventIn	 SFBool	devSwch
+	eventIn	 MFVec3f sechnz
+
+	eventIn	SFVec2f	  handsTrackPosition
+	eventIn	SFVec2f	  handsTrackSecondHandposition
+
+	eventIn	SFString handStatus
+
+	eventIn	SFVec3f	floorPoint
+	eventIn	SFVec3f	floorNormal
+
+
+	eventIn SFInt32 playerID 
+	eventIn SFBool isTracking 
+	eventIn SFBool isCalibrating 
+	eventIn SFBool needPoseForCalibration 
+	
+	eventIn	SFVec3f	userCoM 
+
+
+	url	"javascript:
+	function initialize(){
+//		Browser.showConsole();	
+	}
+	function getInfo(){
+	  	
+		
+	}
+
+	function handsTrackPosition   (v) {  TXT.string[1]= 			'first hand position '+v;}
+	function handsTrackSecondHandposition	 (v) {   TXT.string[2]= 'second hand position '+v;}
+	function handStatus (v)	{   					TXT.string[3]= 'hand status' + v	;}
+
+	function floorPoint	 (v){   TXT.string[4]= 'floor point '	+	v;}
+	function floorNormal (v){	TXT.string[5]= 'floor normal'	+	v;}
+
+ 	function playerID	(v)		{  	    TXT.string[6]=('playerID '+v);		}
+ 	function userCoM	(v)		{  	    TXT.string[7]=('user CoM'+v);		}
+
+	function needPoseForCalibration  (v)	{  	  TXT.string[8]=('needPoseForCalibration '+v);		}
+	function isTracking (v)		{     TXT.string[9]=('isTracking ' +v);	}//	print ( usr.toVrmlString('writeProtos=false,writeExternProtos=false,writeAllFields=true,writeEventFields=true'));	
+	function isCalibrating 	(v)	{  	   TXT.string[10]=('isCalibrating '+v);		}
+	
+
+
+	function devSwch(v){
+		if(v){
+		//	do test here
+		//	print('kd.toVrmlString()'+kd.toVrmlString());
+			trans.translation= kd.skeleton.userCoM;
+		}
+	}
+	function sechnz(v){
+	//	 print ('\xC' );				
+	// 	print('sechnz(v):'+ (v[0].x -320)/320 );
+	//	print('sechnz(v):'+ (240 - v[0].y )/240 );
+//	print(hndz.position + '\n' + hndz.secondHandposition );	
+		
+
+	}
+	function eventsProcessed()
+	{	
+		if (isTracking )
+		{
+			 TXT.string[11] = usr.XN_SKEL_POS_LEFT_HAND + ' ' + usr.XN_SKEL_POS_RIGHT_HAND ;
+	    //	 usr.toVrmlString('writeProtos=false,writeExternProtos=false,writeAllFields=true,writeEventFields=true');
+		}  		
+	//	   print ('\xC' );
+	//	  print ( usr.toVrmlString('writeProtos=false,writeExternProtos=false,writeAllFields=true,writeEventFields=true'));	
+	 
+//	print (usr.status );	   
+//	print (usr.XN_SKEL_POS_LEFT_SHOULDER );	   
+//	print (usr.XN_SKEL_POS_HEAD );	   
+
+	   //  print ( kd.toX3DString('writeProtos=false,writeExternProtos=false,writeAllFields=true,writeEventFields=true'));		
+	
+	}
+	"
+}
+
+
+
+
+ROUTE tm.cycleTime TO scr.getInfo
+#ROUTE ts.isActive TO scr.devSwch
+
+
+ROUTE hnz.firstHandTrack  TO  scr.sechnz
+
+ROUTE hnz.status TO	scr.handStatus
+ROUTE hnz.position TO scr.handsTrackPosition
+ROUTE hnz.secondHandposition TO	scr.handsTrackSecondHandposition
+
+ROUTE usr.isCalibrating	TO scr.isCalibrating
+ROUTE usr.isTracking TO	scr.isTracking
+ROUTE usr.needPoseForCalibration TO	scr.needPoseForCalibration
+ROUTE usr.playerID TO scr.playerID
+ROUTE usr.userCoM TO scr.userCoM
+ROUTE flr.normal TO	scr.floorNormal
+ROUTE flr.point	TO scr.floorPoint
+
+ROUTE usr.userCoM TO  trans.translation	
+
+Viewpoint 
+{
+    position     0.000 0.000 2471.927
+    orientation  0.000 0.000 1.000 0.000
+    fieldOfView  0.716
+}
+
+
+Layer3D	{
+viewpoint Viewpoint 
+{
+    position     320.000 240.000 2000
+    orientation  0.000 0.000 1.000 0.000
+    fieldOfView  0.716
+}
+
+children [
+	Shape {geometry LineSet  { coord Coordinate {point [0 0  600 , 0 480 600 , 640 480 600, 640 0 600   , 0 0 600 ] }vertexCount 5}}
+
+	Transform {scale 1 -1 1 
+		translation	0 480 0
+		children [
+		
+	Shape {
+	appearance Appearance {material Material {emissiveColor 1.0000000 0.0000000 0.0000000}}
+	geometry LineSet {
+		coord DEF LINECOORD1 Coordinate {point [
+				640 480 725.6793213,  -640 -480 724.9442139,280.9167480 -32.1084747 725.6591797,280.6437988 -31.8827515 725.3931885,
+				281.0181580 -31.5345154 725.1520386,282.0064392 -31.8842773 724.7345581,283.7864685 -32.0246429 725.0702515,285.8086853 -30.8643494 725.2611084,
+				289.2707520 -29.9428558 726.6242065,290.2457886 -29.6633453 726.8649902,290.0205688 -30.8639832 726.5504150,289.9759827 -32.9406891 725.1259155,
+				269.4531250 -33.0160828 749.1907349,269.4531250 -33.0160828 749.1907349,269.4531250 -33.0160828 749.1907349,269.4531250 -33.0160828 749.1907349,
+				269.4531250 -33.0160828 749.1907349,269.4531250 -33.0160828 749.1907349,269.4531250 -33.0160828 749.1907349,269.4531250 -33.0160828 749.1907349]}
+		vertexCount 20
+	}
+}
+Shape {
+	appearance Appearance {material Material {emissiveColor 0.0000000 1.0000000 0.0000000}}
+	geometry LineSet {
+		coord DEF LINECOORD2 Coordinate {point [
+				269.4531250 -33.0160828 749.1907349,269.4531250 -33.0160828 749.1907349,269.4531250 -33.0160828 749.1907349,269.4531250 -33.0160828 749.1907349,
+				269.4531250 -33.0160828 749.1907349,269.4531250 -33.0160828 749.1907349,269.4531250 -33.0160828 749.1907349,269.4531250 -33.0160828 749.1907349,
+				269.4531250 -33.0160828 749.1907349,269.4531250 -33.0160828 749.1907349,269.4531250 -33.0160828 749.1907349,269.4531250 -33.0160828 749.1907349,
+				269.4531250 -33.0160828 749.1907349,269.4531250 -33.0160828 749.1907349,269.4531250 -33.0160828 749.1907349,269.4531250 -33.0160828 749.1907349,
+				241.8383484 -30.7093811 757.8630981,241.8383484 -30.7093811 757.8630981,241.8383484 -30.7093811 757.8630981,241.8383484 -30.7093811 757.8630981]}
+		vertexCount 20
+	}
+}
+		
+		
+		]
+	
+	}  	
+
+
+
+
+]
+}
+		
+
+ROUTE	hnz.firstHandTrack TO LINECOORD1.point
+ROUTE	hnz.secondHandTrack TO LINECOORD2.point
+

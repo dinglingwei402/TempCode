@@ -1,0 +1,71 @@
+HKCR
+{
+	KinectDevice.KinectDev.1 = s 'KinectDev Class'
+	{
+		CLSID = s '{F404559E-E7CD-4337-BDDE-9B29545EFEC5}'
+	}
+	KinectDevice.KinectDev = s 'KinectDev Class'
+	{
+		CLSID = s '{F404559E-E7CD-4337-BDDE-9B29545EFEC5}'
+		CurVer = s 'KinectDevice.KinectDev.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {F404559E-E7CD-4337-BDDE-9B29545EFEC5} = s 'KinectDev Class'
+		{
+			ProgID = s 'KinectDevice.KinectDev.1'
+			VersionIndependentProgID = s 'KinectDevice.KinectDev'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			'TypeLib' = s '{C183E75A-4B36-4C51-A55C-E1F2C78221E1}'
+		}
+	}
+}
+
+
+
+HKLM
+{
+    NoRemove 'Software'
+    {
+        NoRemove 'Bitmanagement Software'
+        {
+            NoRemove bsContact
+            {
+                NoRemove plugins
+                {
+                    NoRemove device
+                    {
+                        ForceRemove KinectDev
+                        {
+                            val CLSID =    s '{F404559E-E7CD-4337-BDDE-9B29545EFEC5}'
+                        }
+                    }
+                }
+            }
+        }
+
+
+        NoRemove 'blaxxun interactive'
+        {
+            NoRemove blaxxunCC3D
+            {
+                NoRemove plugins
+                {
+                    NoRemove device
+                    {
+                        ForceRemove KinectDev
+                        {
+                            val CLSID =    s '{F404559E-E7CD-4337-BDDE-9B29545EFEC5}'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+ 

@@ -1,0 +1,153 @@
+
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+
+import "blaxxunVRML.idl";
+
+
+
+
+    [   uuid(21803967-5A64-4eb8-AB91-762DFE942059)
+    ]
+library blaxxunHID_Lib
+{
+
+	
+        [   object
+	    ,   uuid(4256A70F-7DD7-478F-BC2E-1A84D1B68FAC)
+	    ,   dual
+	    ,   helpstring("IbxxHID Interface")
+	    ,   pointer_default(unique)
+        ]
+    interface IbxxHID: IDispatch
+    {
+
+
+
+
+
+
+
+
+
+
+
+            [   id(1)
+            ,   helpstring("Initialization method")
+            ]
+        HRESULT
+        Init( [in]          BSTR        Device          // Name of the device that should be supported.
+            , [in]          int         DeviceNo        // Number of device to support, or 0 which means default device.
+            , [in]          Browser*   pBrowser         // A pointer to the Browser EAI object. Not necessary, but maybe useful in certain cases.
+            , [out, retval] int       *pDeviceNoUsed    // if DeviceNo is 0,     set this to the used device number on success, or to 0 on failure.
+                                                        // if DeviceNo is not 0, set this to DeviceNo               on success, or to 0 on failure.
+            );
+
+
+        
+
+
+
+
+            [   id(2)
+            ,   helpstring("Registration of a DeviceSensor / eventnode pair")
+            ]
+        HRESULT
+        AddDeviceSensor( [in]          BSTR             eventType   // The string in the eventType field. Can be used as additional parameters.
+                       , [in]          Node*           pEventNode   // Value of event field of the DeviceSensor. Fields of this node supply the device data to the VRML world.
+                       , [in]          EventInSFBool*  pIsActive    // isActive field of the DeviceSensor. If the plugin supports hot plugging, it must set this field appropriately.
+                       , [in]          BOOL             Enabled     // current Value of the enabled field of the DeviceSensor. The plugin is informed about future changes to the field through the EnabledChanged(.) field.
+                       , [in]          int              ID          // This is an Identifier that Contact uses to refer to this DeviceSensor.
+                       , [out, retval] int            *pRetVal      // 
+                      );
+
+    // The ID parameter:
+    // Contact uses a small number to refer to the DeviceSensor in subsequent method calls.
+    // Contact ensures that this ID can be directly used as an array index. It is unique,
+    // and always the smallest free number. The ID 0 is not used, but reserved for future
+    // uses.
+
+
+
+
+
+
+
+
+
+            [   id(3)
+            ,   helpstring("Unregistration of a DeviceSensor / eventnode pair")
+            ]
+        HRESULT
+        RemoveDeviceSensor( [in]  int ID  // ID of DeviceSensor to remove.
+                          );
+
+
+
+
+
+
+
+
+
+            [   id(4)
+            ,   helpstring("Method that is called each simulation tick")
+            ]
+        HRESULT
+        Tick(     [in] double SimTime    // The current simulation time.
+            ,     [in] double FrameRate  // An estimation of the current frame rate.
+            );
+
+
+
+
+
+
+
+
+
+
+
+
+            [   id(5)
+            ,   helpstring("Notification about changes in DeviceSensors enabled field")
+            ]
+        HRESULT
+        EnabledChanged(                int    ID           // ID of DeviceSensor whos enabled field has changed.
+                      ,                BOOL   Enabled      // new value
+                      , [out, retval]  BOOL* pSetIsActive  // This must be set to true, if Contact should set the
+                      );                                   // isActive field to true, or false otherwise. Will
+                                                           // be ignored if Enabled is false (isActive is always
+                                                           // false then). If the plugin does not support hot
+                                                           // swapping, this can always be set to true.
+
+
+
+
+
+
+
+
+            [   id(6)
+            ,   helpstring("Notification about changes in input focus of Contacts window")
+            ]
+        HRESULT
+        FocusChanged( [in]          BOOL   HasFocusNow     // True(False) if Contact now runs in the foreground/background application.
+                    , [out, retval] BOOL *pNeedTickCalls   // Set this to false if it is not necessary that Contact continues calling
+                    );                                     // the Tick(.) method in the future. If HasFocusNow is true, Contact will not
+                                                           // pay attention to this.
+
+
+
+
+
+
+
+    };
+
+
+};
+
+

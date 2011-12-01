@@ -1,0 +1,48 @@
+// KinectDevice.idl : KinectDevice 的 IDL 源
+//
+
+// 此文件将由 MIDL 工具处理以
+// 产生类型库(KinectDevice.tlb)和封送处理代码。
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(879B5ACC-BA2B-4891-9D10-0928E5D632F1),
+	dual,
+	nonextensible,
+	helpstring("IKinectDev 接口"),
+	pointer_default(unique)
+]
+interface IKinectDev : IDispatch{
+};
+[
+	uuid(C183E75A-4B36-4C51-A55C-E1F2C78221E1),
+	version(1.0),
+	helpstring("KinectDevice 1.0 类型库")
+]
+library KinectDeviceLib
+{
+	importlib("stdole32.tlb");
+	importlib("stdole2.tlb");
+	import "blaxxunHID.idl";
+	//
+	//[
+	//	//uuid(15970A1D-FCB5-48D5-ABAC-5305858ADA7C),
+	//	uuid(85ffef77-1c86-4bb9-be28-f07dce128a97),
+	//	helpstring("KinectDevice Class")
+	//]
+	//coclass KinectDev
+	//{
+	//	[default] interface IbxxHID;
+	//};
+	[
+		uuid(F404559E-E7CD-4337-BDDE-9B29545EFEC5),
+		helpstring("KinectDev Class")
+	]
+	coclass KinectDev
+	{
+		[default] interface IbxxHID;
+	};
+};
