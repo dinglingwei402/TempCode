@@ -1,6 +1,11 @@
 #include <XnCppWrapper.h>
-class NiUserDetector{
-	
+#include <XnList.h>
+
+XN_DECLARE_DEFAULT_HASH(XnSkeletonJoint,XnSkeletonJointTransformation,XnUserSkeleton);
+
+XN_DECLARE_DEFAULT_HASH(XnUserID,XnUserSkeleton,XnUserSkeletonSet);
+
+class NiUserDetector{	
 public:	
 	NiUserDetector(xn::Context& context);
 	~NiUserDetector();
@@ -18,5 +23,8 @@ private:
 	xn::Context g_context;
 	xn::UserGenerator g_usrGen;
 	XnCallbackHandle hUserExit,hUserReEnter,hUserCallbacks,hCalibration;
-	static XnUserID playerId;
+	XnUserID playerId;
+	XnBool cali_flag;
+	static XnList sm_Instances;
 };
+
