@@ -6,6 +6,7 @@
 #include "KinectDev.h"
 #include "blaxxunVRML.h"
 #include <iostream>
+#include "Temp4Debug.h"
 
 CKinectDev::CKinectDev():
 m_user_com(NULL),
@@ -43,6 +44,13 @@ HRESULT STDMETHODCALLTYPE CKinectDev::Init(BSTR Device, int DeviceNo, Browser *p
 
 HRESULT STDMETHODCALLTYPE CKinectDev::AddDeviceSensor(BSTR eventType, Node *pEventNode, EventInSFBool *pIsActive, BOOL Enabled, int ID, int *pRetVal)
 {
+	 AllocConsole();
+	 HANDLE hConsole = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE,FILE_SHARE_READ | FILE_SHARE_WRITE,NULL,CONSOLE_TEXTMODE_BUFFER,NULL);
+	 SetConsoleActiveScreenBuffer(hConsole);
+	 SetConsoleTextAttribute(hConsole,
+		 FOREGROUND_RED /*×ÖÇ°¾°ºìÉ«*/ | BACKGROUND_GREEN/*×Ö±³¾°ÂÌÉ«*/);
+
+	 SetConsoleHandle(hConsole);
 	if(Enabled){
 		Node *skltn,*hnz,*flr;
 		EventInMFNode* tmpNode;
@@ -74,6 +82,8 @@ HRESULT STDMETHODCALLTYPE CKinectDev::AddDeviceSensor(BSTR eventType, Node *pEve
 }
 
 HRESULT STDMETHODCALLTYPE CKinectDev::RemoveDeviceSensor(int ID){
+	CloseHandle(GetConsoleHandle());
+	FreeConsole();
 	return  S_OK;
 }
 

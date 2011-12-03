@@ -2,6 +2,7 @@
 #include "ControlKinect.h"
 #include "NiHandTracker.h"
 #include "NiUserDetector.h"
+#include "Temp4Debug.h"
 //using namespace xn;
 //xn::UserGenerator usrGen;
 xn::Context g_context;
@@ -51,12 +52,27 @@ XnStatus Init_Kinect(){
 			MessageBeep(16);
 		}
 		ud->Run();
-
-
 	return rc;
 }
 
 XnStatus updateKinect(){
-	return g_context.WaitAndUpdateAll();	
+	XnStatus rc=g_context.WaitAndUpdateAll();
+	XnUInt16 cnt=20;
+	XnUserID uid[20];
+	XnUserSkeleton tmp;
+	ud->getAllUser(uid,cnt);
+		for(int i=0;i<cnt;i++){
+			ud->getAllJoint(uid[i],tmp);
+			for(int j=1;j<=24;j++){
+				XnSkeletonJointTransformation trans;
+				tmp.Get((XnSkeletonJoint)j,trans);
+				wrt_i(trans.position.position.X);
+				wrt_Wchr(L"\r\n");
+				wrt_i(trans.position.position.Y);
+			}
+			
+		}
+
+	return 	rc;
 }
 

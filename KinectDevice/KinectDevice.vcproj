@@ -735,6 +735,14 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\Temp4Debug.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Temp4Debug.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Í·ÎÄ¼þ"
