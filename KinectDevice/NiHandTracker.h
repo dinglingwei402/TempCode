@@ -24,6 +24,7 @@
 
 #include <XnCppWrapper.h>
 #include "NiTrailHistory.h"
+#include "HandSYNC.h"
 
 // Hand position history length (positions)
 #define MAX_HAND_TRAIL_LENGTH	10
@@ -33,10 +34,8 @@ class HandTracker
 public:
 	HandTracker(xn::Context& context);
 	~HandTracker();
-
-	XnStatus Init();
+	XnStatus Init(HandSYNC* sync);
 	XnStatus Run();
-
 	const TrailHistory&	GetHistory()	const	{return m_History;}
 
 private:
@@ -70,6 +69,7 @@ private:
 	TrailHistory			m_History;
 	xn::GestureGenerator	m_GestureGenerator;
 	xn::HandsGenerator		m_HandsGenerator;
+	HandSYNC*				m_sync;
 
 	static XnList	sm_Instances;	// Living instances of the class
 };

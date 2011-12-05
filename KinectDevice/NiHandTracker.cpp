@@ -90,6 +90,10 @@ void XN_CALLBACK_TYPE HandTracker::Hand_Create(	xn::HandsGenerator& generator,
 	if(!pThis->m_History.Find(nId))
 	{
 		pThis->m_History.Add(nId).Push(*pPosition);
+		if(pThis->m_sync){
+			pThis->m_sync->HandCreate(nId,pPosition);
+			MessageBox(NULL,L"seesee",L"see",MB_OK);
+		}
 		//WCHAR t10[10];
 		//MessageBox(NULL,_itow(nId,t10,10),L"Find",MB_OK);
 	}
@@ -107,7 +111,6 @@ void XN_CALLBACK_TYPE HandTracker::Hand_Update(	xn::HandsGenerator& generator,
 		printf("Dead HandTracker: skipped!\n");
 		return;
 	}
-
 	// Add to this user's hands history
 	Trail*	const trail = pThis->m_History.Find(nId);
 	if(!trail)
@@ -116,6 +119,10 @@ void XN_CALLBACK_TYPE HandTracker::Hand_Update(	xn::HandsGenerator& generator,
 		return;
 	}
 	trail->Push(*pPosition);
+	if (pThis->m_sync)
+	{
+		pThis->m_sync->HandUpdate(nId,pPosition);
+	}
 }
 
 void XN_CALLBACK_TYPE HandTracker::Hand_Destroy(	xn::HandsGenerator& generator, 
@@ -161,11 +168,11 @@ HandTracker::~HandTracker()
 	sm_Instances.Remove(it);
 }
 
-XnStatus HandTracker::Init()
+XnStatus HandTracker::Init(HandSYNC* sync)
 {            
 	XnStatus			rc;
 	XnCallbackHandle	chandle;
-
+	m_sync=sync;
 	// Create generators
 	rc = m_GestureGenerator.Create(m_rContext);
 	if (rc != XN_STATUS_OK)
@@ -214,3 +221,4 @@ XnStatus HandTracker::Run()
 
 	return XN_STATUS_OK;
 }
+

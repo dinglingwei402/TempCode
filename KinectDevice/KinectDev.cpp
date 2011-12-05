@@ -13,7 +13,8 @@ m_user_com(NULL),
 m_status(NULL),
 m_skeletonNode(NULL),
 m_floorNode(NULL),
-m_handsTrack(NULL)
+m_handsTrack(NULL),
+m_browser(NULL)
 {
 
 }
@@ -39,6 +40,7 @@ HRESULT STDMETHODCALLTYPE CKinectDev::Init(BSTR Device, int DeviceNo, Browser *p
 {	
 	DeviceNo=1;
 	*pDeviceNoUsed= 1;
+	m_browser=pBrowser;
 	return  S_OK;
 }
 
@@ -49,33 +51,28 @@ HRESULT STDMETHODCALLTYPE CKinectDev::AddDeviceSensor(BSTR eventType, Node *pEve
 	 SetConsoleActiveScreenBuffer(hConsole);
 	 SetConsoleTextAttribute(hConsole,
 		 FOREGROUND_RED /*×ÖÇ°¾°ºìÉ«*/ | BACKGROUND_GREEN/*×Ö±³¾°ÂÌÉ«*/);
-
 	 SetConsoleHandle(hConsole);
 	if(Enabled){
 		Node *skltn,*hnz,*flr;
-		EventInMFNode* tmpNode;
-		QuerySFNode(pEventNode,L"skeleton",IID_EventOutSFNode,&m_skeletonNode,&skltn);
-		QuerySFNode(pEventNode,L"handsTrack",IID_EventOutSFNode,&m_handsTrack,&hnz);
-		QuerySFNode(pEventNode,L"floor",IID_EventOutSFNode,&m_floorNode,&flr);
-		QuerySFNode(skltn,L"enabled",IID_EventOutSFBool,&m_enabledSkltn);
-		QuerySFNode(hnz,L"enabled",IID_EventOutSFBool,&m_enabledHnz);
-		QueryMFNode(pEventNode,L"temp",IID_EventInMFNode,&tmpNode);
-		CoInitialize(NULL);
-		HRESULT hr=CoGetObject(L"howto",NULL,IID_EventInMFNode,(void**)&tmpNode);
-		if(FAILED(hr)){
-			int yyy=0;
-		}
+		QueryEventOutSFNodeVlu(pEventNode,L"floor",IID_EventOutSFNode,&m_floorNode,&flr);
+		QueryEventInNode(pEventNode,L"skeleton",IID_EventInMFNode,&m_skeletonNode);
+		QueryEventInNode(pEventNode,L"handsTrack",IID_EventInMFNode,&m_handsTrack);
+	/*	QuerySFNodeVlu(pEventNode,L"floor",IID_EventOutSFNode,&m_floorNode,&flr);
+		QueryNode(skltn,L"enabled",IID_EventOutSFBool,&m_enabledSkltn);
+		QueryNode(hnz,L"enabled",IID_EventOutSFBool,&m_enabledHnz);
+		QueryNode(pEventNode,L"temp",IID_EventInMFNode,&tmpNode);
 		skltn->Release();
 		hnz->Release();
 		flr->Release();
 		skltn=hnz=flr=NULL;
-		Init_Kinect();
-		//if (Init_Kinect(m_skeletonNode,m_handsTrack,m_floorNode)!=XN_STATUS_OK)
-		//{
-		//	Close_Kinect();
-		//	return E_FAIL;
-		//}
-		CoUninitialize();
+		Init_Kinect();*/
+//		MessageBox(NULL,wc,L"testFlaot",MB_OK);
+		if (Init_Kinect(this)!=XN_STATUS_OK)
+		{
+			Close_Kinect();
+			return E_FAIL;
+		}
+
 	}
 	*pRetVal=1;
 	return  S_OK;
@@ -90,8 +87,8 @@ HRESULT STDMETHODCALLTYPE CKinectDev::RemoveDeviceSensor(int ID){
 
 HRESULT STDMETHODCALLTYPE CKinectDev::Tick(double SimTime, double FrameRate){
 	VARIANT_BOOL vlu,vlu1;
-	m_enabledSkltn->getValue(&vlu);
-	m_enabledHnz->getValue(&vlu1);
+	//m_enabledSkltn->getValue(&vlu);
+	//m_enabledHnz->getValue(&vlu1);
 	updateKinect();
 	return S_OK;
 }

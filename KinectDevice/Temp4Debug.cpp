@@ -14,9 +14,19 @@ void wrt_Wchr(WCHAR wc[]){
 	WriteConsoleW(hConsole,wc,wcslen(wc),&ws,NULL);
 }
 void wrt_i(int i){
-	WCHAR int_wchr[50];
-	_itow(i,int_wchr,10);
-	DWORD ws;
-	WriteConsoleW(hConsole,int_wchr,wcslen(int_wchr),&ws,NULL);
+	WCHAR wc[50];
+	swprintf_s(wc,50,L"%d\r\n",i);
+	wrt_Wchr(wc);
+}
 
+void wrt_f(float f){
+	WCHAR wc[50];
+	swprintf_s(wc,50,L"%.8f\r\n",f);
+	wrt_Wchr(wc);
+}
+
+void wrt_char(char c[]){
+	WCHAR wc[100];
+	swprintf_s(wc,100,L"%s\r\n",c);
+	wrt_Wchr(wc);
 }

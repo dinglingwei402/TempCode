@@ -668,22 +668,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\NiHandTracker.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\NiTrailHistory.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\NiUserDetector.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\SkeletonDataSet.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -737,10 +721,6 @@
 			</File>
 			<File
 				RelativePath=".\Temp4Debug.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Temp4Debug.h"
 				>
 			</File>
 		</Filter>
@@ -814,18 +794,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\NiHandTracker.h"
-				>
-			</File>
-			<File
-				RelativePath=".\NiTrailHistory.h"
-				>
-			</File>
-			<File
-				RelativePath=".\NiUserDetector.h"
-				>
-			</File>
-			<File
 				RelativePath=".\QueryNode.h"
 				>
 			</File>
@@ -834,15 +802,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SkeletonDataSet.h"
-				>
-			</File>
-			<File
 				RelativePath=".\stdafx.h"
 				>
 			</File>
 			<File
 				RelativePath=".\targetver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Temp4Debug.h"
 				>
 			</File>
 			<File
@@ -1088,6 +1056,54 @@
 			</File>
 			<File
 				RelativePath=".\KinectDevice_i.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="BSNodeControl"
+			>
+			<File
+				RelativePath=".\ControlHandsTrackNode.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ControlHandsTrackNode.h"
+				>
+			</File>
+			<File
+				RelativePath=".\HandSYNC.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\HandSYNC.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="KinectDataControl"
+			>
+			<File
+				RelativePath=".\NiHandTracker.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\NiHandTracker.h"
+				>
+			</File>
+			<File
+				RelativePath=".\NiTrailHistory.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\NiTrailHistory.h"
+				>
+			</File>
+			<File
+				RelativePath=".\NiUserDetector.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\NiUserDetector.h"
 				>
 			</File>
 		</Filter>

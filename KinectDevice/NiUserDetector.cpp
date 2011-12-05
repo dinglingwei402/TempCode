@@ -3,9 +3,9 @@
 #include "ControlKinect.h"
 #include "Temp4Debug.h"
 using namespace xn;
-XnList NiUserDetector::sm_Instances;
+XnList UserTracker::sm_Instances;
 
-NiUserDetector::NiUserDetector(Context& context){
+UserTracker::UserTracker(Context& context){
 	g_context=context;
 	playerId=0;
 	XnStatus rc = sm_Instances.AddLast(this);
@@ -17,21 +17,21 @@ NiUserDetector::NiUserDetector(Context& context){
 	XnSkeletonJoint joint_names[]={XN_SKEL_HEAD,XN_SKEL_NECK,XN_SKEL_TORSO,XN_SKEL_WAIST,XN_SKEL_LEFT_COLLAR,XN_SKEL_LEFT_SHOULDER,XN_SKEL_LEFT_ELBOW,XN_SKEL_LEFT_WRIST,XN_SKEL_LEFT_HAND,XN_SKEL_LEFT_FINGERTIP,XN_SKEL_RIGHT_COLLAR,XN_SKEL_RIGHT_SHOULDER,XN_SKEL_RIGHT_ELBOW,XN_SKEL_RIGHT_WRIST,XN_SKEL_RIGHT_HAND,XN_SKEL_RIGHT_FINGERTIP,XN_SKEL_LEFT_HIP,XN_SKEL_LEFT_KNEE,XN_SKEL_LEFT_ANKLE,XN_SKEL_LEFT_FOOT,XN_SKEL_RIGHT_HIP,XN_SKEL_RIGHT_KNEE,XN_SKEL_RIGHT_ANKLE,XN_SKEL_RIGHT_FOOT};
 }
 
-NiUserDetector::~NiUserDetector(){
+UserTracker::~UserTracker(){
 	Stop();
 	g_context=NULL;
 }
-void XN_CALLBACK_TYPE NiUserDetector::UserExit(UserGenerator &generator, XnUserID user, void *pCookie){
+void XN_CALLBACK_TYPE UserTracker::UserExit(UserGenerator &generator, XnUserID user, void *pCookie){
 //	MessageBox(NULL,L"Exit",L"UserDetec",MB_OK);
 }
 
-void XN_CALLBACK_TYPE NiUserDetector::UserReEnter(UserGenerator &generator, XnUserID user, void *pCookie){
+void XN_CALLBACK_TYPE UserTracker::UserReEnter(UserGenerator &generator, XnUserID user, void *pCookie){
 	MessageBox(NULL,L"ReEnter",L"UserDetec",MB_OK);
 }
 
-void XN_CALLBACK_TYPE NiUserDetector::NewUser(UserGenerator &generator, XnUserID user, void *pCookie){
+void XN_CALLBACK_TYPE UserTracker::NewUser(UserGenerator &generator, XnUserID user, void *pCookie){
 	assert(pCookie);
-	NiUserDetector* pThis=STATIC_CAST(NiUserDetector*)(pCookie);
+	UserTracker* pThis=STATIC_CAST(UserTracker*)(pCookie);
 	if(sm_Instances.Find(pThis)!=sm_Instances.end()){
 		pThis->g_usrGen.GetSkeletonCap().RequestCalibration(user,TRUE);
 	//	MessageBox(NULL,L"NewUser",L"UserDetec",MB_OK);
@@ -41,10 +41,10 @@ void XN_CALLBACK_TYPE NiUserDetector::NewUser(UserGenerator &generator, XnUserID
 //	MessageBox(NULL,L"NewUser",L"UserDetec",MB_OK);
 }
 
-void XN_CALLBACK_TYPE NiUserDetector::LostUser(UserGenerator &generator, XnUserID user, void *pCookie){
+void XN_CALLBACK_TYPE UserTracker::LostUser(UserGenerator &generator, XnUserID user, void *pCookie){
 //	MessageBox(NULL,L"Lostusr",L"UserDetec",MB_OK);
 	assert(pCookie);
-	NiUserDetector* pThis=STATIC_CAST(NiUserDetector*)(pCookie);
+	UserTracker* pThis=STATIC_CAST(UserTracker*)(pCookie);
 	MessageBox(NULL,L"Lostusr",L"UserDetec",MB_OK);
 	if(pThis->playerId==0)return;
 	if(sm_Instances.Find(pThis)!=sm_Instances.end()){
@@ -54,9 +54,9 @@ void XN_CALLBACK_TYPE NiUserDetector::LostUser(UserGenerator &generator, XnUserI
 	}
 }
 
-void XN_CALLBACK_TYPE NiUserDetector::UserCalibrationComplete(SkeletonCapability& capability, XnUserID user, XnCalibrationStatus eStatus, void* pCookie){
+void XN_CALLBACK_TYPE UserTracker::UserCalibrationComplete(SkeletonCapability& capability, XnUserID user, XnCalibrationStatus eStatus, void* pCookie){
 	assert(pCookie);
-	NiUserDetector* pThis=STATIC_CAST(NiUserDetector*)(pCookie);
+	UserTracker* pThis=STATIC_CAST(UserTracker*)(pCookie);
 	if(sm_Instances.Find(pThis)!=sm_Instances.end()){
 		if(eStatus==XN_CALIBRATION_STATUS_OK){
 			pThis->g_usrGen.GetSkeletonCap().StartTracking(user);
@@ -70,7 +70,7 @@ void XN_CALLBACK_TYPE NiUserDetector::UserCalibrationComplete(SkeletonCapability
 	}
 }
 
-XnStatus NiUserDetector::Init(){
+XnStatus UserTracker::Init(){
 	XnStatus rc;
 	rc=g_usrGen.Create(g_context);
 	CHECK_RC(rc,"");
@@ -90,12 +90,12 @@ XnStatus NiUserDetector::Init(){
 	return rc;
 }
 
-XnStatus NiUserDetector::Run(){
+XnStatus UserTracker::Run(){
 	XnStatus rc=g_context.StartGeneratingAll();
 	return rc;
 }
 
-void NiUserDetector::Stop(){
+void UserTracker::Stop(){
 	g_usrGen.UnregisterFromUserExit(hUserExit);
 	g_usrGen.UnregisterFromUserReEnter(hUserReEnter);
 	g_usrGen.UnregisterUserCallbacks(hUserCallbacks);
@@ -106,7 +106,7 @@ void NiUserDetector::Stop(){
 }
 
 
-void NiUserDetector::getUserAllJoint(XnUserID user,XnUserSkeletonSet uss_hash){//
+void UserTracker::getUserAllJoint(XnUserID user,XnUserSkeletonSet uss_hash){//
 	XnUserSkeleton us_hash;
 	for (int i=1;i<=24;i++)
 	{
@@ -117,7 +117,7 @@ void NiUserDetector::getUserAllJoint(XnUserID user,XnUserSkeletonSet uss_hash){/
 	uss_hash.Set(user,us_hash);
 }
 
-void NiUserDetector::getAllJoint(XnUserID user,XnUserSkeleton us_hash){
+void UserTracker::getAllJoint(XnUserID user,XnUserSkeleton us_hash){
 	for (int i=1;i<=24;i++)
 	{
 		XnSkeletonJointTransformation trans;
@@ -126,6 +126,6 @@ void NiUserDetector::getAllJoint(XnUserID user,XnUserSkeleton us_hash){
 	}
 }
 
-XnStatus NiUserDetector::getAllUser(XnUserID*  pUsers, XnUInt16&  pnUsers ){
+XnStatus UserTracker::getAllUser(XnUserID*  pUsers, XnUInt16&  pnUsers ){
 	return g_usrGen.GetUsers(pUsers,pnUsers);
 }

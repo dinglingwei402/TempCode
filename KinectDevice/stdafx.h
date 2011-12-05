@@ -20,5 +20,6 @@
 #include <atlcom.h>
 #include <atlctl.h>
 #include <comdef.h>
+#include <atlstr.h>
 
 using namespace ATL;

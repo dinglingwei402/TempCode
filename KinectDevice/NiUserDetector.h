@@ -1,18 +1,19 @@
 #include <XnCppWrapper.h>
 #include <XnHash.h>
 #include <XnList.h>
+
 XN_DECLARE_DEFAULT_HASH(XnSkeletonJoint,XnSkeletonJointTransformation,XnUserSkeleton);
 XN_DECLARE_DEFAULT_HASH(XnUserID,XnUserSkeleton,XnUserSkeletonSet);
 
-class NiUserDetector{	
+class UserTracker{	
 public:	
-	NiUserDetector(xn::Context& context);
-	~NiUserDetector();
+	UserTracker(xn::Context& context);
+	~UserTracker();
 	XnStatus Init();
 	XnStatus Run();
 	void Stop();
 	XnUserID getPlayer();
-	void getUserAllJoint(XnUserID user,XnUserSkeletonSet uss_hash);//
+	void getUserAllJoint(XnUserID user,XnUserSkeletonSet uss_hash);
 	void getAllJoint(XnUserID user,XnUserSkeleton us_hash);
 	XnStatus getAllUser(XnUserID *  pUsers, XnUInt16&  pnUsers );
 
