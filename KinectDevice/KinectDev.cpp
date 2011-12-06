@@ -11,15 +11,15 @@
 CKinectDev::CKinectDev():
 m_user_com(NULL),
 m_status(NULL),
-m_skeletonNode(NULL),
-m_floorNode(NULL),
-m_handsTrack(NULL),
+m_users(NULL),
+m_floor(NULL),
+m_hands(NULL),
 m_browser(NULL)
 {
 
 }
 CKinectDev::~CKinectDev(){
-//	Close_Kinect();
+	Close_Kinect();
 }
 
 STDMETHODIMP CKinectDev::InterfaceSupportsErrorInfo(REFIID riid)
@@ -54,25 +54,14 @@ HRESULT STDMETHODCALLTYPE CKinectDev::AddDeviceSensor(BSTR eventType, Node *pEve
 	 SetConsoleHandle(hConsole);
 	if(Enabled){
 		Node *skltn,*hnz,*flr;
-		QueryEventOutSFNodeVlu(pEventNode,L"floor",IID_EventOutSFNode,&m_floorNode,&flr);
-		QueryEventInNode(pEventNode,L"skeleton",IID_EventInMFNode,&m_skeletonNode);
-		QueryEventInNode(pEventNode,L"handsTrack",IID_EventInMFNode,&m_handsTrack);
-	/*	QuerySFNodeVlu(pEventNode,L"floor",IID_EventOutSFNode,&m_floorNode,&flr);
-		QueryNode(skltn,L"enabled",IID_EventOutSFBool,&m_enabledSkltn);
-		QueryNode(hnz,L"enabled",IID_EventOutSFBool,&m_enabledHnz);
-		QueryNode(pEventNode,L"temp",IID_EventInMFNode,&tmpNode);
-		skltn->Release();
-		hnz->Release();
-		flr->Release();
-		skltn=hnz=flr=NULL;
-		Init_Kinect();*/
-//		MessageBox(NULL,wc,L"testFlaot",MB_OK);
+		QueryEventOutSFNodeVlu(pEventNode,L"floor",IID_EventOutSFNode,&m_floor,&flr);
+		QueryEventInNode(pEventNode,L"users",IID_EventInMFNode,&m_users);
+		QueryEventInNode(pEventNode,L"hands",IID_EventInMFNode,&m_hands);
 		if (Init_Kinect(this)!=XN_STATUS_OK)
 		{
 			Close_Kinect();
 			return E_FAIL;
 		}
-
 	}
 	*pRetVal=1;
 	return  S_OK;
@@ -86,9 +75,6 @@ HRESULT STDMETHODCALLTYPE CKinectDev::RemoveDeviceSensor(int ID){
 
 
 HRESULT STDMETHODCALLTYPE CKinectDev::Tick(double SimTime, double FrameRate){
-	VARIANT_BOOL vlu,vlu1;
-	//m_enabledSkltn->getValue(&vlu);
-	//m_enabledHnz->getValue(&vlu1);
 	updateKinect();
 	return S_OK;
 }

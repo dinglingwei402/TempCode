@@ -1071,11 +1071,27 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ControlUserNode.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ControlUserNode.h"
+				>
+			</File>
+			<File
 				RelativePath=".\HandSYNC.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\HandSYNC.h"
+				>
+			</File>
+			<File
+				RelativePath=".\UserSYNC.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\UserSYNC.h"
 				>
 			</File>
 		</Filter>

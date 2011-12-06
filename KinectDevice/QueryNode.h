@@ -45,13 +45,17 @@ HRESULT QueryEventOutNode(EventOutSFNode* evtout,BSTR name,const IID type_ID,/*o
 	evtout->getValue(&root);
 	hr=QueryEventOutNode(root,name,type_ID,result);
 	root->Release();
-	root=NULL:
+	root=NULL;
 	return hr;
 }
 
 template<typename EVT_TYP,typename VLU_TYP>
 HRESULT QueryEventOutSFNodeVlu(Node* root,BSTR name,const IID type_ID,/*out*/EVT_TYP** result,/*out*/VLU_TYP* vlu){
 	HRESULT hr=S_OK;
+	if(!root){
+	//	MessageBox(NULL,L"root null",L"rn",MB_OK);
+		return E_POINTER;
+	}
 	hr=QueryEventOutNode(root,name,type_ID,result);
 	if(FAILED(hr))return hr;
 	if (vlu!=NULL)

@@ -34,11 +34,7 @@ void XN_CALLBACK_TYPE UserTracker::NewUser(UserGenerator &generator, XnUserID us
 	UserTracker* pThis=STATIC_CAST(UserTracker*)(pCookie);
 	if(sm_Instances.Find(pThis)!=sm_Instances.end()){
 		pThis->g_usrGen.GetSkeletonCap().RequestCalibration(user,TRUE);
-	//	MessageBox(NULL,L"NewUser",L"UserDetec",MB_OK);
-		WCHAR wc[]=L"newuser/n";
-		wrt_Wchr(wc);
 	}
-//	MessageBox(NULL,L"NewUser",L"UserDetec",MB_OK);
 }
 
 void XN_CALLBACK_TYPE UserTracker::LostUser(UserGenerator &generator, XnUserID user, void *pCookie){
@@ -46,6 +42,9 @@ void XN_CALLBACK_TYPE UserTracker::LostUser(UserGenerator &generator, XnUserID u
 	assert(pCookie);
 	UserTracker* pThis=STATIC_CAST(UserTracker*)(pCookie);
 	MessageBox(NULL,L"Lostusr",L"UserDetec",MB_OK);
+	if(pThis->m_sync){
+		pThis->m_sync->UserLost(user);
+	}
 	if(pThis->playerId==0)return;
 	if(sm_Instances.Find(pThis)!=sm_Instances.end()){
 		if(pThis->playerId==user){
@@ -60,17 +59,24 @@ void XN_CALLBACK_TYPE UserTracker::UserCalibrationComplete(SkeletonCapability& c
 	if(sm_Instances.Find(pThis)!=sm_Instances.end()){
 		if(eStatus==XN_CALIBRATION_STATUS_OK){
 			pThis->g_usrGen.GetSkeletonCap().StartTracking(user);
+			if(pThis->m_sync){
+				pThis->m_sync->UserNew(user);
+				WCHAR pid[10];
+				_itow(user,pid,10);
+				MessageBox(NULL,pid,L"cali",MB_OK);
+			}
 		}else{
 			pThis->g_usrGen.GetSkeletonCap().RequestCalibration(user,TRUE);
 		}
 		pThis->playerId=user;
-		WCHAR pid[10];
+		/*WCHAR pid[10];
 		_itow(eStatus,pid,10);
-		MessageBox(NULL,pid,L"cali",MB_OK);
+		MessageBox(NULL,pid,L"cali",MB_OK);*/
 	}
 }
 
-XnStatus UserTracker::Init(){
+XnStatus UserTracker::Init(UserSYNC* sync){
+	this->m_sync=sync;
 	XnStatus rc;
 	rc=g_usrGen.Create(g_context);
 	CHECK_RC(rc,"");
@@ -106,7 +112,7 @@ void UserTracker::Stop(){
 }
 
 
-void UserTracker::getUserAllJoint(XnUserID user,XnUserSkeletonSet uss_hash){//
+void UserTracker::getUserAllJoint(XnUserID user,XnUserSkeletonSet& uss_hash){//
 	XnUserSkeleton us_hash;
 	for (int i=1;i<=24;i++)
 	{
@@ -117,15 +123,31 @@ void UserTracker::getUserAllJoint(XnUserID user,XnUserSkeletonSet uss_hash){//
 	uss_hash.Set(user,us_hash);
 }
 
-void UserTracker::getAllJoint(XnUserID user,XnUserSkeleton us_hash){
-	for (int i=1;i<=24;i++)
-	{
-		XnSkeletonJointTransformation trans;
-		g_usrGen.GetSkeletonCap().GetSkeletonJoint(user,(XnSkeletonJoint)i,trans);
-		us_hash.Set((XnSkeletonJoint)i,trans);	
-	}
-}
+//void UserTracker::getAllJoint(XnUserID user,XnUserSkeleton us_hash){
+//	for (int i=1;i<=24;i++)
+//	{
+//		XnSkeletonJointTransformation trans;
+//		g_usrGen.GetSkeletonCap().GetSkeletonJoint(user,(XnSkeletonJoint)i,trans);
+//		us_hash.Set((XnSkeletonJoint)i,trans);	
+//	}
+//}
 
 XnStatus UserTracker::getAllUser(XnUserID*  pUsers, XnUInt16&  pnUsers ){
 	return g_usrGen.GetUsers(pUsers,pnUsers);
+}
+
+XnStatus UserTracker::UpdataUsers(){
+	XnUserSkeletonSet* uss=new XnUserSkeletonSet();
+	int MaxUser=20;
+	XnUserID pUsers[20];
+	getAllUser(pUsers,&MaxUser);
+	for(int i=0;i<MaxUser;i++){
+		if(g_usrGen.GetSkeletonCap().IsTracking(pUsers[i])){
+			getUserAllJoint(pUsers[i],uss);
+		}
+	}
+	if(m_sync){
+		m_sync->
+	}
+
 }

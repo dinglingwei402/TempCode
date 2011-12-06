@@ -45,9 +45,9 @@ STDMETHOD(InterfaceSupportsErrorInfo)(REFIID riid);
 public:
 	EventInSFVec3f *m_user_com;
 	EventInMFString *m_status;
-	EventInMFNode *m_skeletonNode;
-	EventInMFNode *m_handsTrack;
-	EventOutSFNode *m_floorNode;
+	EventInMFNode *m_users;
+	EventInMFNode *m_hands;
+	EventOutSFNode *m_floor;
 	EventOutSFBool *m_enabledSkltn;
 	EventOutSFBool *m_enabledHnz;
 	Browser *m_browser;

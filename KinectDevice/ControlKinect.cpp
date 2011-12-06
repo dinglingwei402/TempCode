@@ -4,6 +4,7 @@
 #include "NiUserDetector.h"
 #include "Temp4Debug.h"
 #include "ControlHandsTrackNode.h"
+#include "ControlUserNode.h"
 
 xn::Context g_context;
 xn::DepthGenerator depGen;
@@ -26,9 +27,18 @@ XnStatus Init_Kinect(CKinectDev* dev){
 		ht=new HandTracker(g_context);
 		ut=new UserTracker(g_context);
 		ControlHandsTrackNode* chtn=new ControlHandsTrackNode(dev);
-		MessageBox(NULL,L"init",L"init",MB_OK);
+		MessageBox(NULL,L"fa",L"fa",MB_OK);
+		ControlUserNode* cun=new ControlUserNode(dev);
+		MessageBox(NULL,L"fa1",L"fa1",MB_OK);
 		rc=ht->Init(chtn);
 		rc=ht->Run();
+		MessageBox(NULL,L"fa2",L"fa2",MB_OK);
+		rc=ut->Init(cun);
+		rc=ut->Run();
+		MessageBox(NULL,L"fa3",L"fa3",MB_OK);
+
+		/*XnPoint3D pt={111,111,111};
+		chtn->HandUpdate(1,&pt);*/
 	//	rc=ut->Init();
 	//	ut->Run();
 		
@@ -78,13 +88,10 @@ void readHandHistory(HandTracker* handtracker,EventInMFNode* m_handsTrack){
 //	SysFreeString(b);
 }
 
-
-
 XnStatus updateKinect(){
 	XnStatus rc=g_context.WaitAndUpdateAll();
-//	m_handsTrack->setValueFromString(L"Shape{}");
-//	readHandHistory(ht,m_handsTrack);
 	return 	rc;
+//	return S_OK;
 }
 
 

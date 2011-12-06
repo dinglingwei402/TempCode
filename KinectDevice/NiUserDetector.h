@@ -1,6 +1,7 @@
 #include <XnCppWrapper.h>
 #include <XnHash.h>
 #include <XnList.h>
+#include "UserSYNC.h"
 
 XN_DECLARE_DEFAULT_HASH(XnSkeletonJoint,XnSkeletonJointTransformation,XnUserSkeleton);
 XN_DECLARE_DEFAULT_HASH(XnUserID,XnUserSkeleton,XnUserSkeletonSet);
@@ -9,15 +10,14 @@ class UserTracker{
 public:	
 	UserTracker(xn::Context& context);
 	~UserTracker();
-	XnStatus Init();
+	XnStatus Init(UserSYNC* sync);
 	XnStatus Run();
 	void Stop();
 	XnUserID getPlayer();
 	void getUserAllJoint(XnUserID user,XnUserSkeletonSet uss_hash);
-	void getAllJoint(XnUserID user,XnUserSkeleton us_hash);
+	//void getAllJoint(XnUserID user,XnUserSkeleton us_hash);
 	XnStatus getAllUser(XnUserID *  pUsers, XnUInt16&  pnUsers );
-
-
+	XnStatus UpdataUsers();
 
 private:
 	static void XN_CALLBACK_TYPE UserExit(xn::UserGenerator &generator, XnUserID user, void *pCookie);
@@ -31,6 +31,7 @@ private:
 	xn::UserGenerator g_usrGen;
 	XnCallbackHandle hUserExit,hUserReEnter,hUserCallbacks,hCalibration;
 	XnUserID playerId;
+	UserSYNC* m_sync;
 	static XnList sm_Instances;
 };
 
