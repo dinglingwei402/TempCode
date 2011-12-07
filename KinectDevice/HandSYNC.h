@@ -11,5 +11,5 @@ public:
 	virtual	HRESULT HandUpdate(XnUserID nId, const TrailHistory::Trail* trail){return S_OK;};
 	virtual HRESULT HandDestroy(XnUserID nId){return S_OK;};
 private:
-	void* m_dev;
+//	void* m_dev;
 };
