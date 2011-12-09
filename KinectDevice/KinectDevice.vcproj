@@ -813,10 +813,6 @@
 				RelativePath=".\Temp4Debug.h"
 				>
 			</File>
-			<File
-				RelativePath=".\testSpeech.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="资源文件"

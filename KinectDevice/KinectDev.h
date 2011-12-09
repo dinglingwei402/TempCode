@@ -43,15 +43,12 @@ STDMETHOD(InterfaceSupportsErrorInfo)(REFIID riid);
 	}
 
 public:
-	EventInSFVec3f *m_user_com;
-	EventInMFString *m_status;
-	EventInMFNode *m_users;
-	EventInMFNode *m_hands;
+	EventInMFNode  *m_users;
+	EventInMFInt32 *m_usersId;
+	EventInMFNode  *m_hands;
+	EventInMFInt32 *m_handsId;
 	EventOutSFNode *m_floor;
-	EventOutSFBool *m_enabledSkltn;
-	EventOutSFBool *m_enabledHnz;
-	Browser *m_browser;
-	
+	Browser *m_browser;	
 	HRESULT STDMETHODCALLTYPE Init( 
 		/* [in] */ BSTR Device,
 		/* [in] */ int DeviceNo,

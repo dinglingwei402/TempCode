@@ -25,22 +25,28 @@ void XN_CALLBACK_TYPE UserTracker::UserExit(UserGenerator &generator, XnUserID u
 }
 
 void XN_CALLBACK_TYPE UserTracker::UserReEnter(UserGenerator &generator, XnUserID user, void *pCookie){
-	MessageBox(NULL,L"ReEnter",L"UserDetec",MB_OK);
+//	MessageBox(NULL,L"ReEnter",L"UserDetec",MB_OK);
 }
 
 void XN_CALLBACK_TYPE UserTracker::NewUser(UserGenerator &generator, XnUserID user, void *pCookie){
+	#ifdef _DEBUG
+		MessageBox(NULL,L"UserTracker::NewUser",L"UserTracker::NewUser",MB_OK);
+	#endif // _DEBUG
 	assert(pCookie);
 	UserTracker* pThis=STATIC_CAST(UserTracker*)(pCookie);
 	if(sm_Instances.Find(pThis)!=sm_Instances.end()){
 		pThis->g_usrGen.GetSkeletonCap().RequestCalibration(user,TRUE);
+	}
+	if (pThis->m_sync)
+	{
+		pThis->m_sync->UserNew(user);
 	}
 }
 
 void XN_CALLBACK_TYPE UserTracker::LostUser(UserGenerator &generator, XnUserID user, void *pCookie){
 //	MessageBox(NULL,L"Lostusr",L"UserDetec",MB_OK);
 	assert(pCookie);
-	UserTracker* pThis=STATIC_CAST(UserTracker*)(pCookie);
-	MessageBox(NULL,L"Lostusr",L"UserDetec",MB_OK);
+	UserTracker* pThis=STATIC_CAST(UserTracker*)(pCookie);	
 	if(pThis->m_sync){
 		pThis->m_sync->UserLost(user);
 	}
@@ -60,22 +66,16 @@ void XN_CALLBACK_TYPE UserTracker::UserCalibrationComplete(SkeletonCapability &c
 			pThis->g_usrGen.GetSkeletonCap().StartTracking(user);
 			if(pThis->m_sync){
 				pThis->m_sync->UserNew(user);
-				WCHAR pid[10];
-				_itow(user,pid,10);
-				MessageBox(NULL,pid,L"cali",MB_OK);
 			}
 		}else{
 			pThis->g_usrGen.GetSkeletonCap().RequestCalibration(user,TRUE);
 		}
 		pThis->playerId=user;
-		/*WCHAR pid[10];
-		_itow(eStatus,pid,10);
-		MessageBox(NULL,pid,L"cali",MB_OK);*/
 	}
 }
 void XN_CALLBACK_TYPE UserTracker::UserPositionChanged(ProductionNode &node,void* pCookie){
 	assert(pCookie);
-	MessageBox(NULL,_T("UserPositionChanged"),_T("UserPositionChanged"),MB_OK);
+//	MessageBox(NULL,_T("UserPositionChanged"),_T("UserPositionChanged"),MB_OK);
 	UserTracker* pThis=STATIC_CAST(UserTracker*)(pCookie);
 	if(pThis->sm_Instances.Find(pThis)!=sm_Instances.end()){
 		if(pThis->m_sync){
@@ -100,7 +100,7 @@ XnStatus UserTracker::Init(UserSYNC* sync){
 	rc=g_usrGen.GetSkeletonCap().RegisterToCalibrationComplete(UserCalibrationComplete,this,hCalibration);
 	CHECK_RC(rc,"");	
 	if(g_usrGen.GetSkeletonCap().NeedPoseForCalibration()){
-		MessageBox(NULL,L"ndforpos",L"forcali",MB_OK);
+//		MessageBox(NULL,L"ndforpos",L"forcali",MB_OK);
 	}
 	//rc=g_context.FindExistingNode(XN_NODE_TYPE_DEPTH,g_depGen);
 	//
@@ -130,6 +130,7 @@ void UserTracker::Stop(){
 }
 
 void UserTracker::Update(){
+//	MessageBox(NULL,L"UserTracker::Update",L"UserTracker::Update",MB_OK);
 	if (m_sync)
 	{
 		m_sync->UsersUpdate(g_usrGen);

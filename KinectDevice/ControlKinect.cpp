@@ -38,10 +38,18 @@ XnStatus Init_Kinect(CKinectDev* dev){
 		ut=new UserTracker(g_context);
 		ControlHandsTrackNode* chtn=new ControlHandsTrackNode(dev);
 		ControlUserNode* cun=new ControlUserNode(dev);
+		xn::DepthMetaData depMD;
+		depGen.GetMetaData(depMD);
+		int width=depMD.XRes();
+		int height=depMD.YRes();
+		chtn->SetScreenSize(width,height);
 		rc=ht->Init(chtn);
 		rc=ht->Run();
 		rc=ut->Init(cun);
 		rc=ut->Run();
+	#ifdef _DEBUG
+			MessageBox(NULL,L"finish init",L"finish init",MB_OK);
+	#endif // _DEBUG
 	return rc;
 }
 
@@ -75,10 +83,10 @@ XnStatus updateKinect(){
 	ut->Update();
 	SetFloorData();
 	return 	rc;
-//	return S_OK;
 }
 
 
 void Close_Kinect(){
 	g_context.Shutdown();
+//	RELEASE g_context;
 }

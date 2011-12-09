@@ -9,11 +9,11 @@
 #include "Temp4Debug.h"
 
 CKinectDev::CKinectDev():
-m_user_com(NULL),
-m_status(NULL),
-m_users(NULL),
 m_floor(NULL),
+m_users(NULL),
+m_usersId(NULL),
 m_hands(NULL),
+m_handsId(NULL),
 m_browser(NULL)
 {
 
@@ -46,17 +46,22 @@ HRESULT STDMETHODCALLTYPE CKinectDev::Init(BSTR Device, int DeviceNo, Browser *p
 
 HRESULT STDMETHODCALLTYPE CKinectDev::AddDeviceSensor(BSTR eventType, Node *pEventNode, EventInSFBool *pIsActive, BOOL Enabled, int ID, int *pRetVal)
 {
-	 AllocConsole();
-	 HANDLE hConsole = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE,FILE_SHARE_READ | FILE_SHARE_WRITE,NULL,CONSOLE_TEXTMODE_BUFFER,NULL);
-	 SetConsoleActiveScreenBuffer(hConsole);
-	 SetConsoleTextAttribute(hConsole,
+	#ifdef _DEBUG
+		AllocConsole();
+		HANDLE hConsole = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE,FILE_SHARE_READ | FILE_SHARE_WRITE,NULL,CONSOLE_TEXTMODE_BUFFER,NULL);
+		SetConsoleActiveScreenBuffer(hConsole);
+		SetConsoleTextAttribute(hConsole,
 		 FOREGROUND_RED /*×ÖÇ°¾°ºìÉ«*/ | BACKGROUND_GREEN/*×Ö±³¾°ÂÌÉ«*/);
-	 SetConsoleHandle(hConsole);
+		SetConsoleHandle(hConsole);
+		wrt_Wchr(_T("in debug\r\n"));
+	#endif // _DEBUG
+ 
 	if(Enabled){
-		Node *skltn,*hnz,*flr;
-		QueryEventOutSFNodeVlu(pEventNode,L"floor",IID_EventOutSFNode,&m_floor,&flr);
-		QueryEventInNode(pEventNode,L"users",IID_EventInMFNode,&m_users);
-		QueryEventInNode(pEventNode,L"hands",IID_EventInMFNode,&m_hands);
+		QueryEventOutNode(pEventNode,_T("floor"),IID_EventOutSFNode,&m_floor);
+		QueryEventInNode(pEventNode,_T("users"),IID_EventInMFNode,&m_users);
+		QueryEventInNode(pEventNode,_T("hands"),IID_EventInMFNode,&m_hands);
+		QueryEventInNode(pEventNode,_T("handsId"),IID_EventInMFInt32,&m_handsId);
+		QueryEventInNode(pEventNode,_T("usersId"),IID_EventInMFInt32,&m_usersId);
 		if (Init_Kinect(this)!=XN_STATUS_OK)
 		{
 			Close_Kinect();
@@ -68,8 +73,10 @@ HRESULT STDMETHODCALLTYPE CKinectDev::AddDeviceSensor(BSTR eventType, Node *pEve
 }
 
 HRESULT STDMETHODCALLTYPE CKinectDev::RemoveDeviceSensor(int ID){
-	CloseHandle(GetConsoleHandle());
-	FreeConsole();
+	#ifdef _DEBUG
+		CloseHandle(GetConsoleHandle());
+		FreeConsole();
+	#endif // _DEBUG
 	return  S_OK;
 }
 

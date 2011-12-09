@@ -58,7 +58,7 @@ public:
 
 		ConstIterator		begin() const									{return ConstIterator(m_List.begin());}
 		const ConstIterator	end()	const									{return ConstIterator(m_List.end());}
-
+		unsigned short getLength() const									{return m_nLength;} 
 	private:
 		// Not supported:
 		Trail(const Trail&);

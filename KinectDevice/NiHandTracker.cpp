@@ -77,6 +77,10 @@ void XN_CALLBACK_TYPE HandTracker::Hand_Create(	xn::HandsGenerator& generator,
 												XnFloat				fTime, 
 												void*				pCookie)
 {
+	#ifdef _DEBUG
+			MessageBox(NULL,L"HandTracker::Hand_Create",L"HandTracker::Hand_Create",MB_OK);
+	#endif // _DEBUG
+
 	printf("New Hand: %d @ (%f,%f,%f)\n", nId, pPosition->X, pPosition->Y, pPosition->Z);
 	HandTracker*	pThis = static_cast<HandTracker*>(pCookie);
 	if(sm_Instances.Find(pThis) == sm_Instances.end())
@@ -84,7 +88,6 @@ void XN_CALLBACK_TYPE HandTracker::Hand_Create(	xn::HandsGenerator& generator,
 		printf("Dead HandTracker: skipped!\n");
 		return;
 	}
-
 	// Add to hands history if this user is not already tracked
 	if(!pThis->m_History.Find(nId))
 	{
@@ -102,18 +105,18 @@ void XN_CALLBACK_TYPE HandTracker::Hand_Update(	xn::HandsGenerator& generator,
 												void*				pCookie)
 {
 	HandTracker*	pThis = static_cast<HandTracker*>(pCookie);
-	MessageBox(NULL,L"openiUpdata",L"openi",MB_OK);
+//	MessageBox(NULL,L"openiUpdata",L"openi",MB_OK);
 	if(sm_Instances.Find(pThis) == sm_Instances.end())
 	{
 		printf("Dead HandTracker: skipped!\n");
 		return;
 	}
-	MessageBox(NULL,L"NotDeadHand",L"openi",MB_OK);
+//	MessageBox(NULL,L"NotDeadHand",L"openi",MB_OK);
 	// Add to this user's hands history
 	Trail*	const trail = pThis->m_History.Find(nId);
 	if(!trail)
 	{
-		MessageBox(NULL,L"DeadHandUpdate",L"openi",MB_OK);
+	//	MessageBox(NULL,L"DeadHandUpdate",L"openi",MB_OK);
 		printf("Dead hand update: skipped!\n");
 		return;
 	}
