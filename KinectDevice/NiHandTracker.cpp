@@ -60,14 +60,12 @@ void XN_CALLBACK_TYPE HandTracker::Gesture_Recognized(	xn::GestureGenerator&	gen
 														void*					pCookie)
 {
 	printf("Gesture recognized: %s\n", strGesture);
-
 	HandTracker*	pThis = static_cast<HandTracker*>(pCookie);
 	if(sm_Instances.Find(pThis) == sm_Instances.end())
 	{
 		printf("Dead HandTracker: skipped!\n");
 		return;
 	}
-
 	pThis->m_HandsGenerator.StartTracking(*pEndPosition);
 }
 
@@ -80,7 +78,6 @@ void XN_CALLBACK_TYPE HandTracker::Hand_Create(	xn::HandsGenerator& generator,
 	#ifdef _DEBUG
 			MessageBox(NULL,L"HandTracker::Hand_Create",L"HandTracker::Hand_Create",MB_OK);
 	#endif // _DEBUG
-
 	printf("New Hand: %d @ (%f,%f,%f)\n", nId, pPosition->X, pPosition->Y, pPosition->Z);
 	HandTracker*	pThis = static_cast<HandTracker*>(pCookie);
 	if(sm_Instances.Find(pThis) == sm_Instances.end())
