@@ -12,6 +12,9 @@ XnSkeletonJoint ControlUserNode::m_joint_names[]={XN_SKEL_HEAD,XN_SKEL_NECK,XN_S
 
 ControlUserNode::ControlUserNode(CKinectDev* dev):NULLSTR(_T("NULL"))
 {
+	m_lastCom[0]=0;
+	m_lastCom[1]=0;
+	m_lastCom[2]=0;
 	this->m_dev=dev;
 	dev->m_users->QueryInterface(IID_EventInMFNode,(void**)(&this->m_userIn));
 	dev->m_users->QueryInterface(IID_EventOutMFNode,(void**)(&this->m_userOut));
@@ -51,7 +54,7 @@ HRESULT ControlUserNode::UserNew(XnUserID nId){
 	}
 	m_usersIdIn->set1Value(cnt,nId);
 	CString vrmlSyntax;
-	vrmlSyntax.Format(_T(" OpenNIUser{playerID %d}"),nId);
+	vrmlSyntax.Format(_T(" OpenNIUser{id %d\r\n isExit FALSE}"),nId);
 	Node* node;
 	BSTR createUserStr=vrmlSyntax.AllocSysString();
 	hr= m_dev->m_browser->createVrmlFromString(createUserStr,&node);
@@ -165,10 +168,18 @@ HRESULT ControlUserNode::UsersUpdate(xn::UserGenerator& gen )
 		XnPoint3D pt;
 		gen.GetCoM(ids[i],pt);
 		Div1000(pt);
-		EventInSFVec3f* com;
-		hr=QueryEventInNode(tmp_sub,_T("userCoM"),IID_EventInSFVec3f,&com);
+		EventOutSFVec3f* com;
+		hr=QueryEventOutNode(tmp_sub,_T("userCoM"),IID_EventOutSFVec3f,&com);
 		assert(com);
-		com->setValue((float*)(&pt));
+		float vlu[3];
+		com->getValue(vlu);
+		if(vlu[0]!=m_lastCom[0]&&vlu[1]!=m_lastCom[1]&&vlu[2]!=m_lastCom[2]){
+			((EventInSFVec3f*)com)->setValue((float*)(&pt));
+			m_lastCom[0]=vlu[0];
+			m_lastCom[1]=vlu[1];
+			m_lastCom[2]=vlu[2];
+		}
+		
 /////////////////////////////////////////////////////
 		int len=sizeof(m_joint_names)/sizeof(XnUInt32);
 		assert(len==24);
@@ -196,10 +207,64 @@ HRESULT ControlUserNode::UsersUpdate(xn::UserGenerator& gen )
 			}
 		}
 	}
-
 	 return hr;
  }
 
 
 
+
+
+
+HRESULT ControlUserNode::UserExit(XnUserID nId){
+	HRESULT hr=S_OK;
+	int cnt=0;
+	m_usersIdOut->getSize(&cnt);
+	if(cnt==0)return hr;
+	int* ids_bf_create=new int[cnt];
+	m_usersIdOut->getValue(cnt,ids_bf_create);
+	int indx=0;
+	bool findit=false;
+	for(int i=0;i<cnt;i++){
+		if(ids_bf_create[i]==nId){
+			indx=i;
+			findit=true;
+			break;
+		}
+	}
+	if(findit){
+		delete[] ids_bf_create;
+		Node* tmp_sub;
+		hr=m_userOut->get1Value(indx,&tmp_sub);
+		EventInSFBool* isExit;
+		hr=QueryEventInNode(tmp_sub,_T("isExit"),IID_EventInSFBool,&isExit);
+		isExit->setValue(true);
+	}
+}
+
+HRESULT ControlUserNode::UserReEnter(XnUserID nId){
+	HRESULT hr=S_OK;
+	int cnt=0;
+	m_usersIdOut->getSize(&cnt);
+	if(cnt==0)return hr;
+	int* ids_bf_create=new int[cnt];
+	m_usersIdOut->getValue(cnt,ids_bf_create);
+	int indx=0;
+	bool findit=false;
+	for(int i=0;i<cnt;i++){
+		if(ids_bf_create[i]==nId){
+			indx=i;
+			findit=true;
+			break;
+		}
+	}
+	if(findit){
+		delete[] ids_bf_create;
+		Node* tmp_sub;
+		hr=m_userOut->get1Value(indx,&tmp_sub);
+		EventInSFBool* isExit;
+		hr=QueryEventInNode(tmp_sub,_T("isExit"),IID_EventInSFBool,&isExit);
+		isExit->setValue(false);
+	}
+	return S_OK;
+}
 

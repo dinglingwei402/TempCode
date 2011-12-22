@@ -57,7 +57,7 @@ HRESULT ControlHandsTrackNode::HandCreate(XnUserID nId, const XnPoint3D* pPositi
 	XnFloat z=pPosition->Z;
 	XnFloat w=(x-g_width)/g_width;
 	XnFloat h=(g_height-y)/g_height;
-	vrmlSyntax.Format(_T(" OpenNIHand{nid %d handTrack [%f %f %f] position %f %f}"),nId,x,y,z,w,h);
+	vrmlSyntax.Format(_T(" OpenNIHand{id %d handTrack [%f %f %f] position %f %f}"),nId,x,y,z,w,h);
 	Node* node;
 	BSTR createHandStr=vrmlSyntax.AllocSysString();
 	hr= m_dev->m_browser->createVrmlFromString(createHandStr,&node);
@@ -75,7 +75,6 @@ HRESULT ControlHandsTrackNode::HandCreate(XnUserID nId, const XnPoint3D* pPositi
 	}
 	VARIANT_BOOL b=false;
 	m_dev->m_browser->removeNode(node,&b);
-
 	BSTR printidVlu;
 	BSTR printhandVlu;
 	m_handOut->toString(&printhandVlu);

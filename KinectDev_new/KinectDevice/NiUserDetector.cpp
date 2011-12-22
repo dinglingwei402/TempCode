@@ -21,7 +21,7 @@ UserTracker::~UserTracker(){
 	g_context=NULL;
 }
 void XN_CALLBACK_TYPE UserTracker::UserExit(UserGenerator &generator, XnUserID user, void *pCookie){
-//	MessageBox(NULL,L"Exit",L"UserDetec",MB_OK);
+	
 }
 
 void XN_CALLBACK_TYPE UserTracker::UserReEnter(UserGenerator &generator, XnUserID user, void *pCookie){
@@ -29,9 +29,6 @@ void XN_CALLBACK_TYPE UserTracker::UserReEnter(UserGenerator &generator, XnUserI
 }
 
 void XN_CALLBACK_TYPE UserTracker::NewUser(UserGenerator &generator, XnUserID user, void *pCookie){
-	#ifdef _DEBUG
-		MessageBox(NULL,L"UserTracker::NewUser",L"UserTracker::NewUser",MB_OK);
-	#endif // _DEBUG
 	assert(pCookie);
 	UserTracker* pThis=STATIC_CAST(UserTracker*)(pCookie);
 	if(sm_Instances.Find(pThis)!=sm_Instances.end()){
@@ -44,7 +41,6 @@ void XN_CALLBACK_TYPE UserTracker::NewUser(UserGenerator &generator, XnUserID us
 }
 
 void XN_CALLBACK_TYPE UserTracker::LostUser(UserGenerator &generator, XnUserID user, void *pCookie){
-//	MessageBox(NULL,L"Lostusr",L"UserDetec",MB_OK);
 	assert(pCookie);
 	UserTracker* pThis=STATIC_CAST(UserTracker*)(pCookie);	
 	if(pThis->m_sync){
@@ -75,7 +71,6 @@ void XN_CALLBACK_TYPE UserTracker::UserCalibrationComplete(SkeletonCapability &c
 }
 void XN_CALLBACK_TYPE UserTracker::UserPositionChanged(ProductionNode &node,void* pCookie){
 	assert(pCookie);
-//	MessageBox(NULL,_T("UserPositionChanged"),_T("UserPositionChanged"),MB_OK);
 	UserTracker* pThis=STATIC_CAST(UserTracker*)(pCookie);
 	if(pThis->sm_Instances.Find(pThis)!=sm_Instances.end()){
 		if(pThis->m_sync){
@@ -92,7 +87,7 @@ XnStatus UserTracker::Init(UserSYNC* sync){
 	rc=g_usrGen.GetSkeletonCap().SetSkeletonProfile(XN_SKEL_PROFILE_ALL);
 	CHECK_RC(rc,"");
 	rc=g_usrGen.RegisterToUserExit(UserExit,this,hUserExit);
-	CHECK_RC(rc,"");
+	CHECK_RC(rc,"RegisterToUserExit fail");
 	rc=g_usrGen.RegisterToUserReEnter(UserReEnter,this,hUserReEnter);
 	CHECK_RC(rc,"");
 	rc=g_usrGen.RegisterUserCallbacks(NewUser,LostUser,this,hUserCallbacks);
@@ -102,15 +97,6 @@ XnStatus UserTracker::Init(UserSYNC* sync){
 	if(g_usrGen.GetSkeletonCap().NeedPoseForCalibration()){
 //		MessageBox(NULL,L"ndforpos",L"forcali",MB_OK);
 	}
-	//rc=g_context.FindExistingNode(XN_NODE_TYPE_DEPTH,g_depGen);
-	//
-	//if(rc!=XN_STATUS_OK)
-	//{
-	//	rc=g_depGen.Create(g_context);
-	//}
-	//bool b=g_depGen.IsCapabilitySupported(XN_CAPABILITY_USER_POSITION);
-	//rc=g_depGen.GetUserPositionCap().RegisterToUserPositionChange(UserPositionChanged,this,hUserPostionChanged);
-	//if(rc!=XN_STATUS_OK)MessageBox(NULL,_T("EEE"),_T("EEE"),MB_OK);
 	return rc;
 }
 
@@ -130,7 +116,6 @@ void UserTracker::Stop(){
 }
 
 void UserTracker::Update(){
-//	MessageBox(NULL,L"UserTracker::Update",L"UserTracker::Update",MB_OK);
 	if (m_sync)
 	{
 		m_sync->UsersUpdate(g_usrGen);

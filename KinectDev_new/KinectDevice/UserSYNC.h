@@ -8,5 +8,7 @@ public:
 	~UserSYNC(void);
 	virtual HRESULT UserNew(XnUserID nId){return S_OK;};
 	virtual HRESULT UserLost(XnUserID nId){return S_OK;};
+	virtual HRESULT UserExit(XnUserID nId){return S_OK;};
+	virtual HRESULT UserReEnter(XnUserID nId){return S_OK;};
 	virtual HRESULT UsersUpdate(xn::UserGenerator& gen){return S_OK;};
 };

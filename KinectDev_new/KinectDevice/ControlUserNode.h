@@ -11,6 +11,8 @@ public:
 	HRESULT UserNew(XnUserID nId);
 	HRESULT UserLost(XnUserID nId);
 	HRESULT UsersUpdate(xn::UserGenerator& gen);
+	HRESULT UserExit(XnUserID nId);
+	HRESULT UserReEnter(XnUserID nId);
 private:
 	void Div1000(XnVector3D& vec);
 private:
@@ -19,6 +21,7 @@ private:
 	EventInMFNode* m_userIn;
 	EventInMFInt32* m_usersIdIn;
 	EventOutMFInt32* m_usersIdOut;
+	FLOAT m_lastCom[3];
 	static BSTR m_pos_field[];
 	static BSTR m_ori_field[];
 	static XnSkeletonJoint m_joint_names[];

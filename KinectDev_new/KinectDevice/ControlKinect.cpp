@@ -20,17 +20,13 @@ EventInSFVec3f* floor_nml;
 
 XnStatus Init_Kinect(CKinectDev* dev){
 	XnStatus rc=XN_STATUS_OK;
-//	#ifdef _DEBUG
 		rc=g_context.Init();
-		CHECK_RC(rc,"get g_context fail");
 		rc=depGen.Create(g_context);
-		CHECK_RC(rc,"get depGen fail");
+		const XnChar* statusStr=xnGetStatusString(rc);
+		CHECK_RC(rc,"create context");
 		rc=imgGen.Create(g_context);
-		CHECK_RC(rc,"get imgGen fail");
- //   #else
-	//	rc=g_context.InitFromXmlFile(SAMPLE_XML_PATH,NULL);
-	//	CHECK_RC(rc,"get g_context fail");
-	//#endif // _DEBUG
+		statusStr=xnGetStatusString(rc);
+		CHECK_RC(rc,"create img");
 		scenAnlyz.Create(g_context);
 		QueryEventOutNode(dev->m_floor,_T("point"),IID_EventInSFVec3f,&floor_ctr);
 		QueryEventOutNode(dev->m_floor,_T("normal"),IID_EventInSFVec3f,&floor_nml);
@@ -47,9 +43,6 @@ XnStatus Init_Kinect(CKinectDev* dev){
 		rc=ht->Run();
 		rc=ut->Init(cun);
 		rc=ut->Run();
-	#ifdef _DEBUG
-			MessageBox(NULL,L"finish init",L"finish init",MB_OK);
-	#endif // _DEBUG
 	return rc;
 }
 
@@ -87,6 +80,13 @@ XnStatus updateKinect(){
 
 
 void Close_Kinect(){
+	if(ut)
+	{
+		delete ut;
+	}
+	if (ht)
+	{
+		delete ht;
+	}
 	g_context.Shutdown();
-//	RELEASE g_context;
 }

@@ -11,7 +11,7 @@
 #endif
 
 #ifndef CHECK_RC(rc,what)
-#define CHECK_RC(rc, what)	 if(rc != XN_STATUS_OK) {return rc;}
+#define CHECK_RC(rc, what)	 if(rc != XN_STATUS_OK) {wrt_Wchr(_T(what));return rc;}
 #endif
 
 XnStatus Init_Kinect(CKinectDev* dev);
