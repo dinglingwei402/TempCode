@@ -1,0 +1,22 @@
+#VRML V2.0 utf8
+
+PROTO Scaner[
+	exposedField SFBool	enabled FALSE
+	exposedField MFVec3f points[]
+	#	exposedField MFColor pt_Color []
+]{
+	Shape {
+	
+		geometry PointSet {coord Coordinate {point IS points }}
+		appearance Appearance {material Material {emissiveColor 1 0 0 }}
+
+	}
+}
+Transform {
+	translation	 0 0 0
+	children [
+		DEF	 sc Scaner {
+			points [1 1 1, 1 0 1]
+		}			
+	]
+}
