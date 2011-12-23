@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;E:\Code\cpp\wangmin-cppwork\KinectData\KinectData&quot;;&quot;C:\Program Files (x86)\OpenNI\Include&quot;"
+				AdditionalIncludeDirectories="&quot;$(OPEN_NI_INCLUDE)&quot;;&quot;$(SolutionDir)..\KinectData/KinectData&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -63,7 +63,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="KinectData.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\OpenNI\Lib&quot;;&quot;E:\Code\cpp\wangmin-cppwork\KinectData\Debug&quot;"
+				AdditionalLibraryDirectories="&quot;$(OPEN_NI_LIB)&quot;;&quot;E:\code_share\cherry-temp-dir\TestKinectData\Debug&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
