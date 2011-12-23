@@ -18,7 +18,6 @@ void  init(){
 	XnStatus rc=XN_STATUS_OK;
 	ScriptNode scrptNode;
 	EnumerationErrors errs;
-//	rc=g_context.InitFromXmlFile(xmlpath,scrptNode,&errs);
 	rc=g_context.Init();
 	const XnChar* rslt;
 	rslt=xnGetStatusString(rc);
@@ -78,22 +77,16 @@ XnStatus checkSensors(){
 	sensors[0].yres=depMD.YRes();
 	sensors[1].xres=depMD.XRes();
 	sensors[1].yres=depMD.YRes();
+	g_context.StartGeneratingAll();
 	return rc;
 }
 
-bool CheckUser(int devID,int UserID){
-	if(devID==0) {return false;}
-	else{
-		int n=devID-1;
-		SceneMetaData data;
-		const XnLabel* pLable;
-		if(sensors[n].g_user.GetUserPixels(UserID,data)==XN_STATUS_OK){
-			pLable=data.Data();
-		}
-	}
-
+void tick(){
+	g_context.WaitAndUpdateAll();
 }
-
+void getValidUserNum(XnUInt32 devId,XnUserID aUsers[],XnUInt16 aUsersNum){
+	sensors[devId].g_user.GetUsers(aUsers,aUsersNum);
+}
 
 void drawPoint(XnUInt32 devId,XnUserID nId){
 	XnBool hasUsrPix=false;
@@ -102,7 +95,8 @@ void drawPoint(XnUInt32 devId,XnUserID nId){
 	XnStatus rc=XN_STATUS_OK;
 	sensors[devId].g_scen.GetMetaData(usrPix);
 	sensors[devId].g_depGen.GetMetaData(depPix);
-	rc=sensors[devId].g_user.GetUserPixels(nId,usrPix);
+	rc=sensors[devId].g_user.GetUserPixels(0,usrPix);
+	const XnChar* rslt=xnGetStatusString(rc);
 	XnUInt32 xres=sensors[devId].xres;
 	XnUInt32 yres=sensors[devId].yres;
 	XnUInt32 ptSize=xres*yres;
@@ -113,15 +107,16 @@ void drawPoint(XnUInt32 devId,XnUserID nId){
 		hasUsrPix=TRUE;
 		for(XnUInt32 i=0;i<yres;i++){
 			for(XnUInt32 j=0;j<xres;j++){
-				if(usrPix.Data()==0){
+				const XnLabel* p=usrPix.Data();
+				if(*p==0){
 					continue;
 				}
 				len++;
-				pts->X=j;
-				pts->Y=i;
-				pts->Z=depPix[j*i];
-				pts++;				
+				pts[len].X=j;
+				pts[len].Y=i;
+				pts[len].Z=depPix[j+i*xres];		
 			}
 		}
 	}
+	delete[] pts;
 }
