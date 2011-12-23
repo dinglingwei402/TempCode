@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0500 */
-/* at Thu Dec 08 21:18:23 2011
+/* at Fri Dec 23 09:23:07 2011
  */
 /* Compiler settings for .\KinectDevice.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)

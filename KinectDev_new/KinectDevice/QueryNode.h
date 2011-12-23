@@ -8,11 +8,6 @@ HRESULT QueryEventInNode(Node* root,BSTR name,const IID type_ID,/*out*/EVT_TYP**
 	if(!in){
 		return E_FAIL;
 	}
-	if(FAILED(hr)){
-		in->Release();
-		in=NULL;
-		return hr;
-	}
 	hr=in->QueryInterface(type_ID,(void**)result);
 	in->Release();
 	in=NULL;
@@ -27,11 +22,6 @@ HRESULT QueryEventOutNode(Node* root,BSTR name,const IID type_ID,/*out*/EVT_TYP*
 	hr=root->getEventOut(name,&out);
 	if(!out){
 		return E_FAIL;
-	}
-	if(FAILED(hr)){
-		out->Release();
-		out=NULL;
-		return hr;
 	}
 	hr=out->QueryInterface(type_ID,(void**)result);
 	out->Release();
