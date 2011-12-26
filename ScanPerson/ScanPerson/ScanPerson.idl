@@ -1,0 +1,37 @@
+// ScanPerson.idl : ScanPerson 的 IDL 源
+//
+
+// 此文件将由 MIDL 工具处理以
+// 产生类型库(ScanPerson.tlb)和封送处理代码。
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(afb35e79-34aa-4cb5-8984-631dcf3ad622),
+	dual,
+	nonextensible,
+	helpstring("IscanPerson 接口"),
+	pointer_default(unique)	
+]
+interface IScanPerson:IDispatch{};
+
+
+[
+	uuid(17EFE0D4-1279-421C-BB02-21AB9BA0FDBA),
+	version(1.0),
+	helpstring("ScanPerson 1.0 类型库")
+]
+library ScanPersonLib
+{
+	importlib("stdole2.tlb");
+	import "blaxxunHID.idl";
+	[
+		uuid(70174573-e3f9-4f69-9467-62afd6544b31),
+		helpstring("scanPerson class")
+	]
+	coclass ScanPerson{
+		[default]interface IbxxHID;
+	};
+};

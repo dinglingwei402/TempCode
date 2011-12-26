@@ -1,0 +1,13 @@
+#VRML V2.0 utf8
+
+
+Transform {translation 0 0 0 children [Shape {appearance	Appearance	{texture MovieTexture {url "capture:"}} geometry Box {}	}]}
+Transform {translation 4 0 0 children [Shape {appearance	Appearance	{texture MovieTexture {url "capture:@0"}}		geometry Box {}	}]}
+Transform {translation 8 0 0 children [Shape {appearance	Appearance	{texture MovieTexture {url "capture:@1"}}		geometry Box {}	}]}
+Transform {translation 12 0 0 children [Shape {appearance	Appearance	{texture MovieTexture {url "capture:@2"}}		geometry Box {}	}]}
+Transform {translation 16 0 0 children [Shape {appearance	Appearance	{texture MovieTexture {url "capture:@3"}}	geometry Box {}	}]}
+Transform {translation 20 0 0 children [Shape {appearance	Appearance	{texture MovieTexture {url "capture:@4"}}	geometry Box {}	}]}
+Transform {translation 24 0 0 children [Shape {appearance	Appearance	{texture MovieTexture {url "capture:@5"}}		geometry Box {}	}]}
+Transform {translation 28 0 0 children [Shape {appearance	Appearance	{texture MovieTexture {url "capture:@6"}}		geometry Box {}	}]}
+Transform {translation 32 0 0 children [Shape {appearance	Appearance	{texture MovieTexture {url "capture:@7"}}	geometry Box {}	}]}
+Transform {translation 36 0 0 children [Shape {appearance	Appearance	{texture MovieTexture {url "capture:@8"}}	geometry Box {}	}]}
