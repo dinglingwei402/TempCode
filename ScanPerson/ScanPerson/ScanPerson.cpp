@@ -67,4 +67,76 @@ STDAPI DllInstall(BOOL bInstall, LPCWSTR pszCmdLine)
     return hr;
 }
 
+// ScanPerson.cpp : CScanPerson µÄÊµÏÖ
+
+#include "stdafx.h"
+#include "ScanPerson.h"
+
+CScanPerson::CScanPerson(){}
+CScanPerson::~CScanPerson(){}
+
+
+STDMETHODIMP CScanPerson::InterfaceSupportsErrorInfo(REFIID riid)
+{
+	static const IID* arr[] = 
+	{
+		&IID_IbxxHID
+	};
+	for (int i=0; i < sizeof(arr) / sizeof(arr[0]); i++)
+	{
+		if (InlineIsEqualGUID(*arr[i],riid))
+			return S_OK;
+	}
+	return S_FALSE;
+}
+
+
+HRESULT STDMETHODCALLTYPE CScanPerson::Init( 
+							   /* [in] */ BSTR Device,
+							   /* [in] */ int DeviceNo,
+							   /* [in] */ Browser *pBrowser,
+							   /* [retval][out] */ int *pDeviceNoUsed)
+{
+	MessageBox(NULL,L"dsd",L"ddd",MB_OK);
+	return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor( 
+	/* [in] */ BSTR eventType,
+	/* [in] */ Node *pEventNode,
+	/* [in] */ EventInSFBool *pIsActive,
+	/* [in] */ BOOL Enabled,
+	/* [in] */ int ID,
+	/* [retval][out] */ int *pRetVal)
+{
+	return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE CScanPerson::RemoveDeviceSensor( 
+	/* [in] */ int ID)
+{
+return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE CScanPerson::Tick( 
+							   /* [in] */ double SimTime,
+							   /* [in] */ double FrameRate) 
+{
+return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE CScanPerson::EnabledChanged( 
+	int ID,
+	BOOL Enabled,
+	/* [retval][out] */ BOOL *pSetIsActive)
+{
+return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE CScanPerson::FocusChanged( 
+									   /* [in] */ BOOL HasFocusNow,
+									   /* [retval][out] */ BOOL *pNeedTickCalls)
+{
+return S_OK;
+}
 
