@@ -234,6 +234,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ScanPerson.h"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -289,17 +293,41 @@
 				RelativePath=".\ScanPerson.rgs"
 				>
 			</File>
+			<File
+				RelativePath=".\ScanPerson1.rgs"
+				>
+			</File>
+			<File
+				RelativePath=".\ScanPerson2.rgs"
+				>
+			</File>
+			<File
+				RelativePath=".\ScanPerson3.rgs"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="生成的文件"
 			SourceControlFiles="false"
 			>
 			<File
+				RelativePath=".\blaxxunHID.c"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath=".\blaxxunHID.h"
 				>
 			</File>
 			<File
-				RelativePath=".\blaxxunHID_i.c"
+				RelativePath=".\blaxxunVRML.c"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -311,23 +339,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\blaxxunHID_i.h"
-				>
-			</File>
-			<File
-				RelativePath=".\blaxxunVRML_i.c"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\blaxxunVRML_i.h"
+				RelativePath=".\blaxxunVRML.h"
 				>
 			</File>
 			<File
@@ -360,8 +372,8 @@
 						Name="VCMIDLTool"
 						GenerateTypeLibrary="false"
 						TypeLibraryName=""
-						HeaderFileName="blaxxunHID_i.h"
-						InterfaceIdentifierFileName="blaxxunHID_i.c"
+						HeaderFileName="blaxxunHID.h"
+						InterfaceIdentifierFileName="blaxxunHID.c"
 						ProxyFileName="blaxxunHID_p.c"
 					/>
 				</FileConfiguration>
@@ -374,8 +386,8 @@
 					>
 					<Tool
 						Name="VCMIDLTool"
-						HeaderFileName="blaxxunVRML_i.h"
-						InterfaceIdentifierFileName="blaxxunVRML_i.c"
+						HeaderFileName="blaxxunVRML.h"
+						InterfaceIdentifierFileName="blaxxunVRML.c"
 						ProxyFileName="blaxxunVRML_p.c"
 					/>
 				</FileConfiguration>
