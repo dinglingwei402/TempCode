@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0500 */
-/* at Tue Dec 27 17:14:32 2011
+/* at Wed Dec 28 11:57:58 2011
  */
 /* Compiler settings for .\blaxxunHID.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)

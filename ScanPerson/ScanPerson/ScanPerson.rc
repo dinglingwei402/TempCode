@@ -98,9 +98,6 @@ END
 //
 
 IDR_SCANPERSON          REGISTRY                "ScanPerson.rgs"
-IDR_SCANPERSON1         REGISTRY                "ScanPerson1.rgs"
-IDR_SCANPERSON2         REGISTRY                "ScanPerson2.rgs"
-IDR_SCANPERSON3         REGISTRY                "ScanPerson3.rgs"
 
 /////////////////////////////////////////////////////////////////////////////
 //

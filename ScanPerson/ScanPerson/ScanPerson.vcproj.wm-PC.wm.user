@@ -9,7 +9,7 @@
 			Name="Debug|Win32"
 			>
 			<DebugSettings
-				Command=""
+				Command="C:\BS Contact 7.220 RC9\BSContact.exe"
 				WorkingDirectory=""
 				CommandArguments=""
 				Attach="false"

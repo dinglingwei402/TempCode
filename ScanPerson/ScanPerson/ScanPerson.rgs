@@ -9,3 +9,74 @@ HKCR
 		}
 	}
 }
+
+HKCR
+{
+	ScanPerson.ScanPerson.1 = s 'ScanPerson Class'
+	{
+		CLSID = s '{70174573-e3f9-4f69-9467-62afd6544b31}'
+	}
+	ScanPerson.ScanPerson = s 'ScanPerson Class'
+	{
+		CLSID = s '{70174573-e3f9-4f69-9467-62afd6544b31}'
+		CurVer = s 'ScanPerson.ScanPerson.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {70174573-e3f9-4f69-9467-62afd6544b31} = s 'ScanPerson Class'
+		{
+			ProgID = s 'ScanPerson.ScanPerson.1'
+			VersionIndependentProgID = s 'ScanPerson.ScanPerson'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			'TypeLib' = s '{17EFE0D4-1279-421C-BB02-21AB9BA0FDBA}'
+		}
+	}
+}
+
+
+HKLM
+{
+    NoRemove 'Software'
+    {
+        NoRemove 'Bitmanagement Software'
+        {
+            NoRemove bsContact
+            {
+                NoRemove plugins
+                {
+                    NoRemove device
+                    {
+                        ForceRemove ScanPerson
+                        {
+                            val CLSID =    s '{70174573-e3f9-4f69-9467-62afd6544b31}'
+                        }
+                    }
+                }
+            }
+        }
+
+
+        NoRemove 'blaxxun interactive'
+        {
+            NoRemove blaxxunCC3D
+            {
+                NoRemove plugins
+                {
+                    NoRemove device
+                    {
+                        ForceRemove ScanPerson
+                        {
+                            val CLSID =    s '{70174573-e3f9-4f69-9467-62afd6544b31}'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+ 

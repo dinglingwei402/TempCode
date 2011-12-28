@@ -46,16 +46,18 @@ class ATL_NO_VTABLE CScanPerson :
 	public IDispatchImpl<IbxxHID, &IID_IbxxHID, &LIBID_ScanPersonLib, /*wMajor =*/ 1, /*wMinor =*/ 0>
 {
 public:
+	
 	CScanPerson();
 	~CScanPerson();
 
-DECLARE_REGISTRY_RESOURCEID(IDR_SCANPERSON3)
+DECLARE_REGISTRY_RESOURCEID(IDR_SCANPERSON)
 
 
 BEGIN_COM_MAP(CScanPerson)
 	COM_INTERFACE_ENTRY(IbxxHID)
 	COM_INTERFACE_ENTRY(IDispatch)
 END_COM_MAP()
+
 
 STDMETHOD(InterfaceSupportsErrorInfo)(REFIID riid);
 
@@ -72,6 +74,7 @@ STDMETHOD(InterfaceSupportsErrorInfo)(REFIID riid);
 	}
 
 public:
+	EventInSFNode *m_ColorImg;
 	HRESULT STDMETHODCALLTYPE Init( 
 		/* [in] */ BSTR Device,
 		/* [in] */ int DeviceNo,

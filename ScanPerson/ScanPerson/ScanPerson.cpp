@@ -5,6 +5,7 @@
 #include "resource.h"
 #include "ScanPerson_i.h"
 #include "dllmain.h"
+#include "KinectControl.h"
 
 // 用于确定 DLL 是否可由 OLE 卸载
 STDAPI DllCanUnloadNow(void)
@@ -72,8 +73,13 @@ STDAPI DllInstall(BOOL bInstall, LPCWSTR pszCmdLine)
 #include "stdafx.h"
 #include "ScanPerson.h"
 
-CScanPerson::CScanPerson(){}
-CScanPerson::~CScanPerson(){}
+CScanPerson::CScanPerson():m_ColorImg(NULL)
+{
+
+}
+CScanPerson::~CScanPerson(){
+	KinectClose();
+}
 
 
 STDMETHODIMP CScanPerson::InterfaceSupportsErrorInfo(REFIID riid)
@@ -97,7 +103,10 @@ HRESULT STDMETHODCALLTYPE CScanPerson::Init(
 							   /* [in] */ Browser *pBrowser,
 							   /* [retval][out] */ int *pDeviceNoUsed)
 {
-	MessageBox(NULL,L"dsd",L"ddd",MB_OK);
+	int i=1;
+	DeviceNo=1;
+	*pDeviceNoUsed= 1;
+//	
 	return S_OK;
 }
 
@@ -109,6 +118,19 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 	/* [in] */ int ID,
 	/* [retval][out] */ int *pRetVal)
 {
+	Field* fld;
+	pEventNode->getField(_T("colorTexture"),&fld);
+	if(fld==NULL){
+		MessageBox(NULL,L"field is NULL",L"in testing",MB_OK);
+	}
+	EventOutSFNode* imgNode;
+	Node* vlu;
+	fld->QueryInterface(IID_EventOutSFNode,(void**)&imgNode);
+	imgNode->getValue(&vlu);
+	KinectInit(vlu);
+	imgNode->Release();
+	fld->Release();
+	*pRetVal=1;
 	return S_OK;
 }
 
@@ -122,7 +144,8 @@ HRESULT STDMETHODCALLTYPE CScanPerson::Tick(
 							   /* [in] */ double SimTime,
 							   /* [in] */ double FrameRate) 
 {
-return S_OK;
+	UpdateImage();
+	return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE CScanPerson::EnabledChanged( 
