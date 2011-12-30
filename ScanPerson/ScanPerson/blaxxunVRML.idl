@@ -1095,5 +1095,47 @@ library blaxxunVRMLLib
 	};
 
 
+
+[
+	object,
+	uuid(49fe19f3-e269-46ce-a9af-e701ecc088ee),
+	dual,
+	helpstring("BufferTexture Interface"),
+	pointer_default(unique)
+]
+interface IBufferTexture : IDispatch
+{
+    import "oaidl.idl"; 
+	HRESULT setFormat (
+        /*[in]*/ int width,
+        /*[in]*/ int height,
+        /*[in]*/ int levels,
+        /*[in]*/ int format,
+        /*[in]*/ int options );
+    HRESULT getFormat (
+        /*[out]*/ int * width,
+        /*[out]*/ int * height,
+        /*[out]*/ int * levels,
+        /*[out]*/ int * format );
+     HRESULT getStatus (
+        /*[out]*/ int * status );
+     HRESULT setTexture (
+        /*[in]*/ int level,
+        /*[in]*/ int cnt,
+        /*[in]*/ unsigned char * pixels,
+        /*[in]*/ int stride );
+     HRESULT setTextureEx (
+        /*[in]*/ int width,
+        /*[in]*/ int height,
+        /*[in]*/ int level,
+        /*[in]*/ int format,
+        /*[in]*/ int cnt,
+        /*[in]*/ unsigned char * pixels,
+        /*[in]*/ int stride );
+     HRESULT getTextureHandle (
+        /*[out]*/ IUnknown * * value );
+};
+
+
 };
 

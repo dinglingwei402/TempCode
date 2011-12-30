@@ -6,6 +6,18 @@
 #include "ScanPerson_i.h"
 #include "dllmain.h"
 #include "KinectControl.h"
+#include "blaxxunVRML.h"
+CComQIPtr<IBufferTexture> bufferTexture;
+
+int width;
+int height;
+int levels;
+int format;
+BYTE* tempBuffer;
+BYTE  frame;
+
+
+
 
 // 用于确定 DLL 是否可由 OLE 卸载
 STDAPI DllCanUnloadNow(void)
@@ -107,6 +119,24 @@ HRESULT STDMETHODCALLTYPE CScanPerson::Init(
 	DeviceNo=1;
 	*pDeviceNoUsed= 1;
 //	
+	MessageBox(NULL,L"In Init",L"init",MB_OK);
+	HRESULT hr;
+	CComPtr<Browser> browser=pBrowser;
+	CComPtr<Node> nodeA;
+//	CComPtr<EventOutSFPath> nodePathA;
+
+	tempBuffer = NULL;
+	frame=128;
+	hr = browser->getNode(L"BUFFER-TEXTURE",&nodeA); 
+	if (SUCCEEDED(hr)) {
+		bufferTexture = nodeA;
+		// may fail because not yet created 
+		hr= bufferTexture->getFormat( 
+			&width,
+			&height,
+			&levels,
+			&format);
+	}
 	return S_OK;
 }
 
@@ -124,7 +154,7 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 		MessageBox(NULL,L"field is NULL",L"in testing",MB_OK);
 	}
 	EventOutSFNode* imgNode;
-	Node* vlu;
+	CComPtr<Node> vlu;
 	fld->QueryInterface(IID_EventOutSFNode,(void**)&imgNode);
 	imgNode->getValue(&vlu);
 	KinectInit(vlu);
@@ -146,6 +176,7 @@ HRESULT STDMETHODCALLTYPE CScanPerson::Tick(
 {
 	UpdateImage();
 	return S_OK;
+
 }
 
 HRESULT STDMETHODCALLTYPE CScanPerson::EnabledChanged( 

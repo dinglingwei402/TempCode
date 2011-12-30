@@ -1,5 +1,5 @@
 #include "blaxxunVRML.h"
-void KinectInit(Node* node);
+void KinectInit(CComPtr<Node> node);
 void KinectClose();
 void GetColorImage();
 void UpdateImage();

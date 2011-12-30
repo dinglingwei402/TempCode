@@ -1,18 +1,20 @@
 #include "stdafx.h"
 #include "KinectControl.h"
 #include "XnCppWrapper.h"
+#include "D3D9TYPES.h"
+#include "blaxxunVRML.h"
 
 using namespace xn;
 int xres;
 int yres;
+CComQIPtr<IBufferTexture> g_bufTex;
 Context g_Context;
 ImageGenerator g_imgGen;
 DepthGenerator g_depGen;
 ImageMetaData g_ImgDat;
 DepthMetaData g_DepDat;
 
-
-void KinectInit(Node* node){
+void KinectInit(CComPtr<Node> node){
 	XnStatus rc=XN_STATUS_OK;
 	rc=g_Context.Init();
 	if (rc==XN_STATUS_OK)
@@ -25,6 +27,7 @@ void KinectInit(Node* node){
 		g_depGen.GetMetaData(g_DepDat);		
 		xres=g_DepDat.FullXRes();
 		yres=g_DepDat.FullYRes();
+		g_bufTex = node;
 		EventIn *w,*h,*f;
 		node->getEventIn(_T("pixelWidth"),&w);
 		EventInSFInt32* wid,*heit;
@@ -44,16 +47,18 @@ void KinectInit(Node* node){
 		h->Release();
 		f->Release();
 	}
-	
 	g_Context.StartGeneratingAll();
+	BYTE* pDepth=(BYTE*)g_DepDat.Data();
+	BYTE* tempBuffer = (BYTE *)_aligned_malloc(xres*yres,8);
+	FillMemory(tempBuffer,xres*yres,128);
+	g_bufTex->setTexture(0,xres*yres,tempBuffer,xres);
 }
 
-void UpdateImage(){
-	
-//	g_Context.WaitAndUpdateAll();
-//	const XnDepthPixel* pDepth=g_DepDat.Data();
-	
-	
+void UpdateImage(){	
+	g_Context.WaitAndUpdateAll();
+	BYTE* tempBuffer = (BYTE *)_aligned_malloc(xres*yres,8);
+	FillMemory(tempBuffer,xres*yres,200);
+	g_bufTex->setTexture(0,xres*yres,tempBuffer,xres);
 }
 
 void KinectClose(){

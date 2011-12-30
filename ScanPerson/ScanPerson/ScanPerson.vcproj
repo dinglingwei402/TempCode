@@ -80,7 +80,7 @@
 				IgnoreImportLibrary="true"
 				AdditionalDependencies="openNI.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(OPEN_NI_LIB)&quot;"
+				AdditionalLibraryDirectories="$(open_NI_LIB)"
 				ModuleDefinitionFile=".\ScanPerson.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"

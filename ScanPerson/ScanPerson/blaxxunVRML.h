@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0500 */
-/* at Wed Dec 28 11:57:58 2011
+/* at Fri Dec 30 18:53:52 2011
  */
 /* Compiler settings for .\blaxxunVRML.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)
@@ -345,6 +345,12 @@ typedef interface Script Script;
 #define __BrowserObserver_FWD_DEFINED__
 typedef interface BrowserObserver BrowserObserver;
 #endif 	/* __BrowserObserver_FWD_DEFINED__ */
+
+
+#ifndef __IBufferTexture_FWD_DEFINED__
+#define __IBufferTexture_FWD_DEFINED__
+typedef interface IBufferTexture IBufferTexture;
+#endif 	/* __IBufferTexture_FWD_DEFINED__ */
 
 
 #ifdef __cplusplus
@@ -8629,6 +8635,209 @@ EXTERN_C const IID IID_BrowserObserver;
 
 
 #endif 	/* __BrowserObserver_INTERFACE_DEFINED__ */
+
+
+#ifndef __IBufferTexture_INTERFACE_DEFINED__
+#define __IBufferTexture_INTERFACE_DEFINED__
+
+/* interface IBufferTexture */
+/* [unique][helpstring][dual][uuid][object] */ 
+
+
+EXTERN_C const IID IID_IBufferTexture;
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+    
+    MIDL_INTERFACE("49fe19f3-e269-46ce-a9af-e701ecc088ee")
+    IBufferTexture : public IDispatch
+    {
+    public:
+        virtual HRESULT STDMETHODCALLTYPE setFormat( 
+            int width,
+            int height,
+            int levels,
+            int format,
+            int options) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE getFormat( 
+            int *width,
+            int *height,
+            int *levels,
+            int *format) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE getStatus( 
+            int *status) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE setTexture( 
+            int level,
+            int cnt,
+            unsigned char *pixels,
+            int stride) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE setTextureEx( 
+            int width,
+            int height,
+            int level,
+            int format,
+            int cnt,
+            unsigned char *pixels,
+            int stride) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE getTextureHandle( 
+            IUnknown **value) = 0;
+        
+    };
+    
+#else 	/* C style interface */
+
+    typedef struct IBufferTextureVtbl
+    {
+        BEGIN_INTERFACE
+        
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            IBufferTexture * This,
+            /* [in] */ REFIID riid,
+            /* [iid_is][out] */ 
+            __RPC__deref_out  void **ppvObject);
+        
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            IBufferTexture * This);
+        
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            IBufferTexture * This);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetTypeInfoCount )( 
+            IBufferTexture * This,
+            /* [out] */ UINT *pctinfo);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetTypeInfo )( 
+            IBufferTexture * This,
+            /* [in] */ UINT iTInfo,
+            /* [in] */ LCID lcid,
+            /* [out] */ ITypeInfo **ppTInfo);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetIDsOfNames )( 
+            IBufferTexture * This,
+            /* [in] */ REFIID riid,
+            /* [size_is][in] */ LPOLESTR *rgszNames,
+            /* [range][in] */ UINT cNames,
+            /* [in] */ LCID lcid,
+            /* [size_is][out] */ DISPID *rgDispId);
+        
+        /* [local] */ HRESULT ( STDMETHODCALLTYPE *Invoke )( 
+            IBufferTexture * This,
+            /* [in] */ DISPID dispIdMember,
+            /* [in] */ REFIID riid,
+            /* [in] */ LCID lcid,
+            /* [in] */ WORD wFlags,
+            /* [out][in] */ DISPPARAMS *pDispParams,
+            /* [out] */ VARIANT *pVarResult,
+            /* [out] */ EXCEPINFO *pExcepInfo,
+            /* [out] */ UINT *puArgErr);
+        
+        HRESULT ( STDMETHODCALLTYPE *setFormat )( 
+            IBufferTexture * This,
+            int width,
+            int height,
+            int levels,
+            int format,
+            int options);
+        
+        HRESULT ( STDMETHODCALLTYPE *getFormat )( 
+            IBufferTexture * This,
+            int *width,
+            int *height,
+            int *levels,
+            int *format);
+        
+        HRESULT ( STDMETHODCALLTYPE *getStatus )( 
+            IBufferTexture * This,
+            int *status);
+        
+        HRESULT ( STDMETHODCALLTYPE *setTexture )( 
+            IBufferTexture * This,
+            int level,
+            int cnt,
+            unsigned char *pixels,
+            int stride);
+        
+        HRESULT ( STDMETHODCALLTYPE *setTextureEx )( 
+            IBufferTexture * This,
+            int width,
+            int height,
+            int level,
+            int format,
+            int cnt,
+            unsigned char *pixels,
+            int stride);
+        
+        HRESULT ( STDMETHODCALLTYPE *getTextureHandle )( 
+            IBufferTexture * This,
+            IUnknown **value);
+        
+        END_INTERFACE
+    } IBufferTextureVtbl;
+
+    interface IBufferTexture
+    {
+        CONST_VTBL struct IBufferTextureVtbl *lpVtbl;
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define IBufferTexture_QueryInterface(This,riid,ppvObject)	\
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+
+#define IBufferTexture_AddRef(This)	\
+    ( (This)->lpVtbl -> AddRef(This) ) 
+
+#define IBufferTexture_Release(This)	\
+    ( (This)->lpVtbl -> Release(This) ) 
+
+
+#define IBufferTexture_GetTypeInfoCount(This,pctinfo)	\
+    ( (This)->lpVtbl -> GetTypeInfoCount(This,pctinfo) ) 
+
+#define IBufferTexture_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
+    ( (This)->lpVtbl -> GetTypeInfo(This,iTInfo,lcid,ppTInfo) ) 
+
+#define IBufferTexture_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
+    ( (This)->lpVtbl -> GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId) ) 
+
+#define IBufferTexture_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
+    ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
+
+
+#define IBufferTexture_setFormat(This,width,height,levels,format,options)	\
+    ( (This)->lpVtbl -> setFormat(This,width,height,levels,format,options) ) 
+
+#define IBufferTexture_getFormat(This,width,height,levels,format)	\
+    ( (This)->lpVtbl -> getFormat(This,width,height,levels,format) ) 
+
+#define IBufferTexture_getStatus(This,status)	\
+    ( (This)->lpVtbl -> getStatus(This,status) ) 
+
+#define IBufferTexture_setTexture(This,level,cnt,pixels,stride)	\
+    ( (This)->lpVtbl -> setTexture(This,level,cnt,pixels,stride) ) 
+
+#define IBufferTexture_setTextureEx(This,width,height,level,format,cnt,pixels,stride)	\
+    ( (This)->lpVtbl -> setTextureEx(This,width,height,level,format,cnt,pixels,stride) ) 
+
+#define IBufferTexture_getTextureHandle(This,value)	\
+    ( (This)->lpVtbl -> getTextureHandle(This,value) ) 
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
+
+
+
+
+#endif 	/* __IBufferTexture_INTERFACE_DEFINED__ */
 
 #endif /* __blaxxunVRMLLib_LIBRARY_DEFINED__ */
 
