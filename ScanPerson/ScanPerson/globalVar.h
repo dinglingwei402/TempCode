@@ -15,13 +15,12 @@ if (rc != XN_STATUS_OK)	    \
 		char name[16];
 		XnUInt32 xres;
 		XnUInt32 yres;
-		DepthGenerator	g_depGen;
-		ImageGenerator	g_imgGen;
-		UserGenerator	g_user;
-		SceneAnalyzer	g_scen;	
+		DepthGenerator	depGen;
+		ImageGenerator	imgGen;
+		UserGenerator	userGen;
+		SceneAnalyzer	scenGen;	
 	}GenGrp;
 #endif
-extern int sensor_count;
 extern Context g_context;
 extern GenGrp* sensors;
 
