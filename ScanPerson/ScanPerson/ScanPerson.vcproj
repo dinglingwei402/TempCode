@@ -275,6 +275,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\globalVar.h"
+				>
+			</File>
+			<File
 				RelativePath=".\KinectControl.h"
 				>
 			</File>

@@ -19,9 +19,11 @@ if (rc != XN_STATUS_OK)	    \
 		ImageGenerator	imgGen;
 		UserGenerator	userGen;
 		SceneAnalyzer	scenGen;	
+		DepthMetaData depMetaData;
+//		ImageMetaData imgMetaData;
 	}GenGrp;
 #endif
-extern Context g_context;
+extern Context g_Context;
 extern GenGrp* sensors;
 
  

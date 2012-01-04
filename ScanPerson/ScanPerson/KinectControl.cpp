@@ -4,31 +4,39 @@
 #include "D3D9TYPES.h"
 #include "blaxxunVRML.h"
 #include "D3D9TYPES.h"
+#include "globalVar.h"
 
 using namespace xn;
 int xres;
 int yres;
-const int sensor_count=1;
-GenGrp* sensors;
+int sensor_count;
+GenGrp *sensors;
 CComQIPtr<IBufferTexture> g_bufTex;
 Context g_Context;
-
+XnStatus  checkSensors();
 
 void KinectInit(CComPtr<Node> node){
 	XnStatus rc=XN_STATUS_OK;
 	rc=g_Context.Init();
-	rc=xnGetStatusString(rc);
+	const XnChar* rslt=xnGetStatusString(rc);
 	rc=checkSensors();
-	xres=GenGrp[0].xres;
-	yres=GenGrp[0].yres;
-	const XnDepthPixel* pDepth=sensors[0].depGen.Data();
-	g_bufTex->setTexture(0,2*xres*yres,(BYTE*)pDepth,xres*2);
+	xres=sensors[0].xres;
+	yres=sensors[0].yres;
+	DepthMetaData mm;
+	sensors[0].depGen.GetMetaData(mm);
+	DepthMetaData m1;
+	
+//	Cn
+//	sensors[0].depGen.GetMetaData((sensors[0].depMetaData));
+//	sensors[0].imgGen.GetMetaData((sensors[0].imgMetaData));
+//	const XnDepthPixel* pDepth=sensors[0].depMetaData.Data();
+//	const XnUInt8* pImage =sensors[0].imgMetaData.Data();
+//	g_bufTex->setTexture(0,2*xres*yres,(BYTE*)pDepth,xres*2);
 }
 
 void UpdateImage(){	
 	g_Context.WaitAndUpdateAll();
-	const XnDepthPixel* pDepth=sensors[0].depGen.Data();
-	g_bufTex->setTexture(0,2*xres*yres,(BYTE*)pDepth,2*xres);
+//	g_bufTex->setTexture(0,2*xres*yres,(BYTE*)sensors[0].depMetaData.Data(),2*xres);
 }
 GenGrp  getGrp(){
 	GenGrp p;
@@ -38,7 +46,7 @@ GenGrp  getGrp(){
 XnStatus checkSensors(){
 	NodeInfoList devicesList;
 	XnStatus rc;
-	rc=g_context.EnumerateProductionTrees(XN_NODE_TYPE_DEVICE,NULL,devicesList);
+	rc=g_Context.EnumerateProductionTrees(XN_NODE_TYPE_DEVICE,NULL,devicesList);
 	int i=0;
 	NodeInfoList::Iterator it=devicesList.Begin();
 	for(it;it!=devicesList.End();it++,i++){}
@@ -49,23 +57,23 @@ XnStatus checkSensors(){
 	const XnChar* statusStr;
 	for(;it!=devicesList.End();it++,i++){
 		NodeInfo devInf=*it;
-		rc=g_context.CreateProductionTree(devInf);
+		rc=g_Context.CreateProductionTree(devInf);
 		CHECK_RC(rc,"Create Device");
 		const XnChar * devName=devInf.GetInstanceName();
 		XnInt32 len =xnOSStrLen(devName); 
 		Query query;
 		query.AddNeededNode(devName);
 		xnOSMemCopy(sensors[i].name,devName,len);
-		rc=g_context.CreateAnyProductionTree(XN_NODE_TYPE_DEPTH,&query,sensors[i].depGen);
+		rc=g_Context.CreateAnyProductionTree(XN_NODE_TYPE_DEPTH,&query,sensors[i].depGen);
 		statusStr=xnGetStatusString(rc);
 		CHECK_RC(rc,"CreateDepGen");
-		rc=g_context.CreateAnyProductionTree(XN_NODE_TYPE_IMAGE,&query,sensors[i].imgGen);
+		rc=g_Context.CreateAnyProductionTree(XN_NODE_TYPE_IMAGE,&query,sensors[i].imgGen);
 		statusStr=xnGetStatusString(rc);
 		CHECK_RC(rc,"CreateImgGen");
-		rc=g_context.CreateAnyProductionTree(XN_NODE_TYPE_USER,&query,sensors[i].userGen);
+		rc=g_Context.CreateAnyProductionTree(XN_NODE_TYPE_USER,&query,sensors[i].userGen);
 		statusStr=xnGetStatusString(rc);
 		CHECK_RC(rc,"CreateUsrGen");
-		rc=g_context.CreateAnyProductionTree(XN_NODE_TYPE_SCENE,&query,sensors[i].scenGen);
+		rc=g_Context.CreateAnyProductionTree(XN_NODE_TYPE_SCENE,&query,sensors[i].scenGen);
 		statusStr=xnGetStatusString(rc);
 		CHECK_RC(rc,"CreateScenAnly");
 	}
@@ -75,7 +83,7 @@ XnStatus checkSensors(){
 	sensors[0].yres=depMD.YRes();
 	sensors[1].xres=depMD.XRes();
 	sensors[1].yres=depMD.YRes();
-	g_context.StartGeneratingAll();
+	g_Context.StartGeneratingAll();
 	return rc;
 }
 
