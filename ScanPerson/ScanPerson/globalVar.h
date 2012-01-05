@@ -19,8 +19,8 @@ if (rc != XN_STATUS_OK)	    \
 		ImageGenerator	imgGen;
 		UserGenerator	userGen;
 		SceneAnalyzer	scenGen;	
-		DepthMetaData depMetaData;
-//		ImageMetaData imgMetaData;
+		const XnDepthPixel* pDepthData;
+		const XnUInt8* pImageData;
 	}GenGrp;
 #endif
 extern Context g_Context;

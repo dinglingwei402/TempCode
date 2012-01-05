@@ -127,9 +127,16 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 	CComPtr<Node> vlu;
 	fld->QueryInterface(IID_EventOutSFNode,(void**)&imgNode);
 	imgNode->getValue(&vlu);
-	KinectInit(vlu);
-	imgNode->Release();
 	fld->Release();
+	pEventNode->getField(_T("coord"),&fld);
+	EventOutSFNode* ptsNode;
+	CComPtr<Node> pts;
+	fld->QueryInterface(IID_EventOutSFNode,(void**)&ptsNode);
+	ptsNode->getValue(&pts);
+	imgNode->Release();
+	ptsNode->Release();
+	fld->Release();
+	KinectInit(vlu,pts);
 	*pRetVal=1;
 	return S_OK;
 }
@@ -137,7 +144,7 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 HRESULT STDMETHODCALLTYPE CScanPerson::RemoveDeviceSensor( 
 	/* [in] */ int ID)
 {
-return S_OK;
+	return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE CScanPerson::Tick( 

@@ -5,38 +5,36 @@
 #include "blaxxunVRML.h"
 #include "D3D9TYPES.h"
 #include "globalVar.h"
-
 using namespace xn;
+const int showStyle=1;
+XnUInt32 pixSize;
 int xres;
 int yres;
 int sensor_count;
 GenGrp *sensors;
 CComQIPtr<IBufferTexture> g_bufTex;
+
 Context g_Context;
 XnStatus  checkSensors();
 
-void KinectInit(CComPtr<Node> node){
+void KinectInit(CComPtr<Node> vlu,CComPtr<Node> pts){
+	g_bufTex=vlu;
 	XnStatus rc=XN_STATUS_OK;
 	rc=g_Context.Init();
 	const XnChar* rslt=xnGetStatusString(rc);
 	rc=checkSensors();
 	xres=sensors[0].xres;
 	yres=sensors[0].yres;
-	DepthMetaData mm;
-	sensors[0].depGen.GetMetaData(mm);
-	DepthMetaData m1;
-	
-//	Cn
-//	sensors[0].depGen.GetMetaData((sensors[0].depMetaData));
-//	sensors[0].imgGen.GetMetaData((sensors[0].imgMetaData));
-//	const XnDepthPixel* pDepth=sensors[0].depMetaData.Data();
-//	const XnUInt8* pImage =sensors[0].imgMetaData.Data();
-//	g_bufTex->setTexture(0,2*xres*yres,(BYTE*)pDepth,xres*2);
+	g_bufTex->setFormat(xres,yres,0,D3DFMT_R8G8B8,0);
+	pixSize = 3;//imgMD.BytesPerPixel();
+	//g_bufTex->setTexture(0,2*xres*yres,(BYTE*)sensors[0].pDepthData,2*xres);
+	g_bufTex->setTexture(0,xres*yres*pixSize,(BYTE*)sensors[0].pImageData,xres*pixSize);
 }
 
 void UpdateImage(){	
 	g_Context.WaitAndUpdateAll();
-//	g_bufTex->setTexture(0,2*xres*yres,(BYTE*)sensors[0].depMetaData.Data(),2*xres);
+//	g_bufTex->setTexture(0,2*xres*yres,(BYTE*)sensors[0].pDepthData,2*xres);
+	g_bufTex->setTexture(0,xres*yres*pixSize,(BYTE*)sensors[0].pImageData,xres*pixSize);
 }
 GenGrp  getGrp(){
 	GenGrp p;
@@ -76,13 +74,15 @@ XnStatus checkSensors(){
 		rc=g_Context.CreateAnyProductionTree(XN_NODE_TYPE_SCENE,&query,sensors[i].scenGen);
 		statusStr=xnGetStatusString(rc);
 		CHECK_RC(rc,"CreateScenAnly");
+		DepthMetaData depMD;
+		ImageMetaData imgMD;
+		sensors[i].depGen.GetMetaData(depMD);
+		sensors[i].imgGen.GetMetaData(imgMD);
+		sensors[i].xres=depMD.XRes();
+		sensors[i].yres=depMD.YRes();
+		sensors[i].pDepthData=depMD.Data();
+		sensors[i].pImageData=imgMD.Data();
 	}
-	DepthMetaData depMD;
-	sensors[0].depGen.GetMetaData(depMD);
-	sensors[0].xres=depMD.XRes();
-	sensors[0].yres=depMD.YRes();
-	sensors[1].xres=depMD.XRes();
-	sensors[1].yres=depMD.YRes();
 	g_Context.StartGeneratingAll();
 	return rc;
 }
@@ -95,10 +95,8 @@ void getValidUserNum(XnUInt32 devId,XnUserID aUsers[],XnUInt16 aUsersNum){
 void drawPoint(XnUInt32 devId,XnUserID nId){
 	XnBool hasUsrPix=false;
 	SceneMetaData usrPix;
-	DepthMetaData depPix;
 	XnStatus rc=XN_STATUS_OK;
 	sensors[devId].scenGen.GetMetaData(usrPix);
-	sensors[devId].depGen.GetMetaData(depPix);
 	rc=sensors[devId].userGen.GetUserPixels(0,usrPix);
 	const XnChar* rslt=xnGetStatusString(rc);
 	XnUInt32 xres=sensors[devId].xres;
@@ -118,7 +116,7 @@ void drawPoint(XnUInt32 devId,XnUserID nId){
 				len++;
 				pts[len].X=j;
 				pts[len].Y=i;
-				pts[len].Z=depPix[j+i*xres];		
+				pts[len].Z=sensors[devId].pDepthData[j+i*xres];		
 			}
 		}
 	}
