@@ -124,19 +124,24 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 		MessageBox(NULL,L"field is NULL",L"in testing",MB_OK);
 	}
 	EventOutSFNode* imgNode;
-	CComPtr<Node> vlu;
+	CComPtr<Node> imgVlu;
 	fld->QueryInterface(IID_EventOutSFNode,(void**)&imgNode);
-	imgNode->getValue(&vlu);
+	imgNode->getValue(&imgVlu);
 	fld->Release();
 	pEventNode->getField(_T("coord"),&fld);
 	EventOutSFNode* ptsNode;
 	CComPtr<Node> pts;
 	fld->QueryInterface(IID_EventOutSFNode,(void**)&ptsNode);
 	ptsNode->getValue(&pts);
+	fld->Release();
+	pts->getField(_T("point"),&fld);
+	EventInMFVec3f* ptsVlu;
+	fld->QueryInterface(IID_EventInMFVec3f,(void**)&ptsVlu);
 	imgNode->Release();
 	ptsNode->Release();
+//	pts->Release();
 	fld->Release();
-	KinectInit(vlu,pts);
+	KinectInit(imgVlu,ptsVlu);
 	*pRetVal=1;
 	return S_OK;
 }

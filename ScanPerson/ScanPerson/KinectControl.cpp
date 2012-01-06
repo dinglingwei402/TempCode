@@ -3,7 +3,6 @@
 #include "XnCppWrapper.h"
 #include "D3D9TYPES.h"
 #include "blaxxunVRML.h"
-#include "D3D9TYPES.h"
 #include "globalVar.h"
 using namespace xn;
 const int showStyle=1;
@@ -13,12 +12,14 @@ int yres;
 int sensor_count;
 GenGrp *sensors;
 CComQIPtr<IBufferTexture> g_bufTex;
-
+EventInMFVec3f* g_pts;
 Context g_Context;
 XnStatus  checkSensors();
+void drawPoint(XnUInt32 devId,XnUserID nId);
 
-void KinectInit(CComPtr<Node> vlu,CComPtr<Node> pts){
+void KinectInit(CComPtr<Node> vlu,CComPtr<EventInMFVec3f> pts){
 	g_bufTex=vlu;
+	g_pts=pts;
 	XnStatus rc=XN_STATUS_OK;
 	rc=g_Context.Init();
 	const XnChar* rslt=xnGetStatusString(rc);
@@ -35,6 +36,7 @@ void UpdateImage(){
 	g_Context.WaitAndUpdateAll();
 //	g_bufTex->setTexture(0,2*xres*yres,(BYTE*)sensors[0].pDepthData,2*xres);
 	g_bufTex->setTexture(0,xres*yres*pixSize,(BYTE*)sensors[0].pImageData,xres*pixSize);
+	drawPoint(0,1);
 }
 GenGrp  getGrp(){
 	GenGrp p;
@@ -102,25 +104,42 @@ void drawPoint(XnUInt32 devId,XnUserID nId){
 	XnUInt32 xres=sensors[devId].xres;
 	XnUInt32 yres=sensors[devId].yres;
 	XnUInt32 ptSize=xres*yres;
-	XnPoint3D* pts=new XnPoint3D[ptSize];
-	XnUInt32 len=0;
-	const XnLabel* pLab=usrPix.Data();
 	if(rc==XN_STATUS_OK){
+		XnPoint3D* pts=new XnPoint3D[ptSize];
+		XnUInt32 len=0;
+		XnUInt32 size=usrPix.DataSize();
+		//	const XnLabel* pLab=usrPix.Data();
+		XnUInt32 psize=usrPix.BytesPerPixel();
 		hasUsrPix=TRUE;
+		const XnLabel *p=usrPix.Data(); 
 		for(XnUInt32 i=0;i<yres;i++){
 			for(XnUInt32 j=0;j<xres;j++){
-				const XnLabel* p=usrPix.Data();
 				if(*p==0){
+					p++;
 					continue;
 				}
 				len++;
-				pts[len].X=j;
-				pts[len].Y=i;
-				pts[len].Z=sensors[devId].pDepthData[j+i*xres];		
+				XnUInt32 dep=sensors[devId].pDepthData[j*2+i*xres*2];
+				if(dep==0){
+					pts[len].X=j/dep;
+					pts[len].Y=i/dep;
+				}
+				pts[len].X=j/dep;
+				pts[len].Y=i/dep;
+				pts[len].Z=1;				
+				p++;
 			}
 		}
+		if(len>0){
+			XnPoint3D* aRealWorld=new XnPoint3D[len];
+			sensors[devId].depGen.ConvertProjectiveToRealWorld(len,pts,aRealWorld);
+			g_pts->setValue(len*3,(float*)aRealWorld);
+			delete[] aRealWorld;
+		}
+		delete[] pts;
+		
 	}
-	delete[] pts;
+	
 }
 void KinectClose(){
 	g_Context.Shutdown();
