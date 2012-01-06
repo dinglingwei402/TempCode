@@ -1,0 +1,320 @@
+#VRML V2.0 utf8
+
+EXTERNPROTO Rectangle [
+	exposedField SFVec2f size
+]
+["urn:inet:bitmanagement.de:node:Rectangle"]
+
+EXTERNPROTO ImageTextureMipmapLOD [
+	exposedField SFBool repeatS
+	exposedField SFBool repeatT
+	exposedField MFString url
+	exposedField SFVec3f center
+	exposedField MFFloat range
+	exposedField SFVec2f maxSize
+	eventIn SFInt32 set_lod
+	eventIn SFFloat set_priority
+	eventIn SFBool set_unload
+	eventOut SFBool isLoaded
+	eventOut SFBool isFlipped
+	eventOut SFVec2f size
+	eventOut SFFloat aspect
+	exposedField SFNode metadata
+]
+["urn:inet:bitmanagement.de:node:ImageTextureMipmapLOD","http://www.bitmanagement.de/vrml/protos/nodes.wrl#ImageTextureMipmapLOD","nodes.wrl#ImageTextureMipmapLOD"]
+
+EXTERNPROTO Layer3D [
+	exposedField MFNode children
+	exposedField MFNode childrenLayer
+	exposedField SFVec2f translation
+	exposedField SFInt32 depth
+	exposedField SFVec2f size
+	exposedField SFNode background
+	exposedField SFNode fog
+	exposedField SFNode navigationInfo
+	exposedField SFNode viewpoint
+	field SFVec3f bboxSize
+	field SFVec3f bboxCenter
+	eventIn MFNode addChildrenLayer
+	eventIn MFNode removeChildrenLayer
+	eventIn MFNode addChildren
+	eventIn MFNode removeChildren
+]
+["urn:inet:bitmanagement.de:node:Layer3D"]
+
+EXTERNPROTO LineSet [
+	exposedField SFNode color
+	exposedField SFNode coord
+	exposedField MFInt32 vertexCount
+	exposedField SFNode fogCoord
+	exposedField SFNode metadata
+]
+["urn:inet:bitmanagement.de:node:LineSet"]
+
+EXTERNPROTO Selection [
+	field SFVec3f bboxSize
+	field SFVec3f bboxCenter
+	exposedField SFBool collide
+	exposedField SFBool select
+	exposedField SFNode proxy
+	exposedField MFNode children
+	eventIn MFNode addChildren
+	eventIn MFNode removeChildren
+]
+["urn:inet:bitmanagement.de:node:Selection"]
+
+EXTERNPROTO Background2D [
+	eventIn SFBool set_bind
+	exposedField SFColor backColor
+	exposedField MFString url
+	eventOut SFBool isBound
+]
+["urn:inet:bitmanagement.de:node:Background2D"]
+
+EXTERNPROTO Layer2D [
+	exposedField MFNode children
+	exposedField SFVec2f translation
+	exposedField SFVec2f size
+	exposedField SFNode background
+	exposedField SFNode viewport
+	eventIn MFNode addChildren
+	eventIn MFNode removeChildren
+]
+["urn:inet:bitmanagement.de:node:Layer2D"]
+
+
+EXTERNPROTO DeviceSensor [
+	exposedField SFBool enabled
+	exposedField SFString device
+	exposedField SFString eventType
+	eventOut SFNode event
+	eventOut SFBool isActive
+]
+["urn:inet:bitmanagement.de:node:DeviceSensor"]
+
+
+ EXTERNPROTO BufferTexture[
+		exposedField SFBool repeatS
+		exposedField SFBool repeatT
+		exposedField SFString format
+		exposedField SFInt32 pixelWidth
+		exposedField SFInt32 pixelHeight
+		exposedField SFInt32 levels
+		exposedField MFString parameter
+		eventIn SFBool set_unload
+		eventIn SFInt32 set_lod
+		eventOut SFBool isLoaded
+		eventOut SFBool isFlipped
+		exposedField SFNode metadata
+]["urn:inet:bitmanagement.de:node:BufferTexture","http://www.bitmanagement.de/vrml/protos/nodes.wrl#BufferTexture","nodes.wrl#BufferTexture"]
+
+
+
+PROTO	OpenNIUser[
+	exposedField SFBool	enabled TRUE
+	exposedField SFInt32 playerID 0
+	exposedField SFBool isTracking FALSE 
+	exposedField SFBool isCalibrating FALSE
+	exposedField SFBool needPoseForCalibration FALSE
+	exposedField SFBool isExit TRUE
+	exposedField SFVec3f userCoM 0 0 0
+	exposedField SFVec3f XN_SKEL_POS_HEAD	0 0 0 
+	exposedField SFVec3f XN_SKEL_POS_NECK	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_TORSO	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_WAIST	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_LEFT_COLLAR	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_LEFT_SHOULDER	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_LEFT_ELBOW	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_LEFT_WRIST	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_LEFT_HAND	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_LEFT_FINGERTIP	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_RIGHT_COLLAR	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_RIGHT_SHOULDER	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_RIGHT_ELBOW	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_RIGHT_WRIST	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_RIGHT_HAND	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_RIGHT_FINGERTIP	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_LEFT_HIP	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_LEFT_KNEE	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_LEFT_ANKLE	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_LEFT_FOOT	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_RIGHT_HIP	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_RIGHT_KNEE	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_RIGHT_ANKLE	0 0 0  
+	exposedField SFVec3f XN_SKEL_POS_RIGHT_FOOT	0 0 0 
+	exposedField SFMatrix XN_SKEL_ORI_HEAD	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+	exposedField SFMatrix XN_SKEL_ORI_NECK	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_TORSO	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_WAIST	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_LEFT_COLLAR	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_LEFT_SHOULDER	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_LEFT_ELBOW	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_LEFT_WRIST	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_LEFT_HAND	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_LEFT_FINGERTIP	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_RIGHT_COLLAR	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_RIGHT_SHOULDER	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_RIGHT_ELBOW	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_RIGHT_WRIST	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_RIGHT_HAND	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_RIGHT_FINGERTIP	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_LEFT_HIP 	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+	exposedField SFMatrix XN_SKEL_ORI_LEFT_KNEE	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_LEFT_ANKLE	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_LEFT_FOOT	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_RIGHT_HIP	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_RIGHT_KNEE	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_RIGHT_ANKLE	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+	exposedField SFMatrix XN_SKEL_ORI_RIGHT_FOOT	1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 
+]{}
+
+PROTO OpenNIHand[
+	exposedField	SFBool	enabled TRUE
+	exposedField	SFString status "NOHAND"
+	exposedField	SFInt32	nid 0
+	exposedField	MFVec3f handTrack []
+	exposedField	SFVec2f	position 0 0 
+
+] {}
+
+PROTO OpenNIFloor[
+	exposedField	SFBool	enabled TRUE
+	exposedField	SFVec3f	point 0 20 0
+	exposedField	SFVec3f normal 0 10 0
+] {}
+
+
+PROTO KinectDev[
+	exposedField	SFNode  floor NULL
+	exposedField	MFNode	users	[]
+	exposedField	MFNode	hands	[]
+	exposedField    MFInt32	handsId []
+	exposedField	MFInt32	usersId []
+	exposedField	SFNode  colorTexture NULL 
+	exposedField	SFNode  coord NULL
+]{}
+
+
+
+PROTO JName [	 
+	exposedField MFString string []	 
+	field SFFloat size 0.05
+]
+{
+	Shape {
+		appearance Appearance {material Material {diffuseColor 0 0 0}}
+		geometry Text {string IS string fontStyle FontStyle {
+			justify     "MIDDLE"
+			size IS size
+	    }} }
+}
+
+
+#DEF kd KinectDev {
+#	hands [] #DEF  a OpenNIHand {id 11 ,handTrack [0 0 0]}
+#	floor DEF flr OpenNIFloor {}
+#	users []##DEF  usr OpenNIUser {}
+#	usersId	[]
+#	handsId	[]
+#}
+
+DEF BUFFER-TEXTURE BufferTexture 
+	{
+		format "A8R8G8B8" ##"X8R8G8B8"
+		pixelWidth 640
+		pixelHeight 480
+		levels 0
+		parameter ["nomipmap", "animated"]
+	}
+
+
+
+
+ 
+DEF kd1 KinectDev {
+	colorTexture  USE  BUFFER-TEXTURE
+	coord DEF pts Coordinate {point []}
+}
+#DEF	ds DeviceSensor	{
+#	enabled	TRUE
+#	device "KinectDev"
+#	event USE kd
+#}
+
+DEF	ds DeviceSensor	{
+	enabled	TRUE
+	device "ScanPerson"
+	event USE kd1
+}
+#DEF	 tm TimeSensor {
+#loop TRUE	 enabled TRUE
+#}
+
+#DEF	tssss Script {
+#eventIn	SFTime time
+#eventIn MFNode users
+#eventIn	MFNode hands
+#field SFNode kd USE	kd
+#url	["javascript:
+#	function time(){
+#		//	print (kd.toVrmlString('writeProtos=false,writeExternProtos=false,writeAllFields=true,writeEventFields=true'));
+#	}
+#	function users (v)
+#	{
+#	print (v);
+#	}
+# 	function hands (v)
+#	{
+#	print (v);
+#	}
+
+
+#	"
+#]
+
+#}
+
+#ROUTE  tm.time TO tssss.time
+#ROUTE  kd.hands	TO tssss.hands
+#ROUTE kd.users  TO tssss.users
+
+  DEF	trans Transform	{
+	translation	 0 0 -10
+	children [
+		DEF	btn Shape {
+	#		geometry Sphere {
+	#			radius 1
+	#		}
+			geometry Rectangle {
+			  size 6.4	4.8 
+			}
+			appearance Appearance {			
+				texture	  USE  BUFFER-TEXTURE
+			}
+		}
+		DEF	btn1 Shape {
+			geometry PointSet {
+				color Color	{color 0 1 0}
+				coord USE pts
+			}
+		}
+
+		DEF	ts TouchSensor {}
+
+	]
+
+}
+
+
+#DEF	show Script	{		    
+#	exposedField SFNode Clr_Tex USE DEPTH-TEXTURE
+#    eventIn SFBool press
+#	url	"javascript:
+#	function press(b){
+#		if(b){
+#			print('Clr_Tex.toVrmlString()'+Clr_Tex.toVrmlString());	
+#		}
+#	}
+#	"
+#}
+#ROUTE ts.isActive TO show.press
