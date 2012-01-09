@@ -16,6 +16,7 @@ EventInMFVec3f* g_pts;
 Context g_Context;
 XnStatus  checkSensors();
 void drawPoint(XnUInt32 devId,XnUserID nId);
+XnUInt16 tdel=0;
 
 void KinectInit(CComPtr<Node> vlu,CComPtr<EventInMFVec3f> pts){
 	g_bufTex=vlu;
@@ -95,6 +96,7 @@ void getValidUserNum(XnUInt32 devId,XnUserID aUsers[],XnUInt16 aUsersNum){
 }
 
 void drawPoint(XnUInt32 devId,XnUserID nId){
+	if(tdel==0){
 	XnBool hasUsrPix=false;
 	SceneMetaData usrPix;
 	XnStatus rc=XN_STATUS_OK;
@@ -118,28 +120,29 @@ void drawPoint(XnUInt32 devId,XnUserID nId){
 					p++;
 					continue;
 				}
-				len++;
-				XnUInt32 dep=sensors[devId].pDepthData[j*2+i*xres*2];
-				if(dep==0){
-					pts[len].X=j/dep;
-					pts[len].Y=i/dep;
-				}
-				pts[len].X=j/dep;
-				pts[len].Y=i/dep;
-				pts[len].Z=1;				
+				XnUInt32 dep=sensors[devId].pDepthData[j+i*xres];
+				pts[len].X=j;
+				pts[len].Y=i;
+				pts[len].Z=dep;	
+			
 				p++;
 			}
 		}
 		if(len>0){
 			XnPoint3D* aRealWorld=new XnPoint3D[len];
 			sensors[devId].depGen.ConvertProjectiveToRealWorld(len,pts,aRealWorld);
+			g_pts->setValue(1,NULL);
 			g_pts->setValue(len*3,(float*)aRealWorld);
 			delete[] aRealWorld;
+			tdel=1;
 		}
-		delete[] pts;
-		
+		delete[] pts;	
 	}
-	
+}
+}
+
+void findEdges(){
+
 }
 void KinectClose(){
 	g_Context.Shutdown();
