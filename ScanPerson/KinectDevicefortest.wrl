@@ -1,5 +1,19 @@
 #VRML V2.0 utf8
 
+EXTERNPROTO TriangleSet [
+	exposedField SFNode color
+	exposedField SFNode coord
+	exposedField SFNode normal
+	exposedField SFNode texCoord
+	field SFBool ccw
+	field SFBool colorPerVertex
+	field SFBool normalPerVertex
+	field SFBool solid
+	exposedField SFNode metadata
+	exposedField SFInt32 useTransparentQuality
+]
+["urn:inet:bitmanagement.de:node:TriangleSet","http://www.bitmanagement.de/vrml/protos/nodes.wrl#TriangleSet","nodes.wrl#TriangleSet"]
+
 EXTERNPROTO Rectangle [
 	exposedField SFVec2f size
 ]
@@ -192,6 +206,7 @@ PROTO KinectDev[
 	exposedField	MFInt32	usersId []
 	exposedField	SFNode  colorTexture NULL 
 	exposedField	SFNode  coord NULL
+	exposedField	SFNode  coord4mesh NULL
 ]{}
 
 
@@ -234,6 +249,7 @@ DEF BUFFER-TEXTURE BufferTexture
 DEF kd1 KinectDev {
 	colorTexture  USE  BUFFER-TEXTURE
 	coord DEF pts Coordinate {point []}
+	coord4mesh DEF triPts Coordinate {point []}
 }
 #DEF	ds DeviceSensor	{
 #	enabled	TRUE
@@ -250,41 +266,10 @@ DEF	ds DeviceSensor	{
 #loop TRUE	 enabled TRUE
 #}
 
-#DEF	tssss Script {
-#eventIn	SFTime time
-#eventIn MFNode users
-#eventIn	MFNode hands
-#field SFNode kd USE	kd
-#url	["javascript:
-#	function time(){
-#		//	print (kd.toVrmlString('writeProtos=false,writeExternProtos=false,writeAllFields=true,writeEventFields=true'));
-#	}
-#	function users (v)
-#	{
-#	print (v);
-#	}
-# 	function hands (v)
-#	{
-#	print (v);
-#	}
-
-
-#	"
-#]
-
-#}
-
-#ROUTE  tm.time TO tssss.time
-#ROUTE  kd.hands	TO tssss.hands
-#ROUTE kd.users  TO tssss.users
-
-  DEF	trans Transform	{
+DEF	trans Transform	{
 	translation	 0 0 -10
 	children [
 		DEF	btn Shape {
-	#		geometry Sphere {
-	#			radius 1
-	#		}
 			geometry Rectangle {
 			  size 6.4	4.8 
 			}
@@ -294,13 +279,19 @@ DEF	ds DeviceSensor	{
 		}
 		DEF	btn1 Shape {
 			geometry PointSet {
-				color Color	{color 0 1 0}
 				coord USE pts
 			}
+			appearance Appearance {material Material {emissiveColor 1 0 1}}
 		}
 
-		DEF	ts TouchSensor {}
+		DEF	btn2 Shape {
+			geometry  TriangleSet {
+				coord USE triPts
+			}
+			appearance Appearance {material Material {emissiveColor 1 0 0}}
 
+		}
+		DEF	ts TouchSensor {}
 	]
 
 }
