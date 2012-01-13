@@ -6,6 +6,7 @@
 #include "globalVar.h"
 #include <vector>
 using namespace xn;
+#define  xmlpath "C:\\SamplesConfig.xml"
 
 const int showStyle=1;
 XnUInt32 pixSize;
@@ -28,8 +29,12 @@ void KinectInit(CComPtr<Node> img,CComPtr<EventInMFVec3f> pts,CComPtr<EventInMFV
 	g_pts=pts;
 	g_mesh=mesh;
 	XnStatus rc=XN_STATUS_OK;
-	rc=g_Context.Init();
+	ScriptNode scriptNode;
+	EnumerationErrors errors;
+	rc=g_Context.InitFromXmlFile(xmlpath,scriptNode,&errors);
+//	rc=g_Context.Init();
 	const XnChar* rslt=xnGetStatusString(rc);
+	if(rc!=XN_STATUS_OK){MessageBoxW(NULL,_T("xx"),_T("cccc"),NULL);}	
 	rc=checkSensors();
 	xres=sensors[0].xres;
 	yres=sensors[0].yres;
@@ -84,12 +89,18 @@ XnStatus checkSensors(){
 		CHECK_RC(rc,"CreateScenAnly");
 		DepthMetaData depMD;
 		ImageMetaData imgMD;
+		SceneMetaData sceMD;
 		sensors[i].depGen.GetMetaData(depMD);
 		sensors[i].imgGen.GetMetaData(imgMD);
+		sensors[i].scenGen.GetMetaData(sceMD);
+		XnPixelFormat format=sensors[i].imgGen.GetPixelFormat();
+		imgMD.ReAdjust(480,320,format,NULL);
+		depMD.ReAdjust(480,320,NULL);
+		sceMD.ReAdjust(480,320,NULL);
 		sensors[i].xres=depMD.XRes();
 		sensors[i].yres=depMD.YRes();
 		sensors[i].pDepthData=depMD.Data();
-		sensors[i].pImageData=imgMD.Data();
+		sensors[i].pImageData=imgMD.RGB24Data();
 	}
 	g_Context.StartGeneratingAll();
 	return rc;
@@ -99,6 +110,14 @@ XnStatus checkSensors(){
 void getValidUserNum(XnUInt32 devId,XnUserID aUsers[],XnUInt16 aUsersNum){
 	sensors[devId].userGen.GetUsers(aUsers,aUsersNum);
 }
+
+void alertZero(XnPoint3D pt){
+	if (pt.X==0&&pt.Y==0&&pt.Z==0)
+	{
+		MessageBox(NULL,_T("ZERO"),_T("ZERO"),NULL);
+	}
+}
+
 //a long  long test code
 void drawPoint(XnUInt32 devId,XnUserID nId){
 	if(tdel==0)
@@ -135,15 +154,23 @@ void drawPoint(XnUInt32 devId,XnUserID nId){
 					p++;
 					len++;
 //******************************************
+					if(dep==0){
+						continue;
+					}
 					if(xres-1==j||yres-1==i){
 						continue;
 					}
 					XnPoint3D pts_squ[4];
 					XnLabel dep_squ[4];
+					int lab_squ[4];
 					dep_squ[0]=dep;
 					dep_squ[1]=sensors[devId].pDepthData[j+1+i*xres];
 					dep_squ[2]=sensors[devId].pDepthData[j+1+(i+1)*xres];
 					dep_squ[3]=sensors[devId].pDepthData[j+(i+1)*xres];
+					lab_squ[0]=nId;
+					lab_squ[1]=*p;
+					lab_squ[2]=p[xres+1];
+					lab_squ[3]=p[xres];
 					pts_squ[0].X=j;
 					pts_squ[0].Y=i;
 					pts_squ[0].Z=dep;
@@ -162,7 +189,7 @@ void drawPoint(XnUInt32 devId,XnUserID nId){
 					id[0]=0;
 					int tri_num=1;
 					for(int i=1;i<4;i++){
-						if(p[i]==0)
+						if(dep_squ[i]==0||lab_squ[i]==0)
 						{
 							continue;
 						}else{
@@ -194,6 +221,9 @@ void drawPoint(XnUInt32 devId,XnUserID nId){
 						mesh1[5]=pts_squ[3];
 						XnPoint3D* aRealWorld=new XnPoint3D[6];
 						sensors[devId].depGen.ConvertProjectiveToRealWorld(6,mesh1,aRealWorld);
+						for(int ii=0;ii<6;ii++){
+							alertZero(aRealWorld[ii]);
+						}
 						vecList.push_back(aRealWorld[0]);
 						vecList.push_back(aRealWorld[1]);
 						vecList.push_back(aRealWorld[2]);
