@@ -119,7 +119,6 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 	/* [retval][out] */ int *pRetVal)
 {
 	Field* fld;
-
 	pEventNode->getField(_T("colorTexture"),&fld);
 	assert(fld);
 	EventOutSFNode* imgNode;
@@ -127,37 +126,16 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 	fld->QueryInterface(IID_EventOutSFNode,(void**)&imgNode);
 	imgNode->getValue(&imgVlu);
 	fld->Release();
-	
-	pEventNode->getField(_T("coord"),&fld);
-	assert(fld);
-	EventOutSFNode* ptsNode;
-	CComPtr<Node> pts;
-	fld->QueryInterface(IID_EventOutSFNode,(void**)&ptsNode);
-	ptsNode->getValue(&pts);
-	fld->Release();
-	pts->getField(_T("point"),&fld);
-	EventInMFVec3f* ptsVlu;
-	fld->QueryInterface(IID_EventInMFVec3f,(void**)&ptsVlu);
-	fld->Release();
 
-	pEventNode->getField(_T("coord4mesh"),&fld);
+	pEventNode->getField(_T("IndxFaceSet"),&fld);
 	EventOutSFNode* meshNode;
-	CComPtr<Node> mesh;
 	fld->QueryInterface(IID_EventOutSFNode,(void**)&meshNode);
-	meshNode->getValue(&mesh);
+	CComPtr<Node> meshVlu;
+	meshNode->getValue(&meshVlu);
 	fld->Release();
-	mesh->getField(_T("point"),&fld);
-	EventInMFVec3f* meshVlu;
-	fld->QueryInterface(IID_EventInMFVec3f,(void**)&meshVlu);
-	fld->Release();
-
-
-
+	KinectInit(imgVlu,meshVlu);
 	imgNode->Release();
-	ptsNode->Release();
 	meshNode->Release();
-	
-	KinectInit(imgVlu,ptsVlu,meshVlu);
 	*pRetVal=1;
 	return S_OK;
 }

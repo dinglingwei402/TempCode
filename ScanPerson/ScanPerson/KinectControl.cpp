@@ -21,15 +21,30 @@ int yres;
 int sensor_count;
 GenGrp *sensors;
 CComQIPtr<IBufferTexture> g_bufTex;
-EventInMFVec3f* g_pts;
-EventInMFVec3f* g_mesh;
+Node* g_mesh;
+EventInMFVec3f* g_point;
+EventInMFInt32* g_coordIndx;
 Context g_Context;
+
 XnStatus  checkSensors();
 void drawPoint(XnUInt32 devId,XnUserID nId);
-void KinectInit(CComPtr<Node> img,CComPtr<EventInMFVec3f> pts,CComPtr<EventInMFVec3f> mesh){
+void KinectInit(CComPtr<Node> img,CComPtr<Node> mesh){
 	g_bufTex=img;
-	g_pts=pts;
 	g_mesh=mesh;
+	EventOutSFNode* coord;
+	g_mesh->getEventOut(_T("coord"),(EventOut**)&coord);
+	g_mesh->getEventIn(_T("coordIndex"),(EventIn**)&g_coordIndx);
+	Node* dontknow;
+	coord->getValue(&dontknow);
+	BSTR ymp;
+	dontknow->getName(&ymp);
+	int e[3]={1,0,0};
+	g_coordIndx->setValue(3,e);
+	/*Node* tmp;
+	coord->getValue(&tmp);*/
+	//CComPtr<Node> coordNode;
+	//coord->getValue(&coordNode);
+	//coordNode->getEventIn(_T("point"),(EventIn**)&g_point);
 	XnStatus rc=XN_STATUS_OK;
 	ScriptNode scriptNode;
 	EnumerationErrors errors;
@@ -46,7 +61,7 @@ void UpdateImage(){
 	g_Context.WaitAndUpdateAll();
 //	g_bufTex->setTexture(0,2*xres*yres,(BYTE*)sensors[0].pDepthData,2*xres);
 	g_bufTex->setTexture(0,xres*yres*pixSize,(BYTE*)sensors[0].pImageData,xres*pixSize);
-	drawPoint(0,1);
+//	drawPoint(0,1);
 
 }
 GenGrp  getGrp(){
@@ -140,222 +155,39 @@ void drawPoint(XnUInt32 devId,XnUserID nId){
 			hasUsrPix=TRUE;
 			const XnLabel *lab=usrPix.Data(); 
 			const XnDepthPixel *depPix=sensors[devId].pDepthData;
-			std::vector<XnPoint3D> vecList;
-			std::vector<XnPoint3D>::iterator vec_ptr=vecList.begin();
-			for(XnUInt32 i=0;i<yres-g_YStep;i+=g_YStep){
-				for(XnUInt32 j=0;j<xres-g_XStep;j+=g_XStep){
-					XnUInt32 curIdx=i*xres+j;
-					XnInt32	 nextIdx=curIdx+g_XStep;
-					XnInt32  undNextIdx=nextIdx+g_YStep*xres;
-					XnUInt32 undCurIdx=curIdx+g_YStep*xres;
-	
-					XnUInt32 dep=depPix[curIdx];
-					pts[curIdx].X=j;
-					pts[curIdx].Y=i;
-					pts[curIdx].Z=dep;
-			
-					if(!isValidPt(curIdx,lab,depPix)){
-						indx[curIdx]=-1;
-						continue;
-					}
-					indx[curIdx]=1;
-					XnUInt32 dep=sensors[devId].pDepthData[curIdx];
-					pts[len].X=j;
-					pts[len].Y=i;
-					pts[len].Z=dep;
-					len++;
-//******************************************
-					if(dep==0){
-						continue;
-					}
-					XnPoint3D pts_squ[4];
-					XnLabel dep_squ[4];
-					int lab_squ[4];
-					dep_squ[0]=dep;
-					dep_squ[1]=sensors[devId].pDepthData[nextIdx];
-					dep_squ[2]=sensors[devId].pDepthData[undNextIdx];
-					dep_squ[3]=sensors[devId].pDepthData[undCurIdx];
-					lab_squ[0]=nId;
-					lab_squ[1]=lab[nextIdx];
-					lab_squ[2]=lab[undNextIdx];
-					lab_squ[3]=lab[undCurIdx];
-					pts_squ[0].X=j;
-					pts_squ[0].Y=i;
-					pts_squ[0].Z=dep;
-					pts_squ[1].X=j+g_XStep;
-					pts_squ[1].Y=i;
-					pts_squ[1].Z=dep_squ[1];
-					pts_squ[2].X=j+g_XStep;
-					pts_squ[2].Y=i+g_YStep;
-					pts_squ[2].Z=dep_squ[2];
-					pts_squ[3].X=j;
-					pts_squ[3].Y=i+g_YStep;
-					pts_squ[3].Z=dep_squ[3];
-
-//*************************************************						
-					int* id=new int[4];
-					id[0]=0;
-					int tri_num=1;
-					for(int i=1;i<4;i++){
-						if(dep_squ[i]==0||lab_squ[i]==0)
-						{
-							continue;
-						}else{
-							id[tri_num]=i;
-							tri_num++;
-						}
-					}
-					if(tri_num<3){
-						printf("trinum is less then 3:it is %d",tri_num);
-					}else if(tri_num==3){
-						XnPoint3D mesh[3];
-						mesh[0]=pts_squ[id[0]];
-						mesh[1]=pts_squ[id[1]];
-						mesh[2]=pts_squ[id[2]];
-						XnPoint3D* aRealWorld=new XnPoint3D[3];
-						sensors[devId].depGen.ConvertProjectiveToRealWorld(3,mesh,aRealWorld);
-						vecList.push_back(aRealWorld[0]);
-						vecList.push_back(aRealWorld[1]);
-						vecList.push_back(aRealWorld[2]);
-						delete[] aRealWorld;
-						printf("trinum == 3:it is %d",tri_num);
-					}else{
-						XnPoint3D mesh1[6];
-						mesh1[0]=pts_squ[0];
-						mesh1[1]=pts_squ[1];
-						mesh1[2]=pts_squ[2];	
-						mesh1[3]=pts_squ[0];
-						mesh1[4]=pts_squ[2];
-						mesh1[5]=pts_squ[3];
-						XnPoint3D* aRealWorld=new XnPoint3D[6];
-						sensors[devId].depGen.ConvertProjectiveToRealWorld(6,mesh1,aRealWorld);
-						for(int ii=0;ii<6;ii++){
-							alertZero(aRealWorld[ii]);
-						}
-						vecList.push_back(aRealWorld[0]);
-						vecList.push_back(aRealWorld[1]);
-						vecList.push_back(aRealWorld[2]);
-						vecList.push_back(aRealWorld[3]);
-						vecList.push_back(aRealWorld[4]);
-						vecList.push_back(aRealWorld[5]);
-						delete[] aRealWorld;
-						printf("trinum == 4:it is %d",tri_num);
-					}
-					
-//************************************************
-				}
-			}
-			int v_size=vecList.size();
-			int v_3time=v_size*3;
-			if(v_size>0){
-				float* putIn=new float[v_3time];
-				vec_ptr=vecList.begin();
-				for(int k=0;k<v_3time;k=k+3,vec_ptr++){
-					putIn[k]=-vec_ptr->X;
-					putIn[k+1]=vec_ptr->Y;
-					putIn[k+2]=-vec_ptr->Z;
-				}
-				g_mesh->setValue(1,NULL);
-				g_mesh->setValue(v_3time,putIn);
-				runOnce=1;
-				delete[] putIn;
-			}
-			if(len>0){
-				XnPoint3D* aRealWorld=new XnPoint3D[len];
-				sensors[devId].depGen.ConvertProjectiveToRealWorld(len,pts,aRealWorld);
-				for(int k=0;k<len;k++){
-					aRealWorld[k].X*=-1;
-					aRealWorld[k].Z*=-1;
-				}
-				g_pts->setValue(1,NULL);
-				g_pts->setValue(len*3,(float*)aRealWorld);
-				delete[] aRealWorld;
-			}
-			delete[] pts;	
-		}
-	}
-}
-
-//a long  long test code
-void drawPoint_old(XnUInt32 devId,XnUserID nId){
-	if(runOnce==0)
-	{
-		XnBool hasUsrPix=false;
-		SceneMetaData usrPix;
-		XnStatus rc=XN_STATUS_OK;
-		sensors[devId].scenGen.GetMetaData(usrPix);
-		rc=sensors[devId].userGen.GetUserPixels(0,usrPix);
-		const XnChar* rslt=xnGetStatusString(rc);
-		XnUInt32 ptSize=xres*yres;
-		bool flag=false;
-		if(rc==XN_STATUS_OK){
-			XnPoint3D* pts=new XnPoint3D[ptSize];
-			XnUInt32 len=0;
-			XnUInt32 size=usrPix.DataSize();
-			//	const XnLabel* pLab=usrPix.Data();
-			XnUInt32 psize=usrPix.BytesPerPixel();
-			hasUsrPix=TRUE;
-			const XnLabel *p=usrPix.Data(); 
-			std::vector<XnPoint3D> vecList;
-			std::vector<XnPoint3D>::iterator vec_ptr=vecList.begin();
+			std::vector<XnPoint3D> ptList;
+			std::vector<XnUInt32> idxList;
+			std::vector<XnPoint3D>::iterator vec_ptr=ptList.begin();
 			for(XnUInt32 i=0;i<yres;i+=g_YStep){
 				for(XnUInt32 j=0;j<xres;j+=g_XStep){
 					XnUInt32 curIdx=i*xres+j;
 					XnInt32	 nextIdx=curIdx+g_XStep;
 					XnInt32  undNextIdx=nextIdx+g_YStep*xres;
 					XnUInt32 undCurIdx=curIdx+g_YStep*xres;
-					if(p[curIdx]==0){
+					XnUInt32 squence[4]={curIdx,nextIdx,undNextIdx,undCurIdx};
+					if(!isValidPt(curIdx,lab,depPix)){
+						indx[curIdx]=-1;
 						continue;
 					}
-					if(!flag){
-						MessageBoxW(NULL,L"start",L"dont move",MB_OK);
-						flag=true;
-					}
-					XnUInt32 dep=sensors[devId].pDepthData[curIdx];
+					XnDepthPixel  dep=depPix[curIdx];
+					indx[curIdx]=len;
 					pts[len].X=j;
 					pts[len].Y=i;
 					pts[len].Z=dep;
 					len++;
-//******************************************
-					if(dep==0){
+					//如果是最后一个有效排或列就不计算构面
+					if ((i>=yres-g_YStep)||(j>=xres-g_XStep))
+					{
 						continue;
 					}
-					if((j+g_XStep>xres)||(i+g_YStep>yres)){
-						continue;
-					}
-					XnPoint3D pts_squ[4];
-					XnLabel dep_squ[4];
-					int lab_squ[4];
-					dep_squ[0]=dep;
-					dep_squ[1]=sensors[devId].pDepthData[nextIdx];
-					dep_squ[2]=sensors[devId].pDepthData[undNextIdx];
-					dep_squ[3]=sensors[devId].pDepthData[undCurIdx];
-					lab_squ[0]=nId;
-					lab_squ[1]=p[nextIdx];
-					lab_squ[2]=p[undNextIdx];
-					lab_squ[3]=p[undCurIdx];
-					pts_squ[0].X=j;
-					pts_squ[0].Y=i;
-					pts_squ[0].Z=dep;
-					pts_squ[1].X=j+g_XStep;
-					pts_squ[1].Y=i;
-					pts_squ[1].Z=dep_squ[1];
-					pts_squ[2].X=j+g_XStep;
-					pts_squ[2].Y=i+g_YStep;
-					pts_squ[2].Z=dep_squ[2];
-					pts_squ[3].X=j;
-					pts_squ[3].Y=i+g_YStep;
-					pts_squ[3].Z=dep_squ[3];
-
-//*************************************************						
+					//查看一个矩形的4个点是否都是有效的并加入存储
 					int* id=new int[4];
-					id[0]=0;
+					id[0]=curIdx;
 					int tri_num=1;
+					
 					for(int i=1;i<4;i++){
-						if(dep_squ[i]==0||lab_squ[i]==0)
+						if(isValidPt(squence[i],lab,depPix))
 						{
-							continue;
-						}else{
 							id[tri_num]=i;
 							tri_num++;
 						}
@@ -363,73 +195,202 @@ void drawPoint_old(XnUInt32 devId,XnUserID nId){
 					if(tri_num<3){
 						printf("trinum is less then 3:it is %d",tri_num);
 					}else if(tri_num==3){
-						XnPoint3D mesh[3];
-						mesh[0]=pts_squ[id[0]];
-						mesh[1]=pts_squ[id[1]];
-						mesh[2]=pts_squ[id[2]];
-						XnPoint3D* aRealWorld=new XnPoint3D[3];
-						sensors[devId].depGen.ConvertProjectiveToRealWorld(3,mesh,aRealWorld);
-						vecList.push_back(aRealWorld[0]);
-						vecList.push_back(aRealWorld[1]);
-						vecList.push_back(aRealWorld[2]);
-						delete[] aRealWorld;
+						idxList.push_back(squence[id[0]]);
+						idxList.push_back(squence[id[1]]);
+						idxList.push_back(squence[id[2]]);
 						printf("trinum == 3:it is %d",tri_num);
 					}else{
-						XnPoint3D mesh1[6];
-						mesh1[0]=pts_squ[0];
-						mesh1[1]=pts_squ[1];
-						mesh1[2]=pts_squ[2];	
-						mesh1[3]=pts_squ[0];
-						mesh1[4]=pts_squ[2];
-						mesh1[5]=pts_squ[3];
-						XnPoint3D* aRealWorld=new XnPoint3D[6];
-						sensors[devId].depGen.ConvertProjectiveToRealWorld(6,mesh1,aRealWorld);
-						for(int ii=0;ii<6;ii++){
-							alertZero(aRealWorld[ii]);
-						}
-						vecList.push_back(aRealWorld[0]);
-						vecList.push_back(aRealWorld[1]);
-						vecList.push_back(aRealWorld[2]);
-						vecList.push_back(aRealWorld[3]);
-						vecList.push_back(aRealWorld[4]);
-						vecList.push_back(aRealWorld[5]);
-						delete[] aRealWorld;
+						idxList.push_back(squence[id[0]]);
+						idxList.push_back(squence[id[1]]);
+						idxList.push_back(squence[id[2]]);
+						idxList.push_back(squence[id[0]]);
+						idxList.push_back(squence[id[2]]);
+						idxList.push_back(squence[id[3]]);
 						printf("trinum == 4:it is %d",tri_num);
 					}
-					
 //************************************************
 				}
 			}
-			int v_size=vecList.size();
-			int v_3time=v_size*3;
-			if(v_size>0){
-				float* putIn=new float[v_3time];
-				vec_ptr=vecList.begin();
-				for(int k=0;k<v_3time;k=k+3,vec_ptr++){
-					putIn[k]=-vec_ptr->X;
-					putIn[k+1]=vec_ptr->Y;
-					putIn[k+2]=-vec_ptr->Z;
-				}
-				g_mesh->setValue(1,NULL);
-				g_mesh->setValue(v_3time,putIn);
-				runOnce=1;
-				delete[] putIn;
-			}
+
 			if(len>0){
+				//去得在子坐标系中的位置
+				int idxListLen=idxList.size();
+				int *idxArr=new int[idxListLen];
+				for(int k=0;k<idxListLen;k++){
+					idxArr[k]=indx[idxList.at(k)];
+				}
 				XnPoint3D* aRealWorld=new XnPoint3D[len];
 				sensors[devId].depGen.ConvertProjectiveToRealWorld(len,pts,aRealWorld);
 				for(int k=0;k<len;k++){
 					aRealWorld[k].X*=-1;
 					aRealWorld[k].Z*=-1;
 				}
-				g_pts->setValue(1,NULL);
-				g_pts->setValue(len*3,(float*)aRealWorld);
+				g_point->setValue(1,NULL);
+				g_point->setValue(len*3,(float*)aRealWorld);
+				g_coordIndx->setValue(1,NULL);
+				g_coordIndx->setValue(idxListLen,idxArr);
 				delete[] aRealWorld;
+				delete[] idxArr;
 			}
 			delete[] pts;	
 		}
 	}
 }
+
+////a long  long test code
+//void drawPoint_old(XnUInt32 devId,XnUserID nId){
+//	if(runOnce==0)
+//	{
+//		XnBool hasUsrPix=false;
+//		SceneMetaData usrPix;
+//		XnStatus rc=XN_STATUS_OK;
+//		sensors[devId].scenGen.GetMetaData(usrPix);
+//		rc=sensors[devId].userGen.GetUserPixels(0,usrPix);
+//		const XnChar* rslt=xnGetStatusString(rc);
+//		XnUInt32 ptSize=xres*yres;
+//		bool flag=false;
+//		if(rc==XN_STATUS_OK){
+//			XnPoint3D* pts=new XnPoint3D[ptSize];
+//			XnUInt32 len=0;
+//			XnUInt32 size=usrPix.DataSize();
+//			//	const XnLabel* pLab=usrPix.Data();
+//			XnUInt32 psize=usrPix.BytesPerPixel();
+//			hasUsrPix=TRUE;
+//			const XnLabel *p=usrPix.Data(); 
+//			std::vector<XnPoint3D> vecList;
+//			std::vector<XnPoint3D>::iterator vec_ptr=vecList.begin();
+//			for(XnUInt32 i=0;i<yres;i+=g_YStep){
+//				for(XnUInt32 j=0;j<xres;j+=g_XStep){
+//					XnUInt32 curIdx=i*xres+j;
+//					XnInt32	 nextIdx=curIdx+g_XStep;
+//					XnInt32  undNextIdx=nextIdx+g_YStep*xres;
+//					XnUInt32 undCurIdx=curIdx+g_YStep*xres;
+//					if(p[curIdx]==0){
+//						continue;
+//					}
+//					if(!flag){
+//						MessageBoxW(NULL,L"start",L"dont move",MB_OK);
+//						flag=true;
+//					}
+//					XnUInt32 dep=sensors[devId].pDepthData[curIdx];
+//					pts[len].X=j;
+//					pts[len].Y=i;
+//					pts[len].Z=dep;
+//					len++;
+////******************************************
+//					if(dep==0){
+//						continue;
+//					}
+//					if((j+g_XStep>xres)||(i+g_YStep>yres)){
+//						continue;
+//					}
+//					XnPoint3D pts_squ[4];
+//					XnLabel dep_squ[4];
+//					int lab_squ[4];
+//					dep_squ[0]=dep;
+//					dep_squ[1]=sensors[devId].pDepthData[nextIdx];
+//					dep_squ[2]=sensors[devId].pDepthData[undNextIdx];
+//					dep_squ[3]=sensors[devId].pDepthData[undCurIdx];
+//					lab_squ[0]=nId;
+//					lab_squ[1]=p[nextIdx];
+//					lab_squ[2]=p[undNextIdx];
+//					lab_squ[3]=p[undCurIdx];
+//					pts_squ[0].X=j;
+//					pts_squ[0].Y=i;
+//					pts_squ[0].Z=dep;
+//					pts_squ[1].X=j+g_XStep;
+//					pts_squ[1].Y=i;
+//					pts_squ[1].Z=dep_squ[1];
+//					pts_squ[2].X=j+g_XStep;
+//					pts_squ[2].Y=i+g_YStep;
+//					pts_squ[2].Z=dep_squ[2];
+//					pts_squ[3].X=j;
+//					pts_squ[3].Y=i+g_YStep;
+//					pts_squ[3].Z=dep_squ[3];
+//
+////*************************************************						
+//					int* id=new int[4];
+//					id[0]=0;
+//					int tri_num=1;
+//					for(int i=1;i<4;i++){
+//						if(dep_squ[i]==0||lab_squ[i]==0)
+//						{
+//							continue;
+//						}else{
+//							id[tri_num]=i;
+//							tri_num++;
+//						}
+//					}
+//					if(tri_num<3){
+//						printf("trinum is less then 3:it is %d",tri_num);
+//					}else if(tri_num==3){
+//						XnPoint3D mesh[3];
+//						mesh[0]=pts_squ[id[0]];
+//						mesh[1]=pts_squ[id[1]];
+//						mesh[2]=pts_squ[id[2]];
+//						XnPoint3D* aRealWorld=new XnPoint3D[3];
+//						sensors[devId].depGen.ConvertProjectiveToRealWorld(3,mesh,aRealWorld);
+//						vecList.push_back(aRealWorld[0]);
+//						vecList.push_back(aRealWorld[1]);
+//						vecList.push_back(aRealWorld[2]);
+//						delete[] aRealWorld;
+//						printf("trinum == 3:it is %d",tri_num);
+//					}else{
+//						XnPoint3D mesh1[6];
+//						mesh1[0]=pts_squ[0];
+//						mesh1[1]=pts_squ[1];
+//						mesh1[2]=pts_squ[2];	
+//						mesh1[3]=pts_squ[0];
+//						mesh1[4]=pts_squ[2];
+//						mesh1[5]=pts_squ[3];
+//						XnPoint3D* aRealWorld=new XnPoint3D[6];
+//						sensors[devId].depGen.ConvertProjectiveToRealWorld(6,mesh1,aRealWorld);
+//						for(int ii=0;ii<6;ii++){
+//							alertZero(aRealWorld[ii]);
+//						}
+//						vecList.push_back(aRealWorld[0]);
+//						vecList.push_back(aRealWorld[1]);
+//						vecList.push_back(aRealWorld[2]);
+//						vecList.push_back(aRealWorld[3]);
+//						vecList.push_back(aRealWorld[4]);
+//						vecList.push_back(aRealWorld[5]);
+//						delete[] aRealWorld;
+//						printf("trinum == 4:it is %d",tri_num);
+//					}
+//					
+////************************************************
+//				}
+//			}
+//			int v_size=vecList.size();
+//			int v_3time=v_size*3;
+//			if(v_size>0){
+//				float* putIn=new float[v_3time];
+//				vec_ptr=vecList.begin();
+//				for(int k=0;k<v_3time;k=k+3,vec_ptr++){
+//					putIn[k]=-vec_ptr->X;
+//					putIn[k+1]=vec_ptr->Y;
+//					putIn[k+2]=-vec_ptr->Z;
+//				}
+//				g_mesh->setValue(1,NULL);
+//				g_mesh->setValue(v_3time,putIn);
+//				runOnce=1;
+//				delete[] putIn;
+//			}
+//			if(len>0){
+//				XnPoint3D* aRealWorld=new XnPoint3D[len];
+//				sensors[devId].depGen.ConvertProjectiveToRealWorld(len,pts,aRealWorld);
+//				for(int k=0;k<len;k++){
+//					aRealWorld[k].X*=-1;
+//					aRealWorld[k].Z*=-1;
+//				}
+//				g_pts->setValue(1,NULL);
+//				g_pts->setValue(len*3,(float*)aRealWorld);
+//				delete[] aRealWorld;
+//			}
+//			delete[] pts;	
+//		}
+//	}
+//}
 
 void ReadCell()
 {
