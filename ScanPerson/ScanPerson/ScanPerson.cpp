@@ -127,14 +127,25 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 	imgNode->getValue(&imgVlu);
 	fld->Release();
 
+	pEventNode->getField(_T("coord"),&fld);
+	assert(fld);
+	EventOutSFNode* coordNode;
+	CComPtr<Node> coordVlu;
+	fld->QueryInterface(IID_EventOutSFNode,(void**)&coordNode);
+	coordNode->getValue(&coordVlu);
+	fld->Release();
+
 	pEventNode->getField(_T("IndxFaceSet"),&fld);
+	assert(fld);
 	EventOutSFNode* meshNode;
 	fld->QueryInterface(IID_EventOutSFNode,(void**)&meshNode);
 	CComPtr<Node> meshVlu;
 	meshNode->getValue(&meshVlu);
 	fld->Release();
-	KinectInit(imgVlu,meshVlu);
+
+	KinectInit(imgVlu,coordVlu,meshVlu);
 	imgNode->Release();
+	coordNode->Release();
 	meshNode->Release();
 	*pRetVal=1;
 	return S_OK;
