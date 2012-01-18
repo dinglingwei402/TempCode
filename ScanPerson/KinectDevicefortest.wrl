@@ -1,5 +1,22 @@
 #VRML V2.0 utf8
 
+EXTERNPROTO IndexedTriangleSet [
+	eventIn MFInt32 set_index
+	exposedField SFNode color
+	exposedField SFNode coord
+	exposedField SFNode normal
+	exposedField SFNode texCoord
+	exposedField SFNode fogCoord
+	exposedField SFNode metadata
+	field SFBool ccw
+	field SFBool colorPerVertex
+	field MFInt32 index
+	field SFBool normalPerVertex
+	field SFBool solid
+	exposedField SFInt32 useTransparentQuality
+]
+["urn:inet:bitmanagement.de:node:IndexedTriangleSet","http://www.bitmanagement.de/vrml/protos/nodes.wrl#IndexedTriangleSet","nodes.wrl#IndexedTriangleSet"]
+
 EXTERNPROTO TriangleSet [
 	exposedField SFNode color
 	exposedField SFNode coord
@@ -206,7 +223,7 @@ PROTO KinectDev[
 	exposedField	MFInt32	usersId []
 	exposedField	SFNode  colorTexture NULL 
 	exposedField	SFNode  coord NULL
-	exposedField	SFNode  coord4mesh NULL
+	exposedField	SFNode  IndxFaceSet NULL
 ]{}
 
 
@@ -243,13 +260,13 @@ DEF BUFFER-TEXTURE BufferTexture
 	}
 
 
-
-
- 
 DEF kd1 KinectDev {
 	colorTexture  USE  BUFFER-TEXTURE
-	coord DEF pts Coordinate {point []}
-	coord4mesh DEF triPts Coordinate {point []}
+	coord DEF Coord Coordinate {}
+	IndxFaceSet DEF	faceset IndexedTriangleSet{
+		coord USE Coord 
+		index []
+	}	
 }
 #DEF	ds DeviceSensor	{
 #	enabled	TRUE
@@ -279,15 +296,13 @@ DEF	trans Transform	{
 		}
 		DEF	btn1 Shape {
 			geometry PointSet {
-				coord USE pts
+				coord USE Coord
 			}
-			appearance Appearance {material Material {emissiveColor 1 0 1}}
+			appearance Appearance {material Material {emissiveColor 1 1 0}}
 		}
 
 		DEF	btn2 Shape {
-			geometry  TriangleSet {
-				coord USE triPts
-			}
+			geometry USE faceset
 			appearance Appearance {material Material {emissiveColor 1 0 0}}
 
 		}
