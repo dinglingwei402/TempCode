@@ -26,9 +26,13 @@ EventInMFVec3f* g_point;
 EventInMFInt32* g_coordIndx;
 Context g_Context;
 XnPoint3D* depthPts;
+XnLabel* labPts;
 
 XnStatus  checkSensors();
 void drawPoint(XnUInt32 devId,XnUserID nId);
+
+
+
 void KinectInit(CComPtr<Node> img,CComPtr<Node> coord,CComPtr<Node> mesh){
 	g_bufTex=img;
 	g_mesh=mesh;
@@ -107,6 +111,14 @@ XnStatus checkSensors(){
 	return rc;
 }
 
+void getValidUserNum(XnUInt32 devId,XnUserID aUsers[],XnUInt16 aUsersNum){
+	sensors[devId].userGen.GetUsers(aUsers,aUsersNum);
+}
+bool isValidPt(int indx,const XnLabel* lab,const XnPoint3D* dep,int i){
+	int jj=i;
+	return ((lab[indx]>0)&&(dep[indx].Z!=0));
+}
+
 void drawPoint(XnUInt32 devId,XnUserID nId){
 	if(runOnce==0)
 	{
@@ -115,89 +127,107 @@ void drawPoint(XnUInt32 devId,XnUserID nId){
 		XnStatus rc=XN_STATUS_OK;
 		sensors[devId].scenGen.GetMetaData(usrPix);
 		rc=sensors[devId].userGen.GetUserPixels(0,usrPix);
+		const XnLabel *lab=usrPix.Data(); 
+		const XnDepthPixel* depPix=sensors[devId].pDepthData;
 		const XnChar* rslt=xnGetStatusString(rc);
 		int small_x=(int)(xres/g_XStep);
 		int small_y=(int)(yres/g_YStep);
 		XnUInt32 ptSize=(small_x*small_y);
 		bool flag=false;
+		std::vector<XnUInt32> idxList;
 		if(rc==XN_STATUS_OK){
 			if(!depthPts){
-				XnUInt32 curIdx=i*g_YStep*xres+j;
-				XnInt32	 nextIdx=curIdx+g_XStep;
-				XnInt32  undNextIdx=nextIdx+g_YStep*xres;
-				XnUInt32 undCurIdx=curIdx+g_YStep*xres;
-				XnUInt32 squence[4]={curIdx,nextIdx,undNextIdx,undCurIdx};
+				depthPts=new XnPoint3D[ptSize];
 			}else{
 				memset(depthPts,0,sizeof(XnPoint3D)*ptSize);
 			}
-			for(int i=0;i<small_y;i++){
-				for(int j=0;j<small_x,j++){
-					
-					depthPts[i].X=i;
-
-
-
-				}
-
-			}
-			for(int i=1;i<4;i++){
-				if(isValidPt(squence[i],lab,depPix))
-				{
-					id[tri_num]=i;
-					tri_num++;
-				}
-			}
-			if(tri_num<3){
-				printf("trinum is less then 3:it is %d",tri_num);
-			}else if(tri_num==3){
-				idxList.push_back(squence[id[0]]);
-				idxList.push_back(squence[id[1]]);
-				idxList.push_back(squence[id[2]]);
-				printf("trinum == 3:it is %d",tri_num);
+			if(!labPts){
+				labPts=new XnLabel[ptSize];
 			}else{
-				idxList.push_back(squence[id[0]]);
-				idxList.push_back(squence[id[1]]);
-				idxList.push_back(squence[id[2]]);
-				idxList.push_back(squence[id[0]]);
-				idxList.push_back(squence[id[2]]);
-				idxList.push_back(squence[id[3]]);
-
+				memset(labPts,0,sizeof(XnLabel)*ptSize);
+			}
+			XnUInt32 squence[4];
+			int len=0;
+			//compress mesh grid
+			for(int i=0;i<small_y;i++){
+				for(int j=0;j<small_x;j++){
+					int bigX=j*g_XStep;
+					int bigY=i*g_YStep;
+					depthPts[len].X=bigX;
+					depthPts[len].Y=bigY;
+					int idx=bigY*xres+bigX;
+					depthPts[len].Z=depPix[idx];
+					labPts[len]=lab[idx];
+					len++;
+				}
+			}
+			//find  valid pts then put their indices to the vector
+			for(int i=0;i<small_y-1;i++){
+				for(int j=0;j<small_x-1;j++){
+					squence[0]=i*small_x+j;
+					squence[1]=squence[0]+1;
+					squence[2]=squence[1]+small_x;
+					squence[3]=squence[0]+small_x;
+					int id[4];
+					int tri_num=0;
+					for(int k=0;k<4;k++){
+						if(squence[k]>34080){
+							int sss=squence[k];
+						}
+						if(isValidPt(squence[k],labPts,depthPts,k))
+						{
+							id[tri_num]=k;
+							tri_num++;
+						}
+					}
+					if(tri_num<3){
+						continue;
+					}else if(tri_num==3){
+						idxList.push_back(squence[id[0]]);
+						idxList.push_back(squence[id[1]]);
+						idxList.push_back(squence[id[2]]);
+					}else{
+						idxList.push_back(squence[id[0]]);
+						idxList.push_back(squence[id[1]]);
+						idxList.push_back(squence[id[2]]);
+						idxList.push_back(squence[id[0]]);
+						idxList.push_back(squence[id[2]]);
+						idxList.push_back(squence[id[3]]);
+					}
+				}
+			}
+			//******
+			if(len>0){
+				//去得在子坐标系中的位置
+				int idxListLen=idxList.size();
+				int *idxArr=new int[idxListLen];
+				for(int k=0;k<idxListLen;k++){
+					idxArr[k]=idxList.at(k);
+				}
+				XnPoint3D* aRealWorld=new XnPoint3D[len];
+				sensors[devId].depGen.ConvertProjectiveToRealWorld(len,depthPts,aRealWorld);
+				for(int k=0;k<len;k++){
+					aRealWorld[k].X*=-1;
+					aRealWorld[k].Z*=-1;
+				}
+				g_point->setValue(1,NULL);
+				g_point->setValue(len*3,(float*)aRealWorld);
+				g_coordIndx->setValue(1,NULL);
+				g_coordIndx->setValue(idxListLen,idxArr);
+				delete[] aRealWorld;
+				delete[] idxArr;
+			}
 
 		}
+	
 	}
-}
-
-void getValidUserNum(XnUInt32 devId,XnUserID aUsers[],XnUInt16 aUsersNum){
-	sensors[devId].userGen.GetUsers(aUsers,aUsersNum);
-}
-
-void alertZero(XnPoint3D pt){
-	if (pt.X==0&&pt.Y==0&&pt.Z==0)
-	{
-		MessageBox(NULL,_T("ZERO"),_T("ZERO"),NULL);
-	}
-}
-
-bool isValidPt(int indx,const XnLabel* lab,const XnDepthPixel* dep){
-	return ((lab[indx]>0)&&(dep[indx]!=0));
-}
-
-
-
-
-void ReadCell()
-{
-		
-}
-void ReadRow()
-{
 
 }
 
-void ReadGrid()
-{
 
-}
+
+
+
 
 
 void KinectClose(){
