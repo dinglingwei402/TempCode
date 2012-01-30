@@ -22,6 +22,7 @@ int sensor_count;
 GenGrp *sensors;
 CComQIPtr<IBufferTexture> g_bufTex;
 Node* g_mesh;
+Node* g_coord;
 EventInMFVec3f* g_point;
 EventInMFInt32* g_coordIndx;
 Context g_Context;
@@ -36,25 +37,34 @@ void drawPoint(XnUInt32 devId,XnUserID nId);
 void KinectInit(CComPtr<Node> img,CComPtr<Node> coord,CComPtr<Node> mesh){
 	g_bufTex=img;
 	g_mesh=mesh;
-	g_mesh->getEventIn(_T("index"),(EventIn**)&g_coordIndx);
-	coord->getEventIn(_T("point"),(EventIn**)&g_point);
+	g_coord=coord;
+//	g_mesh->getEventIn(_T("set_index"),(EventIn**)&g_coordIndx);
+//	g_coord->getEventIn(_T("point"),(EventIn**)&g_point);
+	Field* fld;
+	g_coord->getEventIn(_T("point"),&fld);
 	XnStatus rc=XN_STATUS_OK;
 	ScriptNode scriptNode;
 	EnumerationErrors errors;
 	rc=g_Context.Init();
-	rc=checkSensors();
-	xres=sensors[0].xres;
-	yres=sensors[0].yres;
+//	rc=checkSensors();
+	//xres=sensors[0].xres;
+	//yres=sensors[0].yres;
 	g_bufTex->setFormat(xres,yres,0,D3DFMT_R8G8B8,0);
 	pixSize = 3;
-	g_bufTex->setTexture(0,xres*yres*pixSize,(BYTE*)sensors[0].pImageData,xres*pixSize);
+//	g_bufTex->setTexture(0,xres*yres*pixSize,(BYTE*)sensors[0].pImageData,xres*pixSize);
+	float ooo[10]={0.0,0.0,0.5,1.0,0.007,0.6,0.1,1.7,0.1,0.0};
+//	float u[3]={9.0,9.0,9.0};
+	float* u=new float[3];
+	g_point->setValue(1,ooo);
+//	g_point->set1Value(0,u);
+//	g_point->setValue(9,ooo);
 }
 
 void UpdateImage(){	
 	g_Context.WaitAndUpdateAll();
 //	g_bufTex->setTexture(0,2*xres*yres,(BYTE*)sensors[0].pDepthData,2*xres);
 	g_bufTex->setTexture(0,xres*yres*pixSize,(BYTE*)sensors[0].pImageData,xres*pixSize);
-	drawPoint(0,1);
+//	drawPoint(0,1);
 
 }
 GenGrp  getGrp(){
@@ -162,6 +172,7 @@ void drawPoint(XnUInt32 devId,XnUserID nId){
 				}
 			}
 			//find  valid pts then put their indices to the vector
+			int valPt_len=0;
 			for(int i=0;i<small_y-1;i++){
 				for(int j=0;j<small_x-1;j++){
 					squence[0]=i*small_x+j;
@@ -194,10 +205,11 @@ void drawPoint(XnUInt32 devId,XnUserID nId){
 						idxList.push_back(squence[id[2]]);
 						idxList.push_back(squence[id[3]]);
 					}
+					valPt_len++;
 				}
 			}
 			//******
-			if(len>0){
+			if(valPt_len>0){
 				//去得在子坐标系中的位置
 				int idxListLen=idxList.size();
 				int *idxArr=new int[idxListLen];
@@ -206,7 +218,7 @@ void drawPoint(XnUInt32 devId,XnUserID nId){
 				}
 				XnPoint3D* aRealWorld=new XnPoint3D[len];
 				sensors[devId].depGen.ConvertProjectiveToRealWorld(len,depthPts,aRealWorld);
-				for(int k=0;k<len;k++){
+ 				for(int k=0;k<len;k++){
 					aRealWorld[k].X*=-1;
 					aRealWorld[k].Z*=-1;
 				}
@@ -216,6 +228,7 @@ void drawPoint(XnUInt32 devId,XnUserID nId){
 				g_coordIndx->setValue(idxListLen,idxArr);
 				delete[] aRealWorld;
 				delete[] idxArr;
+runOnce=1;
 			}
 
 		}
