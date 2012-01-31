@@ -12,8 +12,8 @@ const int showStyle=1;
 XnUInt16 runOnce=0;
 XnUInt32 rows=0;
 XnBool findValidCell=0;
-XnUInt32 g_YStep=3;
-XnUInt32 g_XStep=3;
+XnUInt32 g_YStep=9;
+XnUInt32 g_XStep=9;
 
 XnUInt32 pixSize;
 int xres;
@@ -28,6 +28,7 @@ EventInMFInt32* g_coordIndx;
 Context g_Context;
 XnPoint3D* depthPts;
 XnLabel* labPts;
+XnBool chgVPt;
 
 XnStatus  checkSensors();
 void drawPoint(XnUInt32 devId,XnUserID nId);
@@ -38,34 +39,32 @@ void KinectInit(CComPtr<Node> img,CComPtr<Node> coord,CComPtr<Node> mesh){
 	g_bufTex=img;
 	g_mesh=mesh;
 	g_coord=coord;
-//	g_mesh->getEventIn(_T("set_index"),(EventIn**)&g_coordIndx);
-//	g_coord->getEventIn(_T("point"),(EventIn**)&g_point);
+	g_mesh->getEventIn(_T("set_index"),(EventIn**)&g_coordIndx);
 	Field* fld;
-	g_coord->getEventIn(_T("point"),&fld);
+	g_coord->getField(_T("point"),&fld);
+	fld->QueryInterface(IID_EventInMFVec3f,(void**)&g_point);
+	fld->Release();
 	XnStatus rc=XN_STATUS_OK;
 	ScriptNode scriptNode;
 	EnumerationErrors errors;
 	rc=g_Context.Init();
-//	rc=checkSensors();
-	//xres=sensors[0].xres;
-	//yres=sensors[0].yres;
+	rc=checkSensors();
+	xres=sensors[0].xres;
+	yres=sensors[0].yres;
 	g_bufTex->setFormat(xres,yres,0,D3DFMT_R8G8B8,0);
 	pixSize = 3;
-//	g_bufTex->setTexture(0,xres*yres*pixSize,(BYTE*)sensors[0].pImageData,xres*pixSize);
-	float ooo[10]={0.0,0.0,0.5,1.0,0.007,0.6,0.1,1.7,0.1,0.0};
-//	float u[3]={9.0,9.0,9.0};
+	g_bufTex->setTexture(0,xres*yres*pixSize,(BYTE*)sensors[0].pImageData,xres*pixSize);
+	/*float ooo[10]={0.0,0.0,0.5,1.0,0.007,0.6,0.1,1.7,0.1,0.0};
+	float u[3]={9.0,9.0,9.0};
 	float* u=new float[3];
-	g_point->setValue(1,ooo);
-//	g_point->set1Value(0,u);
-//	g_point->setValue(9,ooo);
+	g_point->setValue(1,ooo);*/
 }
 
 void UpdateImage(){	
 	g_Context.WaitAndUpdateAll();
 //	g_bufTex->setTexture(0,2*xres*yres,(BYTE*)sensors[0].pDepthData,2*xres);
 	g_bufTex->setTexture(0,xres*yres*pixSize,(BYTE*)sensors[0].pImageData,xres*pixSize);
-//	drawPoint(0,1);
-
+	drawPoint(0,1);
 }
 GenGrp  getGrp(){
 	GenGrp p;
@@ -108,6 +107,9 @@ XnStatus checkSensors(){
 		DepthMetaData depMD;
 		ImageMetaData imgMD;
 		SceneMetaData sceMD;
+		if(chgVPt){
+			sensors[i].depGen.GetAlternativeViewPointCap().SetViewPoint();
+		}
 		sensors[i].depGen.GetMetaData(depMD);
 		sensors[i].imgGen.GetMetaData(imgMD);
 		sensors[i].scenGen.GetMetaData(sceMD);
@@ -222,9 +224,9 @@ void drawPoint(XnUInt32 devId,XnUserID nId){
 					aRealWorld[k].X*=-1;
 					aRealWorld[k].Z*=-1;
 				}
-				g_point->setValue(1,NULL);
+		//		g_point->setValue(1,NULL);
 				g_point->setValue(len*3,(float*)aRealWorld);
-				g_coordIndx->setValue(1,NULL);
+		//		g_coordIndx->setValue(1,NULL);
 				g_coordIndx->setValue(idxListLen,idxArr);
 				delete[] aRealWorld;
 				delete[] idxArr;
