@@ -127,6 +127,14 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 	imgNode->getValue(&imgVlu);
 	fld->Release();
 
+	pEventNode->getField(_T("colorTexture1"),&fld);
+	assert(fld);
+	EventOutSFNode* imgNode1;
+	CComPtr<Node> imgVlu1;
+	fld->QueryInterface(IID_EventOutSFNode,(void**)&imgNode1);
+	imgNode->getValue(&imgVlu1);
+	fld->Release();
+
 	pEventNode->getField(_T("coord"),&fld);
 	assert(fld);
 	EventOutSFNode* coordNode;
@@ -143,8 +151,9 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 	meshNode->getValue(&meshVlu);
 	fld->Release();
 
-	KinectInit(imgVlu,coordVlu,meshVlu);
+	KinectInit(imgVlu,imgVlu1,coordVlu,meshVlu);
 	imgNode->Release();
+	imgNode1->Release();
 	coordNode->Release();
 	meshNode->Release();
 	*pRetVal=1;
