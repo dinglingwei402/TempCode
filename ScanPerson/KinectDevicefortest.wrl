@@ -222,6 +222,7 @@ PROTO KinectDev[
 	exposedField    MFInt32	handsId []
 	exposedField	MFInt32	usersId []
 	exposedField	SFNode  colorTexture NULL 
+	exposedField	SFNode  colorTexture1 NULL 
 	exposedField	SFNode  coord NULL
 	exposedField	SFNode  IndxFaceSet NULL
 ]{}
@@ -250,7 +251,15 @@ PROTO JName [
 #	handsId	[]
 #}
 
-DEF BUFFER-TEXTURE BufferTexture 
+DEF BUFFER-TEXTURE-LEFT BufferTexture 
+	{
+		format "A8R8G8B8" ##"X8R8G8B8"
+		pixelWidth 640
+		pixelHeight 480
+		levels 0
+		parameter ["nomipmap", "animated"]
+	}
+DEF BUFFER-TEXTURE-RIGHT BufferTexture 
 	{
 		format "A8R8G8B8" ##"X8R8G8B8"
 		pixelWidth 640
@@ -259,10 +268,10 @@ DEF BUFFER-TEXTURE BufferTexture
 		parameter ["nomipmap", "animated"]
 	}
 
-
 DEF kd1 KinectDev {
-	colorTexture  USE  BUFFER-TEXTURE
-	coord DEF Coord Coordinate {}
+	colorTexture  USE  BUFFER-TEXTURE-LEFT
+	colorTexture1 USE  BUFFER-TEXTURE-RIGHT
+	coord DEF Coord Coordinate {point []}
 	IndxFaceSet DEF	faceset IndexedTriangleSet{
 		coord USE Coord 
 		index []
@@ -284,14 +293,15 @@ DEF	ds DeviceSensor	{
 #}
 
 DEF	trans Transform	{
-	translation	 0 0 -10
+	translation	 0 0 0
 	children [
 		DEF	btn Shape {
 			geometry Rectangle {
 			  size 6.4	4.8 
 			}
-			appearance Appearance {			
-				texture	  USE  BUFFER-TEXTURE
+			appearance Appearance {	
+				material	Material	{emissiveColor 1 0 1}		
+				texture	  USE  BUFFER-TEXTURE-LEFT
 			}
 		}
 		DEF	btn1 Shape {
@@ -307,6 +317,22 @@ DEF	trans Transform	{
 
 		}
 		DEF	ts TouchSensor {}
+	]
+
+}
+
+DEF	trans_1 Transform	{
+	translation	 7 0 0
+	children [
+		DEF	btn_right Shape {
+			geometry Rectangle {
+			  size 6.4	4.8 
+			}
+			appearance Appearance {			
+				texture	  USE  BUFFER-TEXTURE-RIGHT
+				material	Material	{emissiveColor 1 0 1}
+			}
+		}
 	]
 
 }
