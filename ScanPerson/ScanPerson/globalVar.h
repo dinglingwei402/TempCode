@@ -20,7 +20,7 @@ if (rc != XN_STATUS_OK)	    \
 		UserGenerator	userGen;
 		SceneAnalyzer	scenGen;	
 		const XnDepthPixel* pDepthData;
-		const XnRGB24Pixel* pImageData;
+		const XnUInt8* pImageData;
 	}GenGrp;
 #endif
 extern Context g_Context;

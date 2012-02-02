@@ -122,18 +122,19 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 	pEventNode->getField(_T("colorTexture"),&fld);
 	assert(fld);
 	EventOutSFNode* imgNode;
-	CComPtr<Node> imgVlu;
+	Node* imgVlu;
 	fld->QueryInterface(IID_EventOutSFNode,(void**)&imgNode);
 	imgNode->getValue(&imgVlu);
 	fld->Release();
 
-	pEventNode->getField(_T("colorTexture1"),&fld);
-	assert(fld);
+	Field* fld1;
+	pEventNode->getField(_T("colorTexture1"),&fld1);
+	assert(fld1);
 	EventOutSFNode* imgNode1;
-	CComPtr<Node> imgVlu1;
-	fld->QueryInterface(IID_EventOutSFNode,(void**)&imgNode1);
-	imgNode->getValue(&imgVlu1);
-	fld->Release();
+	Node* imgVlu1;
+	fld1->QueryInterface(IID_EventOutSFNode,(void**)&imgNode1);
+	imgNode1->getValue(&imgVlu1);
+	fld1->Release();
 
 	pEventNode->getField(_T("coord"),&fld);
 	assert(fld);
