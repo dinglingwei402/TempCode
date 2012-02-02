@@ -1,5 +1,35 @@
 #VRML V2.0 utf8
 
+EXTERNPROTO ShaderAppearance [
+	exposedField SFNode fragmentShader
+	exposedField SFNode material
+	exposedField SFNode texture
+	exposedField SFNode textureTransform
+	exposedField SFNode vertexShader
+	exposedField SFBool transparent
+]
+["urn:inet:bitmanagement.de:node:ShaderAppearance"]
+
+EXTERNPROTO MultiTexture [
+	exposedField SFBool materialColor
+	exposedField SFBool materialAlpha
+	exposedField SFBool materialSpecular
+	exposedField SFBool transparent
+	exposedField SFBool nomipmap
+	exposedField MFString mode
+	exposedField MFString source
+	exposedField MFString function
+	exposedField MFString type
+	exposedField MFNode texture
+	exposedField MFNode textureTransform
+	exposedField MFInt32 textureOp
+	exposedField SFColor color
+	exposedField SFFloat alpha
+	exposedField MFNode bumpTransform
+	exposedField SFNode metadata
+]
+["urn:inet:bitmanagement.de:node:MultiTexture"]
+
 EXTERNPROTO IndexedTriangleSet [
 	eventIn MFInt32 set_index
 	exposedField SFNode color
@@ -251,37 +281,35 @@ PROTO JName [
 #	handsId	[]
 #}
 
-DEF BUFFER-TEXTURE-LEFT BufferTexture 
-	{
-		format "A8R8G8B8" ##"X8R8G8B8"
-		pixelWidth 640
-		pixelHeight 480
-		levels 0
-		parameter ["nomipmap", "animated"]
-	}
-DEF BUFFER-TEXTURE-RIGHT BufferTexture 
-	{
-		format "A8R8G8B8" ##"X8R8G8B8"
-		pixelWidth 640
-		pixelHeight 480
-		levels 0
-		parameter ["nomipmap", "animated"]
-	}
+
+
+
+
+
 
 DEF kd1 KinectDev {
-	colorTexture  USE  BUFFER-TEXTURE-LEFT
-	colorTexture1 USE  BUFFER-TEXTURE-RIGHT
+	colorTexture   DEF BUFFER-TEXTURE-LEFT BufferTexture 
+{
+		format "X8R8G8B8" ##"X8R8G8B8"
+		pixelWidth 640
+		pixelHeight 480
+		levels 1 
+		parameter ["nomipmap", "animated"]	
+}
+	colorTexture1  DEF BUFFER-TEXTURE-RIGHT BufferTexture 
+	{
+		format "X8R8G8B8" ##"X8R8G8B8"
+		pixelWidth 640
+		pixelHeight 480
+		levels 1 
+		parameter ["nomipmap", "animated"]#		levels 0
+	}     
 	coord DEF Coord Coordinate {point []}
 	IndxFaceSet DEF	faceset IndexedTriangleSet{
 		coord USE Coord 
 		index []
 	}	
 }
-#DEF	ds DeviceSensor	{
-#	enabled	TRUE
-#	device "KinectDev"
-#	event USE kd
-#}
 
 DEF	ds DeviceSensor	{
 	enabled	TRUE
@@ -295,47 +323,36 @@ DEF	ds DeviceSensor	{
 DEF	trans Transform	{
 	translation	 0 0 0
 	children [
-		DEF	btn Shape {
-			geometry Rectangle {
-			  size 6.4	4.8 
+		DEF	btn_left Shape {
+			geometry Box {
+			  size 64	48 2
 			}
-			appearance Appearance {	
-				material	Material	{emissiveColor 1 0 1}		
+			appearance Appearance {			
 				texture	  USE  BUFFER-TEXTURE-LEFT
+				material	Material	{emissiveColor 1 1 1}
 			}
 		}
-		DEF	btn1 Shape {
-			geometry PointSet {
-				coord USE Coord
-			}
-			appearance Appearance {material Material {emissiveColor 1 1 0}}
-		}
-
-		DEF	btn2 Shape {
-			geometry USE faceset
-			appearance Appearance {material Material {emissiveColor 1 0 0}}
-
-		}
-		DEF	ts TouchSensor {}
 	]
 
 }
 
 DEF	trans_1 Transform	{
-	translation	 7 0 0
+	translation	 70 0 0
 	children [
 		DEF	btn_right Shape {
-			geometry Rectangle {
-			  size 6.4	4.8 
+			geometry Box {
+			  size 64	48 2
 			}
 			appearance Appearance {			
-				texture	  USE  BUFFER-TEXTURE-RIGHT
-				material	Material	{emissiveColor 1 0 1}
+				texture	  USE   BUFFER-TEXTURE-RIGHT
+				material	Material	{emissiveColor 1 1 1}
 			}
 		}
 	]
 
 }
+
+
 
 
 #DEF	show Script	{		    
