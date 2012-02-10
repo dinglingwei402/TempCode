@@ -294,8 +294,8 @@ DEF kd1 KinectDev {
 		pixelWidth 640
 		pixelHeight 480
 		levels 1 
-		parameter ["nomipmap", "animated"]	
-}
+		parameter ["nomipmap", "animated"]
+	}	
 	colorTexture1  DEF BUFFER-TEXTURE-RIGHT BufferTexture 
 	{
 		format "X8R8G8B8" ##"X8R8G8B8"
@@ -310,6 +310,7 @@ DEF kd1 KinectDev {
 		index []
 	}	
 }
+
 
 DEF	ds DeviceSensor	{
 	enabled	TRUE

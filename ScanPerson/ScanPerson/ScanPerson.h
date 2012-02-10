@@ -55,6 +55,7 @@ DECLARE_REGISTRY_RESOURCEID(IDR_SCANPERSON)
 
 BEGIN_COM_MAP(CScanPerson)
 	COM_INTERFACE_ENTRY(IbxxHID)
+
 	COM_INTERFACE_ENTRY(IDispatch)
 END_COM_MAP()
 
@@ -74,7 +75,6 @@ STDMETHOD(InterfaceSupportsErrorInfo)(REFIID riid);
 	}
 
 public:
-	EventInSFNode *m_ColorImg;
 	HRESULT STDMETHODCALLTYPE Init( 
 		/* [in] */ BSTR Device,
 		/* [in] */ int DeviceNo,
@@ -104,7 +104,6 @@ public:
 	HRESULT STDMETHODCALLTYPE FocusChanged( 
 		/* [in] */ BOOL HasFocusNow,
 		/* [retval][out] */ BOOL *pNeedTickCalls);
-
 
 };
 

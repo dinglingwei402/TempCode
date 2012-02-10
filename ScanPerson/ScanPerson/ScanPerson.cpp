@@ -74,7 +74,7 @@ STDAPI DllInstall(BOOL bInstall, LPCWSTR pszCmdLine)
 #include "stdafx.h"
 #include "ScanPerson.h"
 
-CScanPerson::CScanPerson():m_ColorImg(NULL)
+CScanPerson::CScanPerson()
 {
 
 }

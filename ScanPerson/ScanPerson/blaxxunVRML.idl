@@ -544,8 +544,6 @@ library blaxxunVRMLLib
 		HRESULT setValue([in,size_is(16)] float* value);
 	};
 
-
-
 	// forward
 
 	interface EventOutObserver;

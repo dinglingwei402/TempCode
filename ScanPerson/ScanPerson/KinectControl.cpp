@@ -53,7 +53,6 @@ void testColor(){
 	int lev=0;
 	int fmt=0;
 	g_bufTex_left->getFormat(&w,&h,&lev,&fmt);*/
-
 }
 //*************************************************
 
@@ -75,26 +74,26 @@ void KinectInit(Node* img,CComPtr<Node> img1,Node* coord,CComPtr<Node> mesh){
 	xres=sensors[0].xres;
 	yres=sensors[0].yres;
 	pixSize = 3;
-	/*g_bufTex_left->setTexture(0,xres*yres*pixSize,(BYTE*)sensors[0].pImageData,xres*pixSize);*/	
-//	g_bufTex_right->setTexture(0,xres*yres,(BYTE*)sensors[0].pDepthData,xres);
-//	g_bufTex_right->setTexture(0,xres*yres*pixSize,(BYTE*)sensors[1].pDepthData,xres*pixSize);
-//	g_bufTex_left->setTextureEx(xres,yres,0,D3DFMT_L16,xres*yres*2,(BYTE*)sensors[0].pDepthData,xres*2);
 }
 
 void UpdateImage(){	
-	XnStatus rc=g_Context.WaitAndUpdateAll();
+	XnStatus rc=g_Context.WaitNoneUpdateAll();
 	if (rc!=0)
 	{
 		int iii=0;
 		return;
 	}
 	testColor();
-//	drawPoint(0,1);
+	drawPoint(0,1);
 }
 GenGrp  getGrp(){
 	GenGrp p;
 	DepthGenerator dd=p.depGen;
 	return p;
+}
+
+void getValidUserNum(XnUInt32 devId,XnUserID aUsers[],XnUInt16 aUsersNum){
+	sensors[devId].userGen.GetUsers(aUsers,aUsersNum);
 }
 XnStatus checkSensors(){
 	NodeInfoList devicesList;
@@ -123,8 +122,8 @@ XnStatus checkSensors(){
 		rc=g_Context.CreateAnyProductionTree(XN_NODE_TYPE_IMAGE,&query,sensors[i].imgGen);
 		statusStr=xnGetStatusString(rc);
 		CHECK_RC(rc,"CreateImgGen");
-		/*rc=g_Context.CreateAnyProductionTree(XN_NODE_TYPE_USER,&query,sensors[i].userGen);
-		statusStr=xnGetStatusString(rc);
+		rc=g_Context.CreateAnyProductionTree(XN_NODE_TYPE_USER,&query,sensors[i].userGen);
+		/*	statusStr=xnGetStatusString(rc);
 		CHECK_RC(rc,"CreateUsrGen");
 		rc=g_Context.CreateAnyProductionTree(XN_NODE_TYPE_SCENE,&query,sensors[i].scenGen);
 		statusStr=xnGetStatusString(rc);
@@ -141,19 +140,21 @@ XnStatus checkSensors(){
 		sensors[i].yres=depMD.YRes();
 		sensors[i].pDepthData=depMD.Data();
 		sensors[i].pImageData=imgMD.Data();
+	//	sensors[i].pImageData=imgMD.RGB24Data();
 	}
-	if(i==2){
-		if(chgVPt){
-			sensors[0].imgGen.GetAlternativeViewPointCap().SetViewPoint(sensors[1].imgGen);
-			sensors[0].depGen.GetAlternativeViewPointCap().SetViewPoint(sensors[1].depGen);
-		}
+//	EnumerationErrors* pErrors;
+	NodeInfoList userList;
+	g_Context.EnumerateProductionTrees(XN_NODE_TYPE_USER,NULL,userList,NULL);
+	int j=0;
+	NodeInfoList::Iterator it1=userList.Begin();
+	while(it1!=userList.End()){
+		NodeInfo imageInfo = *it1;
+		bool kk=(imageInfo.GetDescription().Type == XN_NODE_TYPE_USER );
+		it1++;
+		j++;
 	}
 	g_Context.StartGeneratingAll();
 	return rc;
-}
-
-void getValidUserNum(XnUInt32 devId,XnUserID aUsers[],XnUInt16 aUsersNum){
-	sensors[devId].userGen.GetUsers(aUsers,aUsersNum);
 }
 bool isValidPt(int indx,const XnLabel* lab,const XnPoint3D* dep,int i){
 	int jj=i;
