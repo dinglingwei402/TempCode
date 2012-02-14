@@ -31,9 +31,27 @@ XnPoint3D* depthPts;
 XnLabel* labPts;
 XnBool chgVPt=false;
 //***************************************
+
+class KinectDev {
+	EventInSFNode*  floor;
+	EventInMFNode*	users;
+	EventInMFNode*	hands;
+	EventInMFInt32*	handsId;
+	EventInMFInt32*	usersId;
+	EventInSFNode*  colorTexture_dev1; 
+	EventInSFNode*  colorTexture_dev2;
+	EventInSFNode*  coord_dev1 ;
+	EventInSFNode*  coord_dev2 ;
+	EventInSFNode*  IndxFaceSet ;
+	KinectDev();
+	~KinectDev();
+};
+
+KinectDev::KinectDev(EventInSFNode* flr,EventInMFNode* usr,EventInMFNode* hnd,EventInMFInt32*	hId,EventInMFInt32* uId,EventInSFNode* clr1,EventInSFNode* clr2,EventInSFNode* crd1,EventInSFNode* crd2):floor(f),users(usr),hands(hnd),handsId(hId),usersId(uId),colorTexture_dev1(clr1),colorTexture_dev2(clr2),coord_dev1(crd1),coord_dev2(crd2){}
+
+
 XnStatus  checkSensors();
 void drawPoint(XnUInt32 devId,XnUserID nId);
-
 void testColor(){
 	/*BYTE* tempBuffer = (BYTE*)malloc(xres*yres*pixSize);
 	for(int i=0;i<xres*yres;i++){
@@ -141,18 +159,24 @@ XnStatus checkSensors(){
 		sensors[i].pDepthData=depMD.Data();
 		sensors[i].pImageData=imgMD.Data();
 	//	sensors[i].pImageData=imgMD.RGB24Data();
+
+
+		NodeInfoList userList;
+	//	g_Context.EnumerateProductionTrees(XN_NODE_TYPE_USER,&query,userList,NULL);
+		g_Context.EnumerateExistingNodes(userList,XN_NODE_TYPE_USER);
+		int j=0;
+		NodeInfoList::Iterator it1=userList.Begin();
+		while(it1!=userList.End()){
+			NodeInfo imageInfo = *it1;
+			//	bool kk=(imageInfo.GetDescription().Type == XN_NODE_TYPE_USER );
+	
+			it1++;
+			j++;
+		}
+		OutputDebugString(L"is \r\n");
 	}
 //	EnumerationErrors* pErrors;
-	NodeInfoList userList;
-	g_Context.EnumerateProductionTrees(XN_NODE_TYPE_USER,NULL,userList,NULL);
-	int j=0;
-	NodeInfoList::Iterator it1=userList.Begin();
-	while(it1!=userList.End()){
-		NodeInfo imageInfo = *it1;
-		bool kk=(imageInfo.GetDescription().Type == XN_NODE_TYPE_USER );
-		it1++;
-		j++;
-	}
+
 	g_Context.StartGeneratingAll();
 	return rc;
 }

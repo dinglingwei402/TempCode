@@ -136,7 +136,7 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 	imgNode1->getValue(&imgVlu1);
 	fld1->Release();
 
-	pEventNode->getField(_T("coord"),&fld);
+	pEventNode->getField(_T("coord_dev1"),&fld);
 	assert(fld);
 	EventOutSFNode* coordNode;
 	CComPtr<Node> coordVlu;
@@ -188,6 +188,7 @@ HRESULT STDMETHODCALLTYPE CScanPerson::FocusChanged(
 									   /* [in] */ BOOL HasFocusNow,
 									   /* [retval][out] */ BOOL *pNeedTickCalls)
 {
+*pNeedTickCalls=true;
 return S_OK;
 }
 
