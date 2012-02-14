@@ -1,5 +1,26 @@
 #VRML V2.0 utf8
 
+EXTERNPROTO ShadowGroup [
+	exposedField SFVec3f bboxSize
+	exposedField SFVec3f bboxCenter
+	exposedField MFNode light
+	exposedField MFNode plane
+	exposedField MFNode appearance
+	exposedField MFNode emitter
+	exposedField MFNode children
+	exposedField SFString mode
+	eventIn MFNode addChildren
+	eventIn MFNode removeChildren
+	exposedField SFNode metadata
+	exposedField MFNode shadowMap
+	exposedField SFNode shadowMapGenAppearance
+	exposedField SFNode shadowMapUseAppearance
+	exposedField SFBool shadowMapBlurr
+	exposedField SFFloat shadowMapBlurrFactor
+	exposedField SFFloat shadowMapSplitDistance
+]
+["urn:inet:bitmanagement.de:node:ShadowGroup"]
+
 EXTERNPROTO ShaderAppearance [
 	exposedField SFNode fragmentShader
 	exposedField SFNode material
@@ -251,10 +272,12 @@ PROTO KinectDev[
 	exposedField	MFNode	hands	[]
 	exposedField    MFInt32	handsId []
 	exposedField	MFInt32	usersId []
-	exposedField	SFNode  colorTexture NULL 
-	exposedField	SFNode  colorTexture1 NULL 
-	exposedField	SFNode  coord NULL
+	exposedField	SFNode  colorTexture_dev1 NULL 
+	exposedField	SFNode  colorTexture_dev2 NULL 
+	exposedField	SFNode  coord_dev1 NULL
+	exposedField	SFNode  coord_dev2 NULL
 	exposedField	SFNode  IndxFaceSet NULL
+#	exposedField	MFString showTest "aaa"
 ]{}
 
 
@@ -288,7 +311,7 @@ PROTO JName [
 
 
 DEF kd1 KinectDev {
-	colorTexture   DEF BUFFER-TEXTURE-LEFT BufferTexture 
+	colorTexture_dev1   DEF BUFFER-TEXTURE-LEFT BufferTexture 
 {
 		format "X8R8G8B8" ##"X8R8G8B8"
 		pixelWidth 640
@@ -296,7 +319,7 @@ DEF kd1 KinectDev {
 		levels 1 
 		parameter ["nomipmap", "animated"]
 	}	
-	colorTexture1  DEF BUFFER-TEXTURE-RIGHT BufferTexture 
+	colorTexture_dev2  DEF BUFFER-TEXTURE-RIGHT BufferTexture 
 	{
 		format "X8R8G8B8" ##"X8R8G8B8"
 		pixelWidth 640
@@ -304,10 +327,10 @@ DEF kd1 KinectDev {
 		levels 1 
 		parameter ["nomipmap", "animated"]#		levels 0
 	}     
-	coord DEF Coord Coordinate {point []}
+	coord_dev1 DEF Coord Coordinate {point []}
+	coord_dev2 DEF Coord2 Coordinate  {point []}
 	IndxFaceSet DEF	faceset IndexedTriangleSet{
 		coord USE Coord 
-		index []
 	}	
 }
 
@@ -333,6 +356,16 @@ DEF	trans Transform	{
 				material	Material	{emissiveColor 1 1 1}
 			}
 		}
+		DEF	 pt_left Shape {
+			geometry PointSet {
+				coord USE Coord
+			
+			}
+			appearance Appearance {material Material {emissiveColor  1 0 0}}
+		}
+
+
+
 	]
 
 }
@@ -349,22 +382,56 @@ DEF	trans_1 Transform	{
 				material	Material	{emissiveColor 1 1 1}
 			}
 		}
+
+		DEF pt_right Shape{
+			geometry PointSet {
+				coord USE Coord2
+			}
+			appearance Appearance {
+				material Material {emissiveColor 0 1 0}
+			}
+		}
+		   
+
 	]
 
 }
 
 
+DEF	 trans_2 Transform {
+	children [
+		Shape {
+			geometry DEF  ttt Text {
+			
+			}
+		}
+	
+	]
+}
 
 
-#DEF	show Script	{		    
+
+
+
+
+DEF	show Script	{		    
 #	exposedField SFNode Clr_Tex USE DEPTH-TEXTURE
-#    eventIn SFBool press
-#	url	"javascript:
-#	function press(b){
-#		if(b){
-#			print('Clr_Tex.toVrmlString()'+Clr_Tex.toVrmlString());	
-#		}
-#	}
-#	"
-#}
-#ROUTE ts.isActive TO show.press
+	eventIn	MFString string1
+    eventIn SFBool press
+	exposedField SFNode Text USE ttt
+	field  SFRotation d	0 1 0 50
+
+	url	"javascript:
+	function press(b){
+		if(b){
+			print('Clr_Tex.toVrmlString()'+Clr_Tex.toVrmlString());	
+		}
+	}
+
+	function string1(s){
+				
+		Text.string=s;
+	}
+	"
+}
+ROUTE ts.isActive TO show.press
