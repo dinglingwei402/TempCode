@@ -7,6 +7,8 @@
 #include "dllmain.h"
 #include "KinectControl.h"
 #include "blaxxunVRML.h"
+#include "globalVar.h"
+#include "QueryNode.h"
 
 // 用于确定 DLL 是否可由 OLE 卸载
 STDAPI DllCanUnloadNow(void)
@@ -118,45 +120,31 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 	/* [in] */ int ID,
 	/* [retval][out] */ int *pRetVal)
 {
-	Field* fld;
-	pEventNode->getField(_T("colorTexture"),&fld);
-	assert(fld);
-	EventOutSFNode* imgNode;
-	Node* imgVlu;
-	fld->QueryInterface(IID_EventOutSFNode,(void**)&imgNode);
-	imgNode->getValue(&imgVlu);
-	fld->Release();
+	
 
-	Field* fld1;
-	pEventNode->getField(_T("colorTexture1"),&fld1);
-	assert(fld1);
-	EventOutSFNode* imgNode1;
-	Node* imgVlu1;
-	fld1->QueryInterface(IID_EventOutSFNode,(void**)&imgNode1);
-	imgNode1->getValue(&imgVlu1);
-	fld1->Release();
 
-	pEventNode->getField(_T("coord_dev1"),&fld);
-	assert(fld);
-	EventOutSFNode* coordNode;
-	CComPtr<Node> coordVlu;
-	fld->QueryInterface(IID_EventOutSFNode,(void**)&coordNode);
-	coordNode->getValue(&coordVlu);
-	fld->Release();
+	
+	EventOutSFNode* clr_dev1,*clr_dev2;
+	Node* clr1,*clr2;
+	QuerySFNode(pEventNode,_T("colorTexture_dev1"),IID_EventOutSFNode,&clr_dev1,&clr1);
+	QuerySFNode(pEventNode,_T("colorTexture_dev2"),IID_EventOutSFNode,&clr_dev2,&clr2);
+	clr_dev1->Release();
+	clr_dev2->Release();
 
-	pEventNode->getField(_T("IndxFaceSet"),&fld);
-	assert(fld);
-	EventOutSFNode* meshNode;
-	fld->QueryInterface(IID_EventOutSFNode,(void**)&meshNode);
-	CComPtr<Node> meshVlu;
-	meshNode->getValue(&meshVlu);
-	fld->Release();
+	EventOutSFNode *crd_dev1,*crd_dev2;
+	Node *crd1,*crd2;
+	QuerySFNode(pEventNode,_T("coord_dev1"),IID_EventOutSFNode,&crd_dev1,&crd1);
+	QuerySFNode(pEventNode,_T("coord_dev2"),IID_EventOutSFNode,&crd_dev2,&crd2);
+	crd_dev1->Release();
+	crd_dev2->Release();
 
-	KinectInit(imgVlu,imgVlu1,coordVlu,meshVlu);
-	imgNode->Release();
-	imgNode1->Release();
-	coordNode->Release();
-	meshNode->Release();
+	EventOutSFNode *faceSet;
+	Node* face;
+	QuerySFNode(pEventNode,_T("IndxFaceSet"),IID_EventOutSFNode,&faceSet,&face);
+	faceSet->Release();
+
+	KinectInit(clr1,clr2,crd1,crd2,face);
+
 	*pRetVal=1;
 	return S_OK;
 }

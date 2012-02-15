@@ -9,49 +9,41 @@ using namespace xn;
 #define  xmlpath "C:\\SamplesConfig.xml"
 
 const int showStyle=1;
-XnUInt16 runOnce=0;
+XnUInt16 runOnce[2]={0,0};
 XnUInt32 rows=0;
 XnBool findValidCell=0;
-XnUInt32 g_YStep=9;
-XnUInt32 g_XStep=9;
+XnUInt32 g_YStep=1;
+XnUInt32 g_XStep=1;
 
 XnUInt32 pixSize;
 int xres;
 int yres;
 int sensor_count;
 GenGrp *sensors;
+//////
 CComQIPtr<IBufferTexture> g_bufTex_left;
 CComQIPtr<IBufferTexture> g_bufTex_right;
 Node* g_mesh;
-Node* g_coord;
-EventInMFVec3f* g_point;
-EventInMFInt32* g_coordIndx;
+Node* g_coord1;
+Node* g_coord2;
+EventInMFVec3f* g_point[2];
+EventInMFInt32* g_coordIndx1;
+EventInMFInt32* g_coordIndx2;
+//////
 Context g_Context;
 XnPoint3D* depthPts;
 XnLabel* labPts;
 XnBool chgVPt=false;
 //***************************************
 
-class KinectDev {
-	EventInSFNode*  floor;
-	EventInMFNode*	users;
-	EventInMFNode*	hands;
-	EventInMFInt32*	handsId;
-	EventInMFInt32*	usersId;
-	EventInSFNode*  colorTexture_dev1; 
-	EventInSFNode*  colorTexture_dev2;
-	EventInSFNode*  coord_dev1 ;
-	EventInSFNode*  coord_dev2 ;
-	EventInSFNode*  IndxFaceSet ;
-	KinectDev();
-	~KinectDev();
-};
 
-KinectDev::KinectDev(EventInSFNode* flr,EventInMFNode* usr,EventInMFNode* hnd,EventInMFInt32*	hId,EventInMFInt32* uId,EventInSFNode* clr1,EventInSFNode* clr2,EventInSFNode* crd1,EventInSFNode* crd2):floor(f),users(usr),hands(hnd),handsId(hId),usersId(uId),colorTexture_dev1(clr1),colorTexture_dev2(clr2),coord_dev1(crd1),coord_dev2(crd2){}
+
+KinectDev::KinectDev(EventInSFNode* flr,EventInMFNode* usr,EventInMFNode* hnd,EventInMFInt32*	hId,EventInMFInt32* uId,EventInSFNode* clr1,EventInSFNode* clr2,EventInSFNode* crd1,EventInSFNode* crd2):floor(flr),users(usr),hands(hnd),handsId(hId),usersId(uId),colorTexture_dev1(clr1),colorTexture_dev2(clr2),coord_dev1(crd1),coord_dev2(crd2){}
 
 
 XnStatus  checkSensors();
-void drawPoint(XnUInt32 devId,XnUserID nId);
+void drawMesh(XnUInt32 devId,XnUserID nId);
+void drawPoint(XnUInt32 devId);
 void testColor(){
 	/*BYTE* tempBuffer = (BYTE*)malloc(xres*yres*pixSize);
 	for(int i=0;i<xres*yres;i++){
@@ -74,19 +66,24 @@ void testColor(){
 }
 //*************************************************
 
-void KinectInit(Node* img,CComPtr<Node> img1,Node* coord,CComPtr<Node> mesh){
-	g_bufTex_left=img;
-	g_bufTex_right=img1;
-	g_mesh=mesh;
-	g_coord=coord;
-	g_mesh->getEventIn(_T("set_index"),(EventIn**)&g_coordIndx);
+void KinectInit( Node* img1,Node* img2,Node* coord1,Node* coord2, Node* face )
+{
+	g_bufTex_left=img1;
+	g_bufTex_right=img2;
+	g_mesh=face;
+	g_coord1=coord1;
+	g_coord2=coord2;
+	g_mesh->getEventIn(_T("set_index"),(EventIn**)&g_coordIndx1);
+	
 	Field* fld;
-	g_coord->getField(_T("point"),&fld);
-	fld->QueryInterface(IID_EventInMFVec3f,(void**)&g_point);
+	g_coord1->getField(_T("point"),&fld);
+	fld->QueryInterface(IID_EventInMFVec3f,(void**)&g_point[0]);
+	g_coord2->getField(_T("point"),&fld);
+	fld->QueryInterface(IID_EventInMFVec3f,(void**)&g_point[1]);
 	fld->Release();
+
+
 	XnStatus rc=XN_STATUS_OK;
-	ScriptNode scriptNode;
-	EnumerationErrors errors;
 	rc=g_Context.Init();
 	rc=checkSensors();
 	xres=sensors[0].xres;
@@ -102,7 +99,8 @@ void UpdateImage(){
 		return;
 	}
 	testColor();
-	drawPoint(0,1);
+	drawPoint(0);
+	drawPoint(1);
 }
 GenGrp  getGrp(){
 	GenGrp p;
@@ -137,11 +135,13 @@ XnStatus checkSensors(){
 		rc=g_Context.CreateAnyProductionTree(XN_NODE_TYPE_DEPTH,&query,sensors[i].depGen);
 		statusStr=xnGetStatusString(rc);
 		CHECK_RC(rc,"CreateDepGen");
+		bool b=sensors[i].depGen.GetMirrorCap().IsMirrored();
+		if(!b)sensors[i].depGen.GetMirrorCap().SetMirror(true);
 		rc=g_Context.CreateAnyProductionTree(XN_NODE_TYPE_IMAGE,&query,sensors[i].imgGen);
 		statusStr=xnGetStatusString(rc);
 		CHECK_RC(rc,"CreateImgGen");
-		rc=g_Context.CreateAnyProductionTree(XN_NODE_TYPE_USER,&query,sensors[i].userGen);
-		/*	statusStr=xnGetStatusString(rc);
+		/*	rc=g_Context.CreateAnyProductionTree(XN_NODE_TYPE_USER,&query,sensors[i].userGen);
+		statusStr=xnGetStatusString(rc);
 		CHECK_RC(rc,"CreateUsrGen");
 		rc=g_Context.CreateAnyProductionTree(XN_NODE_TYPE_SCENE,&query,sensors[i].scenGen);
 		statusStr=xnGetStatusString(rc);
@@ -161,19 +161,19 @@ XnStatus checkSensors(){
 	//	sensors[i].pImageData=imgMD.RGB24Data();
 
 
-		NodeInfoList userList;
-	//	g_Context.EnumerateProductionTrees(XN_NODE_TYPE_USER,&query,userList,NULL);
-		g_Context.EnumerateExistingNodes(userList,XN_NODE_TYPE_USER);
-		int j=0;
-		NodeInfoList::Iterator it1=userList.Begin();
-		while(it1!=userList.End()){
-			NodeInfo imageInfo = *it1;
-			//	bool kk=(imageInfo.GetDescription().Type == XN_NODE_TYPE_USER );
-	
-			it1++;
-			j++;
-		}
-		OutputDebugString(L"is \r\n");
+	//	NodeInfoList userList;
+	////	g_Context.EnumerateProductionTrees(XN_NODE_TYPE_USER,&query,userList,NULL);
+	//	g_Context.EnumerateExistingNodes(userList,XN_NODE_TYPE_USER);
+	//	int j=0;
+	//	NodeInfoList::Iterator it1=userList.Begin();
+	//	while(it1!=userList.End()){
+	//		NodeInfo imageInfo = *it1;
+	//		//	bool kk=(imageInfo.GetDescription().Type == XN_NODE_TYPE_USER );
+	//
+	//		it1++;
+	//		j++;
+	//	}
+	//	OutputDebugString(L"is \r\n");
 	}
 //	EnumerationErrors* pErrors;
 
@@ -184,9 +184,53 @@ bool isValidPt(int indx,const XnLabel* lab,const XnPoint3D* dep,int i){
 	int jj=i;
 	return ((lab[indx]>0)&&(dep[indx].Z!=0));
 }
+void drawPoint(XnUInt32 devId){
+	if(runOnce[devId]==0)
+	{
+		XnBool hasUsrPix=false;
+		XnStatus rc=XN_STATUS_OK;
+		const XnDepthPixel* depPix=sensors[devId].pDepthData;
+		const XnChar* rslt=xnGetStatusString(rc);
+		int small_x=(int)(xres/g_XStep);
+		int small_y=(int)(yres/g_YStep);
+		XnUInt32 ptSize=(small_x*small_y);
+		bool flag=false;
+		std::vector<XnUInt32> idxList;
+		if(rc==XN_STATUS_OK){
+			if(!depthPts){
+				depthPts=new XnPoint3D[ptSize];
+			}else{
+				memset(depthPts,0,sizeof(XnPoint3D)*ptSize);
+			}
+			XnUInt32 squence[4];
+			int len=0;
+			//compress mesh grid
+			for(int i=0;i<small_y;i++){
+				for(int j=0;j<small_x;j++){
+					int bigX=j*g_XStep;
+					int bigY=i*g_YStep;
+					depthPts[len].X=bigX;
+					depthPts[len].Y=bigY;
+					int idx=bigY*xres+bigX;
+					depthPts[len].Z=depPix[idx];
+					len++;
+				}
+			}
 
+			//find  valid pts then put their indices to the vector
+			//******
+			if(len>0){
+				XnPoint3D* aRealWorld=new XnPoint3D[len];
+				sensors[devId].depGen.ConvertProjectiveToRealWorld(len,depthPts,aRealWorld);	
+				g_point[devId]->setValue(len*3,(float*)aRealWorld);
+				delete[] aRealWorld;
+				runOnce[devId]=1;
+			}
+		}	
+	}
+}
 
-void drawPoint(XnUInt32 devId,XnUserID nId){
+void drawMesh(XnUInt32 devId,XnUserID nId){
 	if(runOnce==0)
 	{
 		XnBool hasUsrPix=false;
@@ -280,14 +324,14 @@ void drawPoint(XnUInt32 devId,XnUserID nId){
 					aRealWorld[k].Z*=-1;
 				}
 		//		g_point->setValue(1,NULL);
-				g_point->setValue(len*3,(float*)aRealWorld);
+				g_point[0]->setValue(len*3,(float*)aRealWorld);
 		//		g_coordIndx->setValue(1,NULL);
-				g_coordIndx->setValue(idxListLen,idxArr);
+				g_coordIndx1->setValue(idxListLen,idxArr);
 				delete[] aRealWorld;
 				delete[] idxArr;
-				runOnce=1;
+				runOnce[devId]=1;
 			}
-		}	
+		}	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 	}
 }
 void KinectClose(){

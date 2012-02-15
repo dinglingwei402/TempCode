@@ -347,15 +347,15 @@ DEF	ds DeviceSensor	{
 DEF	trans Transform	{
 	translation	 0 0 0
 	children [
-		DEF	btn_left Shape {
-			geometry Box {
-			  size 64	48 2
-			}
-			appearance Appearance {			
-				texture	  USE  BUFFER-TEXTURE-LEFT
-				material	Material	{emissiveColor 1 1 1}
-			}
-		}
+#		DEF	btn_left Shape {
+#			geometry Box {
+#			  size 64	48 2
+#			}
+#			appearance Appearance {			
+#				texture	  USE  BUFFER-TEXTURE-LEFT
+#				material	Material	{emissiveColor 1 1 1}
+#			}
+#		}
 		DEF	 pt_left Shape {
 			geometry PointSet {
 				coord USE Coord
@@ -373,15 +373,15 @@ DEF	trans Transform	{
 DEF	trans_1 Transform	{
 	translation	 70 0 0
 	children [
-		DEF	btn_right Shape {
-			geometry Box {
-			  size 64	48 2
-			}
-			appearance Appearance {			
-				texture	  USE   BUFFER-TEXTURE-RIGHT
-				material	Material	{emissiveColor 1 1 1}
-			}
-		}
+#		DEF	btn_right Shape {
+#			geometry Box {
+#			  size 64	48 2
+#			}
+#			appearance Appearance {			
+#				texture	  USE   BUFFER-TEXTURE-RIGHT
+#				material	Material	{emissiveColor 1 1 1}
+#			}
+#		}
 
 		DEF pt_right Shape{
 			geometry PointSet {
@@ -398,40 +398,40 @@ DEF	trans_1 Transform	{
 }
 
 
-DEF	 trans_2 Transform {
-	children [
-		Shape {
-			geometry DEF  ttt Text {
+#DEF	 trans_2 Transform {
+#	children [
+#		Shape {
+#			geometry DEF  ttt Text {
 			
-			}
-		}
+#			}
+#		}
 	
-	]
-}
+#	]
+#}
 
 
 
 
 
 
-DEF	show Script	{		    
-#	exposedField SFNode Clr_Tex USE DEPTH-TEXTURE
-	eventIn	MFString string1
-    eventIn SFBool press
-	exposedField SFNode Text USE ttt
-	field  SFRotation d	0 1 0 50
+#DEF	show Script	{		    
+##	exposedField SFNode Clr_Tex USE DEPTH-TEXTURE
+#	eventIn	MFString string1
+#    eventIn SFBool press
+#	exposedField SFNode Text USE ttt
+#	field  SFRotation d	0 1 0 50
 
-	url	"javascript:
-	function press(b){
-		if(b){
-			print('Clr_Tex.toVrmlString()'+Clr_Tex.toVrmlString());	
-		}
-	}
+#	url	"javascript:
+#	function press(b){
+#		if(b){
+#			print('Clr_Tex.toVrmlString()'+Clr_Tex.toVrmlString());	
+#		}
+#	}
 
-	function string1(s){
+#	function string1(s){
 				
-		Text.string=s;
-	}
-	"
-}
-ROUTE ts.isActive TO show.press
+#		Text.string=s;
+#	}
+#	"
+#}
+#ROUTE ts.isActive TO show.press

@@ -287,6 +287,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\QueryNode.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Resource.h"
 				>
 			</File>
