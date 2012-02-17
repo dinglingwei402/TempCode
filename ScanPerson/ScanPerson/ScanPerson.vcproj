@@ -53,7 +53,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(OPEN_NI_INCLUDE)&quot;"
+				AdditionalIncludeDirectories="&quot;$(OPEN_NI_INCLUDE)&quot;;&quot;$(PCL_ROOT)/include/pcl-1.4/&quot;;&quot;$(PCL_ROOT)/3rdParty/Eigen/include/&quot;;&quot;$(PCL_ROOT)/3rdParty/Boost/include/&quot;;&quot;$(PCL_ROOT)/include/pcl-1.4/pcl/&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -79,9 +79,9 @@
 				Name="VCLinkerTool"
 				RegisterOutput="true"
 				IgnoreImportLibrary="true"
-				AdditionalDependencies="openNI.lib"
+				AdditionalDependencies="openNI.lib pcl_io.lib pcl_apps.lib pcl_common.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(open_NI_LIB)"
+				AdditionalLibraryDirectories="&quot;$(open_NI_LIB)&quot;;&quot;$(PCL_ROOT)/lib&quot;;&quot;$(PCL_ROOT)/3rdParty/Eigen/lib&quot;;&quot;$(PCL_ROOT)/3rdParty/Boost/lib&quot;"
 				ModuleDefinitionFile=".\ScanPerson.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -284,6 +284,10 @@
 			</File>
 			<File
 				RelativePath=".\KinectControl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PtCld.h"
 				>
 			</File>
 			<File

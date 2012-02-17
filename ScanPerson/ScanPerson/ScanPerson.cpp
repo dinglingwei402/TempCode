@@ -125,9 +125,9 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 
 	
 	EventOutSFNode* clr_dev1,*clr_dev2;
-	Node* clr1,*clr2;
-	QuerySFNode(pEventNode,_T("colorTexture_dev1"),IID_EventOutSFNode,&clr_dev1,&clr1);
-	QuerySFNode(pEventNode,_T("colorTexture_dev2"),IID_EventOutSFNode,&clr_dev2,&clr2);
+	Node* img1,*img2;
+	QuerySFNode(pEventNode,_T("colorTexture_dev1"),IID_EventOutSFNode,&clr_dev1,&img1);
+	QuerySFNode(pEventNode,_T("colorTexture_dev2"),IID_EventOutSFNode,&clr_dev2,&img2);
 	clr_dev1->Release();
 	clr_dev2->Release();
 
@@ -143,7 +143,12 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 	QuerySFNode(pEventNode,_T("IndxFaceSet"),IID_EventOutSFNode,&faceSet,&face);
 	faceSet->Release();
 
-	KinectInit(clr1,clr2,crd1,crd2,face);
+
+	EventOutSFNode* extra;
+	Node* ext;
+	QuerySFNode(pEventNode,_T("extra"),IID_EventOutSFNode,&extra,&ext);
+
+	KinectInit(img1,img2,crd1,crd2,face,ext);
 
 	*pRetVal=1;
 	return S_OK;

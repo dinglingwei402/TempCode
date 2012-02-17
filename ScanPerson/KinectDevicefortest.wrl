@@ -266,6 +266,15 @@ PROTO OpenNIFloor[
 ] {}
 
 
+PROTO  ExtraNode4Dev[
+	exposedField	SFNode  pt_color1 NULL
+	exposedField	SFNode  pt_color2 NULL
+]{
+
+
+}
+
+
 PROTO KinectDev[
 	exposedField	SFNode  floor NULL
 	exposedField	MFNode	users	[]
@@ -277,6 +286,7 @@ PROTO KinectDev[
 	exposedField	SFNode  coord_dev1 NULL
 	exposedField	SFNode  coord_dev2 NULL
 	exposedField	SFNode  IndxFaceSet NULL
+	exposedField	SFNode	extra NULL
 #	exposedField	MFString showTest "aaa"
 ]{}
 
@@ -312,7 +322,7 @@ PROTO JName [
 
 DEF kd1 KinectDev {
 	colorTexture_dev1   DEF BUFFER-TEXTURE-LEFT BufferTexture 
-{
+	{
 		format "X8R8G8B8" ##"X8R8G8B8"
 		pixelWidth 640
 		pixelHeight 480
@@ -329,6 +339,11 @@ DEF kd1 KinectDev {
 	}     
 	coord_dev1 DEF Coord Coordinate {point []}
 	coord_dev2 DEF Coord2 Coordinate  {point []}
+	extra DEF ext ExtraNode4Dev	{
+		pt_color1 DEF clr1 Color {color []}
+		pt_color2 DEF clr2 Color {color []}
+	
+	}
 	IndxFaceSet DEF	faceset IndexedTriangleSet{
 		coord USE Coord 
 	}	
@@ -359,6 +374,7 @@ DEF	trans Transform	{
 		DEF	 pt_left Shape {
 			geometry PointSet {
 				coord USE Coord
+				color USE clr1
 			
 			}
 			appearance Appearance {material Material {emissiveColor  1 0 0}}
@@ -386,6 +402,8 @@ DEF	trans_1 Transform	{
 		DEF pt_right Shape{
 			geometry PointSet {
 				coord USE Coord2
+				color USE clr2
+			
 			}
 			appearance Appearance {
 				material Material {emissiveColor 0 1 0}
@@ -435,3 +453,6 @@ DEF	trans_1 Transform	{
 #	"
 #}
 #ROUTE ts.isActive TO show.press
+
+
+Background {skyColor 1 0 1}

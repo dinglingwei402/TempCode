@@ -4,6 +4,11 @@
 #include "D3D9TYPES.h"
 #include "blaxxunVRML.h"
 #include "globalVar.h"
+#include "QueryNode.h"
+#include "pcl/io/pcd_io.h"
+#include "pcl/point_types.h"
+
+
 #include <vector>
 using namespace xn;
 #define  xmlpath "C:\\SamplesConfig.xml"
@@ -29,9 +34,11 @@ Node* g_coord2;
 EventInMFVec3f* g_point[2];
 EventInMFInt32* g_coordIndx1;
 EventInMFInt32* g_coordIndx2;
+EventInMFColor* g_color[2];
 //////
 Context g_Context;
 XnPoint3D* depthPts;
+XnPoint3D* clorPts;
 XnLabel* labPts;
 XnBool chgVPt=false;
 //***************************************
@@ -66,7 +73,7 @@ void testColor(){
 }
 //*************************************************
 
-void KinectInit( Node* img1,Node* img2,Node* coord1,Node* coord2, Node* face )
+void KinectInit( Node* img1,Node* img2,Node* coord1,Node* coord2, Node* face,Node* extra )
 {
 	g_bufTex_left=img1;
 	g_bufTex_right=img2;
@@ -82,6 +89,14 @@ void KinectInit( Node* img1,Node* img2,Node* coord1,Node* coord2, Node* face )
 	fld->QueryInterface(IID_EventInMFVec3f,(void**)&g_point[1]);
 	fld->Release();
 
+	EventOutSFNode* clr1,*clr2;
+	QuerySFNode(extra,_T("pt_color1"),IID_EventOutSFNode,&clr1);
+	QuerySFNode(extra,_T("pt_color2"),IID_EventOutSFNode,&clr2);
+	QuerySFNode(clr1,_T("color"),IID_EventInMFColor,&g_color[0]);
+	QuerySFNode(clr2,_T("color"),IID_EventInMFColor,&g_color[1]);
+
+	clr1->Release();
+	clr2->Release();
 
 	XnStatus rc=XN_STATUS_OK;
 	rc=g_Context.Init();
@@ -140,6 +155,11 @@ XnStatus checkSensors(){
 		rc=g_Context.CreateAnyProductionTree(XN_NODE_TYPE_IMAGE,&query,sensors[i].imgGen);
 		statusStr=xnGetStatusString(rc);
 		CHECK_RC(rc,"CreateImgGen");
+		b=sensors[i].imgGen.GetMirrorCap().IsMirrored();
+		if(!b)sensors[i].imgGen.GetMirrorCap().SetMirror(true);
+
+		rc=sensors[i].depGen.GetAlternativeViewPointCap().SetViewPoint(sensors[i].imgGen);
+		statusStr=xnGetStatusString(rc);
 		/*	rc=g_Context.CreateAnyProductionTree(XN_NODE_TYPE_USER,&query,sensors[i].userGen);
 		statusStr=xnGetStatusString(rc);
 		CHECK_RC(rc,"CreateUsrGen");
@@ -159,8 +179,6 @@ XnStatus checkSensors(){
 		sensors[i].pDepthData=depMD.Data();
 		sensors[i].pImageData=imgMD.Data();
 	//	sensors[i].pImageData=imgMD.RGB24Data();
-
-
 	//	NodeInfoList userList;
 	////	g_Context.EnumerateProductionTrees(XN_NODE_TYPE_USER,&query,userList,NULL);
 	//	g_Context.EnumerateExistingNodes(userList,XN_NODE_TYPE_USER);
@@ -190,15 +208,19 @@ void drawPoint(XnUInt32 devId){
 		XnBool hasUsrPix=false;
 		XnStatus rc=XN_STATUS_OK;
 		const XnDepthPixel* depPix=sensors[devId].pDepthData;
+		const XnUInt8* imgPix=sensors[devId].pImageData;
 		const XnChar* rslt=xnGetStatusString(rc);
 		int small_x=(int)(xres/g_XStep);
 		int small_y=(int)(yres/g_YStep);
 		XnUInt32 ptSize=(small_x*small_y);
 		bool flag=false;
 		std::vector<XnUInt32> idxList;
+		pcl::PointCloud<pcl::PointXYZ> cloud;
+
 		if(rc==XN_STATUS_OK){
 			if(!depthPts){
 				depthPts=new XnPoint3D[ptSize];
+				clorPts=new XnPoint3D[ptSize];
 			}else{
 				memset(depthPts,0,sizeof(XnPoint3D)*ptSize);
 			}
@@ -213,6 +235,9 @@ void drawPoint(XnUInt32 devId){
 					depthPts[len].Y=bigY;
 					int idx=bigY*xres+bigX;
 					depthPts[len].Z=depPix[idx];
+					clorPts[len].X=imgPix[idx*3]/255.0;
+					clorPts[len].Y=imgPix[idx*3+1]/255.0;
+					clorPts[len].Z=imgPix[idx*3+2]/255.0;
 					len++;
 				}
 			}
@@ -220,9 +245,19 @@ void drawPoint(XnUInt32 devId){
 			//find  valid pts then put their indices to the vector
 			//******
 			if(len>0){
+				cloud.width=small_x;
+				cloud.height=small_y;
+				cloud.points.resize (cloud.width * cloud.height);
 				XnPoint3D* aRealWorld=new XnPoint3D[len];
-				sensors[devId].depGen.ConvertProjectiveToRealWorld(len,depthPts,aRealWorld);	
+				sensors[devId].depGen.ConvertProjectiveToRealWorld(len,depthPts,aRealWorld);
 				g_point[devId]->setValue(len*3,(float*)aRealWorld);
+				g_color[devId]->setValue(len*3,(float*)clorPts);
+				for(int i=0;i<len;i++){
+					cloud.points[i].x=aRealWorld[i].X;
+					cloud.points[i].y=aRealWorld[i].Y;
+					cloud.points[i].z=aRealWorld[i].Z;
+				}
+				pcl::io::savePCDFile ("c:\\test_pcd.pcd", cloud);
 				delete[] aRealWorld;
 				runOnce[devId]=1;
 			}
@@ -230,6 +265,11 @@ void drawPoint(XnUInt32 devId){
 	}
 }
 
+
+void KinectClose(){
+	g_Context.Shutdown();
+}
+/*
 void drawMesh(XnUInt32 devId,XnUserID nId){
 	if(runOnce==0)
 	{
@@ -331,10 +371,6 @@ void drawMesh(XnUInt32 devId,XnUserID nId){
 				delete[] idxArr;
 				runOnce[devId]=1;
 			}
-		}	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+		}	                                                                                                     
 	}
-}
-void KinectClose(){
-	g_Context.Shutdown();
-}
-
+}*/
