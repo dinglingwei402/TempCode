@@ -107,13 +107,11 @@ HRESULT ControlHandsTrackNode::HandUpdate(XnUserID nId, const TrailHistory::Trai
 			findit=true;
 			break;
 		}
-	}
-	
+	}	
 	if(!findit){	
 		delete[] ids;
 		return hr;
 	}
-
 	Node* tmp_sub;
 	EventInMFVec3f* trackVec;
 	hr=m_handOut->get1Value(indx,&tmp_sub);
