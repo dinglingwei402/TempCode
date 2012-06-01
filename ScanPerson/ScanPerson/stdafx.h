@@ -22,3 +22,4 @@
 #include <atlcomcli.h>
 #include <assert.h>
 using namespace ATL;
+

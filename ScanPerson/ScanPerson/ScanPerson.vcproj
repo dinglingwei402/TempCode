@@ -53,7 +53,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(OPEN_NI_INCLUDE)&quot;;&quot;$(PCL_ROOT)/include/pcl-1.4/&quot;;&quot;$(PCL_ROOT)/3rdParty/Eigen/include/&quot;;&quot;$(PCL_ROOT)/3rdParty/Boost/include/&quot;;&quot;$(PCL_ROOT)/include/pcl-1.4/pcl/&quot;"
+				AdditionalIncludeDirectories="&quot;$(OPEN_NI_INCLUDE)&quot;;&quot;$(Boost_INCLUDE_DIRS)&quot;;&quot;C:\Program Files (x86)\PCL\include\pcl-1.6&quot;;&quot;$(EIGEN_ROOT)/include/&quot;;&quot;C:\Program Files (x86)\PCL\include\pcl-1.6\pcl&quot;;&quot;$(FLANN_ROOT)/include&quot;;&quot;$(FLANN_ROOT)/include/flann/&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -79,7 +79,7 @@
 				Name="VCLinkerTool"
 				RegisterOutput="true"
 				IgnoreImportLibrary="true"
-				AdditionalDependencies="openNI.lib pcl_io.lib pcl_apps.lib pcl_common.lib"
+				AdditionalDependencies="openNI.lib pcl_io_debug.lib pcl_apps_debug.lib pcl_common_debug.lib pcl_features_debug.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(open_NI_LIB)&quot;;&quot;$(PCL_ROOT)/lib&quot;;&quot;$(PCL_ROOT)/3rdParty/Eigen/lib&quot;;&quot;$(PCL_ROOT)/3rdParty/Boost/lib&quot;"
 				ModuleDefinitionFile=".\ScanPerson.def"
@@ -233,7 +233,27 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\keyObserver.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\keyObserver.h"
+				>
+			</File>
+			<File
 				RelativePath=".\KinectControl.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="2"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\KinectControler.cpp"
 				>
 			</File>
 			<File
@@ -284,6 +304,10 @@
 			</File>
 			<File
 				RelativePath=".\KinectControl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\KinectControler.h"
 				>
 			</File>
 			<File

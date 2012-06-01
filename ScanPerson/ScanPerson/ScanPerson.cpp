@@ -10,6 +10,8 @@
 #include "globalVar.h"
 #include "QueryNode.h"
 
+
+
 // 用于确定 DLL 是否可由 OLE 卸载
 STDAPI DllCanUnloadNow(void)
 {
@@ -119,36 +121,41 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 	/* [in] */ BOOL Enabled,
 	/* [in] */ int ID,
 	/* [retval][out] */ int *pRetVal)
-{
-	
-
-
-	
-	EventOutSFNode* clr_dev1,*clr_dev2;
-	Node* img1,*img2;
+{	
+	EventOutSFNode* clr_dev1,*clr_dev2,*clr_dev3;
+	Node* img1,*img2,*img3;
 	QuerySFNode(pEventNode,_T("colorTexture_dev1"),IID_EventOutSFNode,&clr_dev1,&img1);
 	QuerySFNode(pEventNode,_T("colorTexture_dev2"),IID_EventOutSFNode,&clr_dev2,&img2);
+	QuerySFNode(pEventNode,_T("colorTexture_dev3"),IID_EventOutSFNode,&clr_dev3,&img3);
+
 	clr_dev1->Release();
 	clr_dev2->Release();
+	clr_dev3->Release();
 
-	EventOutSFNode *crd_dev1,*crd_dev2;
-	Node *crd1,*crd2;
+	EventOutSFNode *crd_dev1,*crd_dev2,*crd_dev3;
+	Node *crd1,*crd2,*crd3;
 	QuerySFNode(pEventNode,_T("coord_dev1"),IID_EventOutSFNode,&crd_dev1,&crd1);
 	QuerySFNode(pEventNode,_T("coord_dev2"),IID_EventOutSFNode,&crd_dev2,&crd2);
+	QuerySFNode(pEventNode,_T("coord_dev3"),IID_EventOutSFNode,&crd_dev3,&crd3);
+
 	crd_dev1->Release();
 	crd_dev2->Release();
+	crd_dev3->Release();
 
 	EventOutSFNode *faceSet;
 	Node* face;
 	QuerySFNode(pEventNode,_T("IndxFaceSet"),IID_EventOutSFNode,&faceSet,&face);
 	faceSet->Release();
 
-
 	EventOutSFNode* extra;
 	Node* ext;
 	QuerySFNode(pEventNode,_T("extra"),IID_EventOutSFNode,&extra,&ext);
+	extra->Release();
 
-	KinectInit(img1,img2,crd1,crd2,face,ext);
+	EventOutSFInt32* key;
+	QuerySFNode(pEventNode,_T("keyObserver"),IID_EventOutSFInt32,&key);
+
+	KinectInit(img1,img2,img3,crd1,crd2,crd3,face,ext,key);
 
 	*pRetVal=1;
 	return S_OK;
@@ -164,7 +171,7 @@ HRESULT STDMETHODCALLTYPE CScanPerson::Tick(
 							   /* [in] */ double SimTime,
 							   /* [in] */ double FrameRate) 
 {
-	UpdateImage();
+//	UpdateImage();
 	return S_OK;
 
 }
