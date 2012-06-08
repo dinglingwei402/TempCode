@@ -3,7 +3,6 @@
 #include "XnCppWrapper.h"
 #include "D3D9TYPES.h"
 #include "blaxxunVRML.h"
-#include "globalVar.h"
 #include "QueryNode.h"
 #include "pcl/io/pcd_io.h"
 #include "pcl/point_types.h"

@@ -241,19 +241,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\KinectControl.cpp"
+				RelativePath=".\KinectControler.cpp"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="2"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\KinectControler.cpp"
+				RelativePath=".\KinectData.cpp"
 				>
 			</File>
 			<File
@@ -262,10 +254,6 @@
 			</File>
 			<File
 				RelativePath=".\ScanPerson.def"
-				>
-			</File>
-			<File
-				RelativePath=".\ScanPerson.h"
 				>
 			</File>
 			<File
@@ -288,6 +276,10 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\VrmlData.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Í·ÎÄ¼þ"
@@ -299,19 +291,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\globalVar.h"
-				>
-			</File>
-			<File
-				RelativePath=".\KinectControl.h"
-				>
-			</File>
-			<File
 				RelativePath=".\KinectControler.h"
 				>
 			</File>
 			<File
-				RelativePath=".\PtCld.h"
+				RelativePath=".\KinectData.h"
 				>
 			</File>
 			<File
@@ -323,11 +307,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ScanPerson.h"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.h"
 				>
 			</File>
 			<File
 				RelativePath=".\targetver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\VrmlData.h"
 				>
 			</File>
 		</Filter>

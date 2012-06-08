@@ -2,45 +2,40 @@
 #include <XnStatus.h>
 #include <XnCppWrapper.h>
 #include "blaxxunVRML.h"
+#include "KinectData.h"
+#include "VrmlData.h"
 using namespace xn;
 
-typedef struct GeneratorsGroup
-{
-	char name[16];
-	XnUInt32 xres;
-	XnUInt32 yres;
-	Context contxt;
-	DepthGenerator	depGen;
-	ImageGenerator	imgGen;
-	UserGenerator	userGen;
-	SceneAnalyzer	scenGen;	
-	const XnDepthPixel* pDepthData;
-	const XnUInt8* pImageData;
-}GenGrp;
 
-class KinectData
-{
+
+
+class KinectControler{
 public:
-GenGrp* data;
-int devNum;
-NodeInfoList devicesList;
-KinectData();
-~KinectData();
-XnStatus checkSensors();
-void KinectInit();
-void checkDev();
+	KinectControler();
+	~KinectControler();
+	void setDevData(GenGrp* data);
+	void setVrmlData(VrmlData* data);
+	void  start();
+	void update();
+	void  close();
+private:
+	XnUInt32 _yStep;
+	XnUInt32 _xStep;
+	GenGrp* _devData;
+	VrmlData* _vrmlData;
+	
 };
+// use single kinect. 
+class SingleControler:public KinectControler{
+public:
+	SingleControler();
+	~SingleControler();
+	
+};
+// use three kinect with 120 deg's interval
+class ThreeDevControler:public KinectControler{
+public:
+	ThreeDevControler();
+	~ThreeDevControler();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+};

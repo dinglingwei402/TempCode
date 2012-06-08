@@ -1,15 +1,13 @@
 // ScanPerson.cpp : DLL 导出的实现。
-
-
 #include "stdafx.h"
 #include "resource.h"
 #include "ScanPerson_i.h"
 #include "dllmain.h"
-#include "KinectControl.h"
+#include "KinectControler.h"
 #include "blaxxunVRML.h"
-#include "globalVar.h"
 #include "QueryNode.h"
-
+#include "KinectData.h"
+#include "VrmlData.h"
 
 
 // 用于确定 DLL 是否可由 OLE 卸载
@@ -83,7 +81,7 @@ CScanPerson::CScanPerson()
 
 }
 CScanPerson::~CScanPerson(){
-	KinectClose();
+//	KinectClose();
 }
 
 
@@ -114,52 +112,7 @@ HRESULT STDMETHODCALLTYPE CScanPerson::Init(
 	return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor( 
-	/* [in] */ BSTR eventType,
-	/* [in] */ Node *pEventNode,
-	/* [in] */ EventInSFBool *pIsActive,
-	/* [in] */ BOOL Enabled,
-	/* [in] */ int ID,
-	/* [retval][out] */ int *pRetVal)
-{	
-	EventOutSFNode* clr_dev1,*clr_dev2,*clr_dev3;
-	Node* img1,*img2,*img3;
-	QuerySFNode(pEventNode,_T("colorTexture_dev1"),IID_EventOutSFNode,&clr_dev1,&img1);
-	QuerySFNode(pEventNode,_T("colorTexture_dev2"),IID_EventOutSFNode,&clr_dev2,&img2);
-	QuerySFNode(pEventNode,_T("colorTexture_dev3"),IID_EventOutSFNode,&clr_dev3,&img3);
 
-	clr_dev1->Release();
-	clr_dev2->Release();
-	clr_dev3->Release();
-
-	EventOutSFNode *crd_dev1,*crd_dev2,*crd_dev3;
-	Node *crd1,*crd2,*crd3;
-	QuerySFNode(pEventNode,_T("coord_dev1"),IID_EventOutSFNode,&crd_dev1,&crd1);
-	QuerySFNode(pEventNode,_T("coord_dev2"),IID_EventOutSFNode,&crd_dev2,&crd2);
-	QuerySFNode(pEventNode,_T("coord_dev3"),IID_EventOutSFNode,&crd_dev3,&crd3);
-
-	crd_dev1->Release();
-	crd_dev2->Release();
-	crd_dev3->Release();
-
-	EventOutSFNode *faceSet;
-	Node* face;
-	QuerySFNode(pEventNode,_T("IndxFaceSet"),IID_EventOutSFNode,&faceSet,&face);
-	faceSet->Release();
-
-	EventOutSFNode* extra;
-	Node* ext;
-	QuerySFNode(pEventNode,_T("extra"),IID_EventOutSFNode,&extra,&ext);
-	extra->Release();
-
-	EventOutSFInt32* key;
-	QuerySFNode(pEventNode,_T("keyObserver"),IID_EventOutSFInt32,&key);
-
-	KinectInit(img1,img2,img3,crd1,crd2,crd3,face,ext,key);
-
-	*pRetVal=1;
-	return S_OK;
-}
 
 HRESULT STDMETHODCALLTYPE CScanPerson::RemoveDeviceSensor( 
 	/* [in] */ int ID)
@@ -190,5 +143,52 @@ HRESULT STDMETHODCALLTYPE CScanPerson::FocusChanged(
 {
 *pNeedTickCalls=true;
 return S_OK;
+}
+
+
+HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor( 
+	/* [in] */ BSTR eventType,
+	/* [in] */ Node *pEventNode,
+	/* [in] */ EventInSFBool *pIsActive,
+	/* [in] */ BOOL Enabled,
+	/* [in] */ int ID,
+	/* [retval][out] */ int *pRetVal)
+{	
+	EventOutSFNode* clr_dev1,*clr_dev2,*clr_dev3;
+	QuerySFNode(pEventNode,_T("colorTexture_dev1"),IID_EventOutSFNode,&clr_dev1);
+	QuerySFNode(pEventNode,_T("colorTexture_dev2"),IID_EventOutSFNode,&clr_dev2);
+	QuerySFNode(pEventNode,_T("colorTexture_dev3"),IID_EventOutSFNode,&clr_dev3);
+
+	EventOutSFNode *crd_dev1,*crd_dev2,*crd_dev3;
+	QuerySFNode(pEventNode,_T("coord_dev1"),IID_EventOutSFNode,&crd_dev1);
+	QuerySFNode(pEventNode,_T("coord_dev2"),IID_EventOutSFNode,&crd_dev2);
+	QuerySFNode(pEventNode,_T("coord_dev3"),IID_EventOutSFNode,&crd_dev3);
+
+	EventOutSFNode *faceSet;
+	QuerySFNode(pEventNode,_T("IndxFaceSet"),IID_EventOutSFNode,&faceSet);
+
+	EventOutSFNode* extra;
+	QuerySFNode(pEventNode,_T("extra"),IID_EventOutSFNode,&extra);
+
+	EventOutSFInt32* key;
+	QuerySFNode(pEventNode,_T("keyObserver"),IID_EventOutSFInt32,&key);
+
+	VrmlData* vrmlData=new VrmlData();
+	vrmlData->setTexture1(clr_dev1);
+	vrmlData->setCoord1(crd_dev1);
+	vrmlData->setTexture1(clr_dev2);
+	vrmlData->setCoord1(crd_dev2);
+	vrmlData->setTexture1(clr_dev3);
+	vrmlData->setCoord1(crd_dev3);
+	
+	KinectData* devData=new KinectData();
+	int num=devData->getDevNum();
+	if(num>=1)devData->initData(1);
+	GenGrp* data=devData->getData();
+	SingleControler* single=new SingleControler();
+	single->setDevData(data);
+	single->update();
+	*pRetVal=1;
+	return S_OK;
 }
 
