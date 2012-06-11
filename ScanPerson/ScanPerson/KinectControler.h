@@ -7,30 +7,26 @@
 using namespace xn;
 
 
-
-
 class KinectControler{
 public:
 	KinectControler();
 	~KinectControler();
-	void setDevData(GenGrp* data);
-	void setVrmlData(VrmlData* data);
+	virtual void setDevData(GenGrp* data);
+	virtual void setVrmlData(VrmlData* data);
 	void  start();
-	void update();
+	virtual int update();
 	void  close();
-private:
 	XnUInt32 _yStep;
 	XnUInt32 _xStep;
 	GenGrp* _devData;
 	VrmlData* _vrmlData;
-	
 };
 // use single kinect. 
 class SingleControler:public KinectControler{
 public:
 	SingleControler();
 	~SingleControler();
-	
+	int update();
 };
 // use three kinect with 120 deg's interval
 class ThreeDevControler:public KinectControler{
