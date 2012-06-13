@@ -185,9 +185,9 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 	int num=devData->getDevNum();
 	if(num>=1)devData->initData(1);
 	GenGrp* data=devData->getData();
-	SingleControler* single=new					SingleControler();
-	single->setDevData(data);
-	single->setVrmlData(vrmlData);
+	SingleControler* single=new	SingleControler();
+	single->setDevData(*devData);
+	single->setVrmlData(*vrmlData);
 	single->update();
 	*pRetVal=1;
 	return S_OK;
