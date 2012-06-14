@@ -21,22 +21,36 @@ typedef struct GeneratorsGroup
 }GenGrp;
 #endif
 
+#ifndef enum_init_status
+#define  enum_init_status
+	enum initStatus{success=1,fail};
+#endif
+
+#ifndef CHECK_RC(rc, what)
+	#define CHECK_RC(rc, what)  \
+	if (rc != XN_STATUS_OK)	    \
+	{					        \
+		printf("%s failed: %s\n", what, xnGetStatusString(rc));	\
+		return rc;					\
+	}
+#endif
+
+
 class KinectData
 {
 public:
 KinectData();
 ~KinectData();
-XnStatus initData(int num);
-GenGrp* getData();
-int getDevNum();
-//void KinectInit();
+initStatus initData();
+GenGrp* getData()const{return _data;};
+inline int getDevNum()const{return _devNum;};
 
 private:
 	xn::Context _context;
 	GenGrp* _data;
 	int _devNum;
-	int _takeDevNum;
 	NodeInfoList* _devicesList;
 	XnStatus checkDev();
+	initStatus ini_stus;
 };
 

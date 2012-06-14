@@ -257,6 +257,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SingleControler.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -308,6 +312,10 @@
 			</File>
 			<File
 				RelativePath=".\ScanPerson.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SingleControler.h"
 				>
 			</File>
 			<File

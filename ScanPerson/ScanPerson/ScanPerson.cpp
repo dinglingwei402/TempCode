@@ -8,6 +8,7 @@
 #include "QueryNode.h"
 #include "KinectData.h"
 #include "VrmlData.h"
+#include "SingleControler.h"
 
 
 // 用于确定 DLL 是否可由 OLE 卸载
@@ -180,15 +181,16 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 	vrmlData->setCoord1(crd_dev2);
 	vrmlData->setTexture1(clr_dev3);
 	vrmlData->setCoord1(crd_dev3);
-	
 	KinectData* devData=new KinectData();
 	int num=devData->getDevNum();
-	if(num>=1)devData->initData(1);
-	GenGrp* data=devData->getData();
-	SingleControler* single=new	SingleControler();
-	single->setDevData(*devData);
-	single->setVrmlData(*vrmlData);
-	single->update();
+	initStatus ini=devData->initData();
+	if(ini!=initStatus::success)
+	{
+		delete devData;
+		delete vrmlData;
+		return S_FALSE;
+	}
+	SingleControler* single=new	SingleControler(*vrmlData,*devData);
 	*pRetVal=1;
 	return S_OK;
 }

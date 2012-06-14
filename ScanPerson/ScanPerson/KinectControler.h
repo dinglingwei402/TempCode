@@ -6,30 +6,28 @@
 #include "VrmlData.h"
 using namespace xn;
 
-enum initStatus{success=1,fail};
 class KinectControler{
 public:
-
-	KinectControler();
+	KinectControler::KinectControler(const VrmlData& v_data,const KinectData& k_data,int x_step,int y_step);
 	~KinectControler();
 	KinectControler(int x_step,int y_step);
-
-	void setDevData(const KinectData& data)const;
-	void setVrmlData(const VrmlData& data)const;
+	const KinectData& getDevData()const;
+	const VrmlData& getVrmlData()const;
 	XnUInt32 getXStep()const;
 	XnUInt32 getYStep()const;
-	void  start();
+	virtual void  start();
 	virtual int update();
-	virtual XnStatus init();
-	void  close();
+	virtual initStatus init();
+	virtual void  close();
 protected:
-	XnUInt32 blockSize;
+	/*XnUInt32 blockSize;
 	XnPoint3D* depthPts;
-	XnPoint3D* clorPts;
-	initStatus ini_stus;
+	XnPoint3D* clorPts;*/
+	initStatus ini_stus;	
+	const KinectData& _devData;
+	const VrmlData& _vrmlData;
 private:	
-	KinectData* _devData;
-	VrmlData* _vrmlData;
+
 	XnUInt32 _yStep;
 	XnUInt32 _xStep;
 };

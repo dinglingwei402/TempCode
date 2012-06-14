@@ -3,42 +3,41 @@
 #include "KinectControler.h"
 using namespace xn;
 
-KinectControler::KinectControler():_xStep(1),_yStep(1),blockSize(0){
+KinectControler::KinectControler(const VrmlData& v_data,const KinectData& k_data,int x_step,int y_step):_vrmlData(v_data),_devData(k_data),_xStep(x_step),_yStep(y_step),ini_stus(initStatus::fail){}
 
-}
-KinectControler::KinectControler(int x_step,int y_step):_xStep(x_step),_yStep(y_step),blockSize(0){
-	if(!_xStep){
-		_xStep=1;
-	}
-	if (_yStep)
-	{
-		_yStep=1;
-	}
-}
+KinectControler::~KinectControler(){}
 
-
-
-KinectControler::~KinectControler(){
-
-}
-
-int KinectControler::update(){return 0;}
-
-void KinectControler::setDevData(const KinectData& data)const
+initStatus KinectControler::init()
 {
-	this->_devData=&data;
+	this->ini_stus=success;
+	return ini_stus;
 }
 
-void KinectControler::setVrmlData(const VrmlData& data)const
+int KinectControler::update()
 {
-	this->_vrmlData=&data;
+	return 0;
 }
+
+const KinectData& KinectControler::getDevData()const
+{
+	return this->_devData;
+}
+
+const VrmlData& KinectControler::getVrmlData()const
+{
+	return this->_vrmlData;
+}
+
 XnUInt32 KinectControler::getXStep()const
 {
 	return this->_xStep;
 }
+
 XnUInt32 KinectControler::getYStep()const
 {
 	return this->_yStep;
 }
+
+void KinectControler::start(){}
+void KinectControler::close(){}
 
