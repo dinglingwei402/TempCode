@@ -10,5 +10,7 @@ private:
 	int sub_x;
 	int sub_y;
 	int blockSize;
+	const XnDepthPixel* depPix;
+	const XnUInt8* imgPix;	
 	initStatus init();
 };

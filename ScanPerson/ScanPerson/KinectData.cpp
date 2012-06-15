@@ -78,8 +78,8 @@ initStatus KinectData::initData(){
 		_data[i].pDepthData=depMD.Data();
 		_data[i].pImageData=imgMD.Data();
 	}
-	this->ini_stus=initStatus::fail;
-	return initStatus::success;
+	this->ini_stus=initStatus::success;
+	return this->ini_stus;
 }
 
 
