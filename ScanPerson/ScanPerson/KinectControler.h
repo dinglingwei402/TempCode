@@ -10,7 +10,6 @@ class KinectControler{
 public:
 	KinectControler::KinectControler(const VrmlData& v_data,const KinectData& k_data,int x_step,int y_step);
 	~KinectControler();
-	KinectControler(int x_step,int y_step);
 	const KinectData& getDevData()const;
 	const VrmlData& getVrmlData()const;
 	XnUInt32 getXStep()const;

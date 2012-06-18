@@ -10,6 +10,8 @@ private:
 	int sub_x;
 	int sub_y;
 	int blockSize;
+	XnDepthPixel** depthPts;
+	XnUInt8** clorPts;
 	const XnDepthPixel* depPix;
 	const XnUInt8* imgPix;	
 	initStatus init();
