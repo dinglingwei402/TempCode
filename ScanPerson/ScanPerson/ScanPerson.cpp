@@ -10,9 +10,10 @@
 #include "VrmlData.h"
 #include "SingleControler.h"
 
-typedef int tic_fun(void);
+/*typedef int tic_fun(void);
 
-tic_fun callback_fun; 
+tic_fun callback_fun;*/ 
+KinectControler* controler=NULL;
 
 // 用于确定 DLL 是否可由 OLE 卸载
 STDAPI DllCanUnloadNow(void)
@@ -128,8 +129,10 @@ HRESULT STDMETHODCALLTYPE CScanPerson::Tick(
 							   /* [in] */ double SimTime,
 							   /* [in] */ double FrameRate) 
 {
-//	UpdateImage();
-	callback_fun();
+if (controler!=NULL)
+{
+	controler->update();
+}
 	return S_OK;
 
 }
@@ -195,7 +198,8 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 		return S_FALSE;
 	}
 	SingleControler* single=new	SingleControler(*vrmlData,*devData);
-	callback_fun=single->update;
+	controler=single;
+	controler->start();
 	*pRetVal=1;
 	return S_OK;
 }
