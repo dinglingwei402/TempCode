@@ -162,7 +162,46 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 	/* [in] */ int ID,
 	/* [retval][out] */ int *pRetVal)
 {	
-	EventOutSFNode* clr_dev1,*clr_dev2,*clr_dev3;
+	KinectData* devData=new KinectData();
+	VrmlData* vrmlData=new VrmlData();
+	int num=devData->getDevNum();
+	initStatus ini=devData->initData();
+	if(ini!=initStatus::success)
+	{
+		delete devData;
+		delete vrmlData;
+		return S_FALSE;
+	}
+	EventOutMFNode* children;
+	QueryMFNode(pEventNode,_T("children"),IID_EventOutMFNode,&children);
+	int chld_cnt;
+	children->getSize(&chld_cnt);
+	Node* child1;
+	EventOutSFVec3f* pos_head;
+	children->get1Value(0,&child1);
+	DeepQueryNode(child1,_T("ttst"),IID_EventOutSFVec3f,&pos_head);
+	float ffff[3];
+	pos_head->getValue(ffff);
+	Node* subNode;
+	children->get1Value(0,&subNode);
+	EventInMFVec3f *crd_dev1;
+	QueryMFNode(subNode,_T("coord_dev"),IID_EventInMFVec3f,&crd_dev1);
+	EventInMFColor* clr_dev1;
+
+	float* vecarr=new float[9];
+	vecarr[0]=0;
+	vecarr[1]=1;
+	vecarr[2]=2;
+	vecarr[3]=3;
+	vecarr[4]=4;
+	vecarr[5]=5;
+	vecarr[6]=6;
+	vecarr[7]=7;
+	vecarr[8]=8;
+	crd_dev1->setValue(9,vecarr);
+
+	/*EventOutSFNode* c
+	lr_dev1,*clr_dev2,*clr_dev3;
 	QuerySFNode(pEventNode,_T("colorTexture_dev1"),IID_EventOutSFNode,&clr_dev1);
 	QuerySFNode(pEventNode,_T("colorTexture_dev2"),IID_EventOutSFNode,&clr_dev2);
 	QuerySFNode(pEventNode,_T("colorTexture_dev3"),IID_EventOutSFNode,&clr_dev3);
@@ -187,16 +226,7 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 	vrmlData->setTexture1(clr_dev2);
 	vrmlData->setCoord1(crd_dev2);
 	vrmlData->setTexture1(clr_dev3);
-	vrmlData->setCoord1(crd_dev3);
-	KinectData* devData=new KinectData();
-	int num=devData->getDevNum();
-	initStatus ini=devData->initData();
-	if(ini!=initStatus::success)
-	{
-		delete devData;
-		delete vrmlData;
-		return S_FALSE;
-	}
+	vrmlData->setCoord1(crd_dev3);*/
 	SingleControler* single=new	SingleControler(*vrmlData,*devData);
 	controler=single;
 	controler->start();

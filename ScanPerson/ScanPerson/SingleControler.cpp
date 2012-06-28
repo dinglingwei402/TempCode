@@ -50,9 +50,8 @@ initStatus SingleControler::init(){
 				len++;
 			}
 		}	
-	Node* dev_clr;
-	getVrmlData().setTexture1(clorPts);
-	dev_clr->getEventIn()
+	//getVrmlData().setTexture1(clorPts);
+	}
 	return this->ini_stus;
 }
 

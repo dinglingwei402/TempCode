@@ -6,7 +6,7 @@ HRESULT QuerySFNode(Node* root,BSTR name,const IID type_ID,/*out*/EVT_TYP** resu
 	HRESULT hr=S_OK;
 	Field* fld;
 	hr=root->getField(name,&fld);
-	if (FAILED(hr))return hr;
+	if (FAILED(hr)||fld==NULL)return E_NOINTERFACE;
 	hr=fld->QueryInterface(type_ID,(void**)result);
 	if (FAILED(hr)){
 		fld->Release();
@@ -105,5 +105,35 @@ HRESULT QueryMFNode(Node* root,BSTR name,const IID type_ID,/*out*/EVT_TYP** resu
 	hr=out->QueryInterface(type_ID,(void**)result);
 	out->Release();
 	out=NULL;
+	return hr;
+}
+template<typename EVT_TYP>
+HRESULT DeepQueryNode(Node*root,BSTR name,const IID type_ID,/*out*/EVT_TYP** result){
+	HRESULT hr=S_OK;
+	hr=QuerySFNode(root,name,type_ID,result);	
+	if(FAILED(hr)){
+		int ele_num=0;
+		root->getNumInterfaceElements(&ele_num);
+		for (int i=0;i<ele_num;i++)
+		{
+			int ele_type=0;
+			int fld_type=0;
+			BSTR ele_name;
+			root->getInterfaceElement(i,&ele_type,&fld_type,&ele_name);
+			if(fld_type==10){
+				EventOutSFNode* subEvent=NULL;
+				Node* subNode=NULL;
+				hr=QuerySFNode(root,ele_name,IID_EventOutSFNode,&subEvent,&subNode);
+				if(subEvent!=NULL)subEvent->Release();
+				if(subNode){		
+					hr=DeepQueryNode(subNode,name,type_ID,result);
+					if (SUCCEEDED(hr))
+					{
+						return hr;
+					}
+				}
+			}
+		}
+	}
 	return hr;
 }
