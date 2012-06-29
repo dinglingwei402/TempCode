@@ -24,6 +24,7 @@ initStatus SingleControler::init(){
 		imgPix=getDevData().getData()[0].pImageData;
 		sub_x=(int)(getDevData().getData()[0].xres/getXStep());
 		sub_y=(int)(getDevData().getData()[0].yres/getYStep());
+
 		blockSize=sub_x*sub_y;
 		if (blockSize==0)
 		{

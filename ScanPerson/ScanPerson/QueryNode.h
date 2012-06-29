@@ -56,7 +56,7 @@ HRESULT QueryMFNode(Node* root,BSTR name,const IID type_ID,/*out*/EVT_TYP** resu
 	EventOut* out;
 	hr=root->getEventOut(name,&out);
 	if(!out){
-		return E_FAIL;
+		return E_NOINTERFACE;
 	}
 	if (FAILED(hr)){
 		out->Release();
@@ -85,8 +85,9 @@ HRESULT QueryMFNode(EventOut* evtOut,BSTR name,const IID type_ID,/*out*/EVT_TYP*
 	HRESULT hr=S_OK;
 	Node* root;
 	evtOut->getValue(root);
-	QueryMFNode(root,name,type_ID,result,vlu);
+	hr=QueryMFNode(root,name,type_ID,result,vlu);
 	root->Release();
+	root=NULL;
 	return hr;
 }
 template <typename EVT_TYP>
@@ -107,6 +108,7 @@ HRESULT QueryMFNode(Node* root,BSTR name,const IID type_ID,/*out*/EVT_TYP** resu
 	out=NULL;
 	return hr;
 }
+//recurrence 
 template<typename EVT_TYP>
 HRESULT DeepQueryNode(Node*root,BSTR name,const IID type_ID,/*out*/EVT_TYP** result){
 	HRESULT hr=S_OK;
@@ -120,17 +122,21 @@ HRESULT DeepQueryNode(Node*root,BSTR name,const IID type_ID,/*out*/EVT_TYP** res
 			int fld_type=0;
 			BSTR ele_name;
 			root->getInterfaceElement(i,&ele_type,&fld_type,&ele_name);
-			if(fld_type==10){
+			if(fld_type==FieldTypes::SFNODE){
 				EventOutSFNode* subEvent=NULL;
 				Node* subNode=NULL;
 				hr=QuerySFNode(root,ele_name,IID_EventOutSFNode,&subEvent,&subNode);
-				if(subEvent!=NULL)subEvent->Release();
+				if(subEvent!=NULL){
+					subEvent->Release();
+					subEvent=NULL;
+				}
 				if(subNode){		
 					hr=DeepQueryNode(subNode,name,type_ID,result);
-					if (SUCCEEDED(hr))
-					{
-						return hr;
-					}
+					subNode->Release();
+					subNode=NULL;
+					if (SUCCEEDED(hr))break;
+				}else{
+					hr=E_NOINTERFACE;
 				}
 			}
 		}

@@ -176,30 +176,18 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 	QueryMFNode(pEventNode,_T("children"),IID_EventOutMFNode,&children);
 	int chld_cnt;
 	children->getSize(&chld_cnt);
-	Node* child1;
-	EventOutSFVec3f* pos_head;
-	children->get1Value(0,&child1);
-	DeepQueryNode(child1,_T("ttst"),IID_EventOutSFVec3f,&pos_head);
-	float ffff[3];
-	pos_head->getValue(ffff);
+
 	Node* subNode;
 	children->get1Value(0,&subNode);
-	EventInMFVec3f *crd_dev1;
-	QueryMFNode(subNode,_T("coord_dev"),IID_EventInMFVec3f,&crd_dev1);
-	EventInMFColor* clr_dev1;
-
-	float* vecarr=new float[9];
-	vecarr[0]=0;
-	vecarr[1]=1;
-	vecarr[2]=2;
-	vecarr[3]=3;
-	vecarr[4]=4;
-	vecarr[5]=5;
-	vecarr[6]=6;
-	vecarr[7]=7;
-	vecarr[8]=8;
-	crd_dev1->setValue(9,vecarr);
-
+	for(int k=0;k<1000;k++){
+		EventOutSFVec3f* rslt;
+		DeepQueryNode(subNode,_T("ttt"),IID_EventOutSFVec3f,&rslt);
+		rslt->Release();
+		rslt=NULL;
+	}
+	
+	
+	
 	/*EventOutSFNode* c
 	lr_dev1,*clr_dev2,*clr_dev3;
 	QuerySFNode(pEventNode,_T("colorTexture_dev1"),IID_EventOutSFNode,&clr_dev1);
