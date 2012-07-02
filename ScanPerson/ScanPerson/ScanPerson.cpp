@@ -18,22 +18,22 @@ KinectControler* controler=NULL;
 // 用于确定 DLL 是否可由 OLE 卸载
 STDAPI DllCanUnloadNow(void)
 {
-    return _AtlModule.DllCanUnloadNow();
+	return _AtlModule.DllCanUnloadNow();
 }
 
 
 // 返回一个类工厂以创建所请求类型的对象
 STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID* ppv)
 {
-    return _AtlModule.DllGetClassObject(rclsid, riid, ppv);
+	return _AtlModule.DllGetClassObject(rclsid, riid, ppv);
 }
 
 
 // DllRegisterServer - 将项添加到系统注册表
 STDAPI DllRegisterServer(void)
 {
-    // 注册对象、类型库和类型库中的所有接口
-    HRESULT hr = _AtlModule.DllRegisterServer();
+	// 注册对象、类型库和类型库中的所有接口
+	HRESULT hr = _AtlModule.DllRegisterServer();
 	return hr;
 }
 
@@ -49,31 +49,31 @@ STDAPI DllUnregisterServer(void)
 //              项。	
 STDAPI DllInstall(BOOL bInstall, LPCWSTR pszCmdLine)
 {
-    HRESULT hr = E_FAIL;
-    static const wchar_t szUserSwitch[] = _T("user");
+	HRESULT hr = E_FAIL;
+	static const wchar_t szUserSwitch[] = _T("user");
 
-    if (pszCmdLine != NULL)
-    {
-    	if (_wcsnicmp(pszCmdLine, szUserSwitch, _countof(szUserSwitch)) == 0)
-    	{
-    		AtlSetPerUserRegistration(true);
-    	}
-    }
+	if (pszCmdLine != NULL)
+	{
+		if (_wcsnicmp(pszCmdLine, szUserSwitch, _countof(szUserSwitch)) == 0)
+		{
+			AtlSetPerUserRegistration(true);
+		}
+	}
 
-    if (bInstall)
-    {	
-    	hr = DllRegisterServer();
-    	if (FAILED(hr))
-    	{	
-    		DllUnregisterServer();
-    	}
-    }
-    else
-    {
-    	hr = DllUnregisterServer();
-    }
+	if (bInstall)
+	{	
+		hr = DllRegisterServer();
+		if (FAILED(hr))
+		{	
+			DllUnregisterServer();
+		}
+	}
+	else
+	{
+		hr = DllUnregisterServer();
+	}
 
-    return hr;
+	return hr;
 }
 
 // ScanPerson.cpp : CScanPerson 的实现
@@ -86,7 +86,7 @@ CScanPerson::CScanPerson()
 
 }
 CScanPerson::~CScanPerson(){
-//	KinectClose();
+	//	KinectClose();
 }
 
 
@@ -106,10 +106,10 @@ STDMETHODIMP CScanPerson::InterfaceSupportsErrorInfo(REFIID riid)
 
 
 HRESULT STDMETHODCALLTYPE CScanPerson::Init( 
-							   /* [in] */ BSTR Device,
-							   /* [in] */ int DeviceNo,
-							   /* [in] */ Browser *pBrowser,
-							   /* [retval][out] */ int *pDeviceNoUsed)
+	/* [in] */ BSTR Device,
+	/* [in] */ int DeviceNo,
+	/* [in] */ Browser *pBrowser,
+	/* [retval][out] */ int *pDeviceNoUsed)
 {
 	int i=1;
 	DeviceNo=1;
@@ -126,13 +126,13 @@ HRESULT STDMETHODCALLTYPE CScanPerson::RemoveDeviceSensor(
 }
 
 HRESULT STDMETHODCALLTYPE CScanPerson::Tick( 
-							   /* [in] */ double SimTime,
-							   /* [in] */ double FrameRate) 
+	/* [in] */ double SimTime,
+	/* [in] */ double FrameRate) 
 {
-if (controler!=NULL)
-{
-	controler->update();
-}
+	if (controler!=NULL)
+	{
+		controler->update();
+	}
 	return S_OK;
 
 }
@@ -142,15 +142,15 @@ HRESULT STDMETHODCALLTYPE CScanPerson::EnabledChanged(
 	BOOL Enabled,
 	/* [retval][out] */ BOOL *pSetIsActive)
 {
-return S_OK;
+	return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE CScanPerson::FocusChanged( 
-									   /* [in] */ BOOL HasFocusNow,
-									   /* [retval][out] */ BOOL *pNeedTickCalls)
+	/* [in] */ BOOL HasFocusNow,
+	/* [retval][out] */ BOOL *pNeedTickCalls)
 {
-*pNeedTickCalls=true;
-return S_OK;
+	*pNeedTickCalls=true;
+	return S_OK;
 }
 
 
@@ -163,61 +163,39 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 	/* [retval][out] */ int *pRetVal)
 {	
 	KinectData* devData=new KinectData();
-	VrmlData* vrmlData=new VrmlData();
+	Vrml_PROTO_KinectDev* kd=new Vrml_PROTO_KinectDev();
 	int num=devData->getDevNum();
 	initStatus ini=devData->initData();
+	EventOutMFNode* children;
+	QueryMFNode(pEventNode,_T("children"),IID_EventOutMFNode,&children);
+	EventOutSFBool* useSgl;
+	QuerySFNode(pEventNode,_T("useSingleDev"),IID_EventOutSFBool,&useSgl);
+	EventOutSFNode* faces;
+	QuerySFNode(pEventNode,_T("IndxFaceSet"),IID_EventOutSFNode,&faces);
+	kd.setChildren(children);
+	kd.setIndxFaceSet(faces);
+	kd.setUseSingleDev(useSgl);
+	VARIANT_BOOL b;
+	useSgl->getValue(&b);
+	if(num==1){
+		SingleControler* single=new	SingleControler(*kd,*devData);
+		controler=single;
+		controler->start();
+	}else if(num>1&&(!b)){}
+	/*int chld_cnt;
+	children->getSize(&chld_cnt); 
+	Node* subNode;
+	children->get1Value(0,&subNode);
+	EventInMFVec3f* crd;
+	QueryMFNode(subNode,_T("coord"),IID_EventInMFVec3f,&crd);
+	vrmlData->setCoord(crd);
+	EventInMFColor* clr;
+	QueryMFNode(subNode,_T("color"),IID_EventInMFColor,&clr);*/
 	if(ini!=initStatus::success)
 	{
 		delete devData;
-		delete vrmlData;
 		return S_FALSE;
 	}
-	EventOutMFNode* children;
-	QueryMFNode(pEventNode,_T("children"),IID_EventOutMFNode,&children);
-	int chld_cnt;
-	children->getSize(&chld_cnt);
-
-	Node* subNode;
-	children->get1Value(0,&subNode);
-	for(int k=0;k<1000;k++){
-		EventOutSFVec3f* rslt;
-		DeepQueryNode(subNode,_T("ttt"),IID_EventOutSFVec3f,&rslt);
-		rslt->Release();
-		rslt=NULL;
-	}
-	
-	
-	
-	/*EventOutSFNode* c
-	lr_dev1,*clr_dev2,*clr_dev3;
-	QuerySFNode(pEventNode,_T("colorTexture_dev1"),IID_EventOutSFNode,&clr_dev1);
-	QuerySFNode(pEventNode,_T("colorTexture_dev2"),IID_EventOutSFNode,&clr_dev2);
-	QuerySFNode(pEventNode,_T("colorTexture_dev3"),IID_EventOutSFNode,&clr_dev3);
-
-	EventOutSFNode *crd_dev1,*crd_dev2,*crd_dev3;
-	QuerySFNode(pEventNode,_T("coord_dev1"),IID_EventOutSFNode,&crd_dev1);
-	QuerySFNode(pEventNode,_T("coord_dev2"),IID_EventOutSFNode,&crd_dev2);
-	QuerySFNode(pEventNode,_T("coord_dev3"),IID_EventOutSFNode,&crd_dev3);
-
-	EventOutSFNode *faceSet;
-	QuerySFNode(pEventNode,_T("IndxFaceSet"),IID_EventOutSFNode,&faceSet);
-
-	EventOutSFNode* extra;
-	QuerySFNode(pEventNode,_T("extra"),IID_EventOutSFNode,&extra);
-
-	EventOutSFInt32* key;
-	QuerySFNode(pEventNode,_T("keyObserver"),IID_EventOutSFInt32,&key);
-
-	VrmlData* vrmlData=new VrmlData();
-	vrmlData->setTexture1(clr_dev1);
-	vrmlData->setCoord1(crd_dev1);
-	vrmlData->setTexture1(clr_dev2);
-	vrmlData->setCoord1(crd_dev2);
-	vrmlData->setTexture1(clr_dev3);
-	vrmlData->setCoord1(crd_dev3);*/
-	SingleControler* single=new	SingleControler(*vrmlData,*devData);
-	controler=single;
-	controler->start();
 	*pRetVal=1;
 	return S_OK;
 }

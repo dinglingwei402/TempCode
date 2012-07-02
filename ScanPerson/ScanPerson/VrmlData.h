@@ -1,40 +1,66 @@
 #pragma once
 #include "blaxxunVRML.h"
 
-class VrmlData
+class Vrml_PROTO_KinectDev{
+	Vrml_PROTO_KinectDev();
+	~Vrml_PROTO_KinectDev();
+	void setUseSingleDev(EventOutSFBool* b){this->useSingleDev=b;};
+	void setIndxFaceSet(EventOutSFNode* faces){this->IndxFaceSet=faces;};
+	void setChildren(EventOutMFNode* chr){
+		this->children=chr;
+	};
+	EventOutSFBool* getUseSingleDev(){
+		return this->useSingleDev;
+	};
+	EventOutMFNode* getChildren(){
+		return this->children;
+	};
+	EventOutSFNode* getIndxFaceSet(){
+		return this->IndxFaceSet;
+	};
+private:
+	EventOutSFBool* useSingleDev;
+	EventOutMFNode* children;
+	EventOutSFNode* IndxFaceSet;
+};
+
+
+class Vrml_PROTO_KinectData
 {
 public:
-	VrmlData(void);
-	~VrmlData(void);
-	void setUseSigleDev(EventOutSFBool* b){useSingleDev=b;}
-	void setFloor(EventOutSFNode* node){floor=node;};
+	Vrml_PROTO_KinectData(void);
+	~Vrml_PROTO_KinectData(void);
+	void setDevId(EventInSFString* id){this->devId=id;};
+	void setHandsId(EventInMFInt32* ids){this->handsId=ids;};
+	void setUsersId(EventInMFInt32* ids){this->usersId=ids;};
+	void setCoord(EventInMFVec3f* crd){this->coord=crd;};
+	void setColor(EventInMFColor* clr){this->color=clr;};
+//#### #### #### #### #### #### #### ####
+	void setFloor(EventOutSFNode* flr){this->floor=flr;};
 	void setUser(EventOutMFNode* user){this->users=user;};
 	void setHands(EventOutMFNode* hand){this->hands=hand;};
-	void setTexture1(EventOutSFNode* tex1)
+	void setImgBuf(EventOutSFNode* tex)
 	{
 		Node* add;
-		this->colorTexture_dev1->getValue(&add);
-		this->colorTexture_dev1=tex1;
+		this->imgBuf->getValue(&add);
+		this->imgBuf=tex;
 	};
-	void setTexture2(EventOutSFNode* tex2){this->colorTexture_dev2=tex2;};
-	void setTexture3(EventOutSFNode* tex3){this->colorTexture_dev3=tex3;};
-	void setCoord1(EventOutSFNode* coord1){this->coord_dev1=coord1;};
-	void setCoord2(EventOutSFNode* coord2){this->coord_dev2=coord2;};
-	void setCoord3(EventOutSFNode* coord3){this->coord_dev3=coord3;};
-
+	void setDptBuf(EventOutSFNode* tex)
+	{
+		Node* add;
+		this->dptBuf->getValue(&add);
+		this->dptBuf=tex;
+	};
 private:
-	EventOutSFBool*  useSingleDev;
-	EventOutSFNode*  floor;
+	EventInSFString* devId;
+	EventInMFInt32* handsId;
+	EventInMFInt32* usersId;
+	EventInMFVec3f* coord;
+	EventInMFColor* color;
+//#### #### #### #### #### #### #### ####
+	EventOutSFNode*	imgBuf;
+	EventOutSFNode*	dptBuf;
+	EventOutSFNode*	floor;
 	EventOutMFNode*	users;
 	EventOutMFNode*	hands;
-	EventOutMFInt32*	handsId;
-	EventOutMFInt32*	usersId;
-	EventOutSFNode*  colorTexture_dev1;
-	EventOutSFNode*  colorTexture_dev2;
-	EventOutSFNode*  colorTexture_dev3;
-	EventOutSFNode*  coord_dev1;
-	EventOutSFNode*  coord_dev2;
-	EventOutSFNode*  coord_dev3;
-	EventOutSFNode*  IndxFaceSet;
-	EventOutSFNode*	extra;
 };

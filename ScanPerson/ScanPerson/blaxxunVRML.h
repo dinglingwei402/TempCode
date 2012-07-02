@@ -8821,7 +8821,7 @@ EXTERN_C const IID IID_IBufferTexture;
     ( (This)->lpVtbl -> getStatus(This,status) ) 
 
 #define IBufferTexture_setTexture(This,level,cnt,pixels,stride)	\
-    ( (This)->lpVtbl -> setTexture(This,level,cnt,pixels,stride) ) 
+    ( (This)->lpVtbl -> setImgBuf(This,level,cnt,pixels,stride) ) 
 
 #define IBufferTexture_setTextureEx(This,width,height,level,format,cnt,pixels,stride)	\
     ( (This)->lpVtbl -> setTextureEx(This,width,height,level,format,cnt,pixels,stride) ) 

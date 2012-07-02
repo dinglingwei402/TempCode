@@ -8,10 +8,10 @@ using namespace xn;
 
 class KinectControler{
 public:
-	KinectControler::KinectControler(const VrmlData& v_data,const KinectData& k_data,int x_step,int y_step);
+	KinectControler::KinectControler(const Vrml_PROTO_KinectDev& v_data,const KinectData& k_data,int x_step,int y_step);
 	~KinectControler();
 	const KinectData& getDevData()const;
-	const VrmlData& getVrmlData()const;
+	const Vrml_PROTO_KinectDev& getVrmlData()const;
 	XnUInt32 getXStep()const;
 	XnUInt32 getYStep()const;
 	virtual void  start();
@@ -24,9 +24,7 @@ protected:
 	XnPoint3D* clorPts;*/
 	initStatus ini_stus;	
 	const KinectData& _devData;
-	const VrmlData& _vrmlData;
+	const Vrml_PROTO_KinectDev& _vrmlData;
 private:	
-
-	XnUInt32 _yStep;
 	XnUInt32 _xStep;
 };
