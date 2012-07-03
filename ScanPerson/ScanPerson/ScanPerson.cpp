@@ -172,16 +172,19 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 	QuerySFNode(pEventNode,_T("useSingleDev"),IID_EventOutSFBool,&useSgl);
 	EventOutSFNode* faces;
 	QuerySFNode(pEventNode,_T("IndxFaceSet"),IID_EventOutSFNode,&faces);
-	kd.setChildren(children);
-	kd.setIndxFaceSet(faces);
-	kd.setUseSingleDev(useSgl);
+	kd->setChildren(children);
+	kd->setIndxFaceSet(faces);
+	kd->setUseSingleDev(useSgl);
 	VARIANT_BOOL b;
 	useSgl->getValue(&b);
 	if(num==1){
 		SingleControler* single=new	SingleControler(*kd,*devData);
 		controler=single;
 		controler->start();
-	}else if(num>1&&(!b)){}
+		
+	}else if(num>1&&(!b)){
+		//TODO:MULTIControler
+	}
 	/*int chld_cnt;
 	children->getSize(&chld_cnt); 
 	Node* subNode;

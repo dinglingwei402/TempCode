@@ -12,9 +12,11 @@ private:
 	int sub_x;
 	int sub_y;
 	int blockSize;
-	XnDepthPixel* depthPts;
-	XnUInt8* clorPts;
+	XnFloat* depthPts;
+	XnFloat* clorPts;
+	Vrml_PROTO_KinectData* data1;
 	const XnDepthPixel* depPix;
 	const XnUInt8* imgPix;	
+private:
 	initStatus init();
 };

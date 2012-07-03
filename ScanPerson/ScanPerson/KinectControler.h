@@ -27,4 +27,5 @@ protected:
 	const Vrml_PROTO_KinectDev& _vrmlData;
 private:	
 	XnUInt32 _xStep;
+	XnUInt32 _yStep;
 };

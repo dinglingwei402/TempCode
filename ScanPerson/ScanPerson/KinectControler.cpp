@@ -3,7 +3,7 @@
 #include "KinectControler.h"
 using namespace xn;
 
-KinectControler::KinectControler(const Vrml_PROTO_KinectDev& v_data,const KinectData& k_data,int x_step,int y_step):_vrmlData(v_data),_devData(k_data),_xStep(x_step),_yStep(y_step),ini_stus(initStatus::fail){}
+KinectControler::KinectControler(const Vrml_PROTO_KinectDev& v_data,const KinectData& k_data,int x_step,int y_step):_vrmlData(v_data),_devData(k_data),_xStep(x_step),_yStep(y_step),ini_stus(fail){}
 
 KinectControler::~KinectControler(){}
 
@@ -23,7 +23,7 @@ const KinectData& KinectControler::getDevData()const
 	return this->_devData;
 }
 
-const Vrml_PROTO_KinectData& KinectControler::getVrmlData()const
+const Vrml_PROTO_KinectDev& KinectControler::getVrmlData()const
 {
 	return this->_vrmlData;
 }
