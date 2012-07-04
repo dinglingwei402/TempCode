@@ -178,7 +178,7 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 	VARIANT_BOOL b;
 	useSgl->getValue(&b);
 	if(num==1){
-		SingleControler* single=new	SingleControler(*kd,*devData);
+		SingleControler* single=new	SingleControler(*kd,*devData,3,3);
 		controler=single;
 		controler->start();
 		
