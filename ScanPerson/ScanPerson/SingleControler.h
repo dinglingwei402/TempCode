@@ -8,15 +8,17 @@ public:
 	void start();
 	int update();
 	void close();
+	void drawPointSet(XnPoint3D* crdPts,XnPoint3D* clrPts);
+	void createMesh();
 private:
 	int sub_x;
 	int sub_y;
 	int blockSize;
-	XnDepthPixel* depthPts;
-	XnFloat* clorPts;
 	Vrml_PROTO_KinectData* data1;
 	const XnDepthPixel* depPix;
-	const XnUInt8* imgPix;	
+	const XnUInt8* imgPix;
+	LPVOID lp_clr;
+	LPVOID lp_crd;
 private:
 	initStatus init();
 };

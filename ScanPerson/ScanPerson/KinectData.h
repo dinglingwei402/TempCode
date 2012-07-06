@@ -43,7 +43,7 @@ KinectData();
 ~KinectData();
 initStatus initData();
 GenGrp* getData()const{return _data;};
-inline int getDevNum()const{return _devNum;};
+int getDevNum()const{return _devNum;};
 
 private:
 	xn::Context _context;

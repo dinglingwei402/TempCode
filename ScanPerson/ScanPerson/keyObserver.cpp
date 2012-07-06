@@ -41,7 +41,6 @@ HRESULT STDMETHODCALLTYPE KeyObserver::GetIDsOfNames(
 }
 
 
-
 HRESULT STDMETHODCALLTYPE KeyObserver::Invoke( 
 								 /* [in] */ DISPID dispIdMember,
 								 /* [in] */ REFIID riid,

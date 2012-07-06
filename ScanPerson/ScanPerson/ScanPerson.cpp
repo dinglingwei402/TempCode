@@ -131,6 +131,7 @@ HRESULT STDMETHODCALLTYPE CScanPerson::Tick(
 {
 	if (controler!=NULL)
 	{
+		
 		controler->update();
 	}
 	return S_OK;
@@ -180,20 +181,10 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 	if(num==1){
 		SingleControler* single=new	SingleControler(*kd,*devData,3,3);
 		controler=single;
-		controler->start();
-		
+		controler->start();		
 	}else if(num>1&&(!b)){
 		//TODO:MULTIControler
 	}
-	/*int chld_cnt;
-	children->getSize(&chld_cnt); 
-	Node* subNode;
-	children->get1Value(0,&subNode);
-	EventInMFVec3f* crd;
-	QueryMFNode(subNode,_T("coord"),IID_EventInMFVec3f,&crd);
-	vrmlData->setCoord(crd);
-	EventInMFColor* clr;
-	QueryMFNode(subNode,_T("color"),IID_EventInMFColor,&clr);*/
 	if(ini!=initStatus::success)
 	{
 		delete devData;
