@@ -1,8 +1,7 @@
 #include "StdAfx.h"
 #include "SingleControler.h"
 #include "QueryNode.h"
-#include <pcl/io/pcd_io.h>
-#include <pcl/point_types.h>
+#include "pcl_function.h"
 //######## ######## ######## ######## ######## 
 SingleControler::SingleControler(const Vrml_PROTO_KinectDev& v_data,const KinectData& k_data,int x_step,int y_step):KinectControler(v_data,k_data,x_step,y_step),blockSize(0),sub_x(0),sub_y(0)
 {
@@ -11,8 +10,8 @@ SingleControler::SingleControler(const Vrml_PROTO_KinectDev& v_data,const Kinect
 SingleControler::~SingleControler()
 {
 	if(this->data1)delete data1;
-	VirtualFree(lp_crd,0,MEM_RELEASE);
-	VirtualFree(lp_clr,0,MEM_RELEASE);
+	if(this->lp_crd)delete lp_crd;
+	if(this->lp_clr)delete lp_clr;
 }
 
 void SingleControler::start(){
@@ -74,11 +73,13 @@ initStatus SingleControler::init(){
 		this->ini_stus=fail;
 		return this->ini_stus;
 	}
-	lp_clr=VirtualAlloc(NULL,blockSize*sizeof(XnPoint3D),MEM_COMMIT,PAGE_READWRITE);
-	lp_crd=VirtualAlloc(NULL,blockSize*sizeof(XnPoint3D),MEM_COMMIT,PAGE_READWRITE);
-	XnPoint3D* crdPts=(XnPoint3D*)lp_crd;
-	XnPoint3D* clrPts=(XnPoint3D*)lp_clr;
-	drawPointSet(crdPts,clrPts);
+//	lp_clr=VirtualAlloc(NULL,blockSize*sizeof(XnPoint3D),MEM_COMMIT,PAGE_READWRITE);
+//	lp_crd=VirtualAlloc(NULL,blockSize*sizeof(XnPoint3D),MEM_COMMIT,PAGE_READWRITE);
+	//XnPoint3D* crdPts=(XnPoint3D*)lp_crd;
+	//XnPoint3D* clrPts=(XnPoint3D*)lp_clr;
+	lp_crd=new XnPoint3D[blockSize];
+	lp_clr=new XnPoint3D[blockSize];
+	drawPointSet(lp_crd,lp_clr);
 	this->ini_stus=FAILED(hr)?fail:success;
 	return this->ini_stus;
 }
@@ -88,11 +89,7 @@ int SingleControler::update(){
 	XnStatus rc;
 	rc=getDevData().getData()[0].depGen.WaitAndUpdateData();
 	if(rc==XN_STATUS_OK){
-		LPVOID lp_clr=VirtualAlloc(NULL,blockSize*sizeof(XnPoint3D),MEM_COMMIT,PAGE_READWRITE);
-		LPVOID lp_crd=VirtualAlloc(NULL,blockSize*sizeof(XnPoint3D),MEM_COMMIT,PAGE_READWRITE);
-		XnPoint3D* crdPts=(XnPoint3D*)lp_crd;
-		XnPoint3D* clrPts=(XnPoint3D*)lp_clr;
-		drawPointSet(crdPts,clrPts);
+		drawPointSet(lp_crd,lp_clr); 
 		createMesh();
 	}
 	return 0;
@@ -100,16 +97,15 @@ int SingleControler::update(){
 
 
 void SingleControler::createMesh(){
-	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ> ());
-	cloud->width=this->sub_x;
-	cloud->height=this->sub_y;
-	int len =sub_y*sub_x;
-	XnPoint3D* crdPts_f=(XnPoint3D*)lp_crd;	
-	for(int i=0;i<len;i++){
-		cloud->points[i].x=crdPts_f[i].X;
-		cloud->points[i].y=crdPts_f[i].Y;
-		cloud->points[i].z=crdPts_f[i].Z;
+	pcl::PointCloud<pcl::PointXYZ> cloud;
+	cloud.width=blockSize;
+	cloud.height=1;
+	cloud.points.resize(blockSize);
+	for(int i=0;i<blockSize;i++){
+		cloud.points[i].x=lp_crd[i].X/1000.0;
+		cloud.points[i].y=lp_crd[i].Y/1000.0;
+		cloud.points[i].z=lp_crd[i].Z/1000.0;
 	}
-	poissonSurface(cloud,_T("tst_7_7.pcd"));
-	delete cloud;
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloudPtr(&cloud);
+	poissonSurface(cloudPtr,("tst_7_7.pcd"));	
 }

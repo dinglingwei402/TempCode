@@ -17,8 +17,8 @@ private:
 	Vrml_PROTO_KinectData* data1;
 	const XnDepthPixel* depPix;
 	const XnUInt8* imgPix;
-	LPVOID lp_clr;
-	LPVOID lp_crd;
+	XnPoint3D* lp_clr;
+	XnPoint3D* lp_crd;
 private:
 	initStatus init();
 };
