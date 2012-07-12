@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0500 */
-/* at Thu Jun 07 17:25:18 2012
+/* at Mon Jul 09 16:36:40 2012
  */
 /* Compiler settings for .\blaxxunVRML.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)
@@ -8821,7 +8821,7 @@ EXTERN_C const IID IID_IBufferTexture;
     ( (This)->lpVtbl -> getStatus(This,status) ) 
 
 #define IBufferTexture_setTexture(This,level,cnt,pixels,stride)	\
-    ( (This)->lpVtbl -> setImgBuf(This,level,cnt,pixels,stride) ) 
+    ( (This)->lpVtbl -> setTexture(This,level,cnt,pixels,stride) ) 
 
 #define IBufferTexture_setTextureEx(This,width,height,level,format,cnt,pixels,stride)	\
     ( (This)->lpVtbl -> setTextureEx(This,width,height,level,format,cnt,pixels,stride) ) 

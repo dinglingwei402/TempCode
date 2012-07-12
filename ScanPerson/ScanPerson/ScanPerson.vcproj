@@ -24,6 +24,7 @@
 			UseOfATL="2"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="1"
+			EnableManagedIncrementalBuild="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -58,6 +59,7 @@
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
+				OpenMP="true"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
 				DebugInformationFormat="4"
@@ -82,6 +84,7 @@
 				AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib ws2_32.lib comctl32.lib wsock32.lib opengl32.lib vfw32.lib &quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\Boost\lib\libboost_system-vc90-mt-gd-1_48.lib&quot; &quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\Boost\lib\libboost_filesystem-vc90-mt-gd-1_48.lib&quot; &quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\Boost\lib\libboost_thread-vc90-mt-gd-1_48.lib&quot; &quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\Boost\lib\libboost_date_time-vc90-mt-gd-1_48.lib&quot; &quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\Boost\lib\libboost_iostreams-vc90-mt-gd-1_48.lib&quot; &quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\VTK\lib\vtk-5.8\vtkCommon-gd.lib&quot; &quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\VTK\lib\vtk-5.8\vtkRendering-gd.lib&quot; &quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\VTK\lib\vtk-5.8\vtkHybrid-gd.lib&quot; &quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\VTK\lib\vtk-5.8\vtkGraphics-gd.lib&quot; &quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\VTK\lib\vtk-5.8\vtkverdict-gd.lib&quot; &quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\VTK\lib\vtk-5.8\vtkImaging-gd.lib&quot; &quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\VTK\lib\vtk-5.8\vtkIO-gd.lib&quot; &quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\VTK\lib\vtk-5.8\vtkFiltering-gd.lib&quot; &quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\VTK\lib\vtk-5.8\vtkDICOMParser-gd.lib&quot; &quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\VTK\lib\vtk-5.8\vtkNetCDF_cxx-gd.lib&quot; &quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\VTK\lib\vtk-5.8\vtkmetaio-gd.lib&quot; &quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\VTK\lib\vtk-5.8\vtksys-gd.lib&quot; &quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\VTK\lib\vtk-5.8\vtksqlite-gd.lib&quot; &quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\VTK\lib\vtk-5.8\vtkpng-gd.lib&quot; &quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\VTK\lib\vtk-5.8\vtktiff-gd.lib&quot; &quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\VTK\lib\vtk-5.8\vtkzlib-gd.lib&quot; &quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\VTK\lib\vtk-5.8\vtkjpeg-gd.lib&quot; &quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\VTK\lib\vtk-5.8\vtkexpat-gd.lib&quot; &quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\VTK\lib\vtk-5.8\vtkftgl-gd.lib&quot; &quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\VTK\lib\vtk-5.8\vtkfreetype-gd.lib&quot; &quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\VTK\lib\vtk-5.8\vtkexoIIc-gd.lib&quot; &quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\VTK\lib\vtk-5.8\vtkNetCDF-gd.lib&quot; &quot;C:\Program Files (x86)\OpenNI\Lib\openNI.lib&quot; &quot;C:\Program Files (x86)\PCL\lib\pcl_common_debug.lib&quot; &quot;C:\Program Files (x86)\PCL\lib\pcl_io_debug.lib&quot; &quot;C:\Program Files (x86)\PCL\lib\pcl_octree_debug.lib&quot; &quot;C:\Program Files (x86)\PCL\lib\pcl_ml_debug.lib&quot; &quot;C:\Program Files (x86)\PCL\lib\pcl_kdtree_debug.lib&quot; &quot;C:\Program Files (x86)\PCL\lib\pcl_surface_debug.lib&quot; &quot;C:\Program Files (x86)\PCL\lib\pcl_features_debug.lib&quot; &quot;C:\Program Files (x86)\PCL\lib\pcl_search_debug.lib&quot; &quot;C:\Program Files (x86)\PCL\lib\pcl_filters_debug.lib&quot; &quot;C:\Program Files (x86)\PCL\lib\pcl_visualization_debug.lib&quot; &quot;C:\Program Files (x86)\PCL\lib\pcl_segmentation_debug.lib&quot;"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(open_NI_LIB)&quot;;&quot;C:\Program Files (x86)\PCL\lib&quot;;&quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\Eigen&quot;;&quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\Boost\lib&quot;;&quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\Qhull\lib&quot;;&quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\Flann\lib&quot;;&quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\VTK\lib\vtk-5.8&quot;"
+				AdditionalManifestDependencies=""
 				ModuleDefinitionFile=".\ScanPerson.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
