@@ -98,14 +98,16 @@ int SingleControler::update(){
 
 void SingleControler::createMesh(){
 	pcl::PointCloud<pcl::PointXYZ> cloud;
-	cloud.width=blockSize;
+	int blockSize1=200;
+	cloud.width=blockSize1;
 	cloud.height=1;
-	cloud.points.resize(blockSize);
-	for(int i=0;i<blockSize;i++){
+	cloud.points.resize(blockSize1);
+	for(int i=0;i<blockSize1;i++){
 		cloud.points[i].x=lp_crd[i].X/1000.0;
 		cloud.points[i].y=lp_crd[i].Y/1000.0;
 		cloud.points[i].z=lp_crd[i].Z/1000.0;
 	}
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloudPtr(&cloud);
-	poissonSurface(cloudPtr,("tst_7_7.pcd"));	
+	poissonSurface(cloud,("tst_7_7.pcd"));	
+
 }

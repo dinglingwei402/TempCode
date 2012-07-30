@@ -1,5 +1,4 @@
 // dllmain.cpp : DllMain µÄÊµÏÖ¡£
-
 #include "stdafx.h"
 #include "resource.h"
 #include "ScanPerson_i.h"

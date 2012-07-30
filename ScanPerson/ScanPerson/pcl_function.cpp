@@ -9,7 +9,7 @@
 #include <pcl/kdtree/kdtree_flann.h>
 #include <pcl/surface/mls.h>
 #include <ctime>
-#include <pcl/surface/mls_omp.h>
+#include <pcl/surface/mls.h>
 #include <pcl/features/normal_3d_omp.h>
 #include <pcl/surface/poisson.h>
 
@@ -254,9 +254,10 @@ int
 	return (0);
 }
 #include <ctime>
-#include <pcl/surface/mls_omp.h>
+#include <pcl/surface/mls.h>
 #include <pcl/features/normal_3d_omp.h>
 #include <pcl/surface/poisson.h>
+#include <pcl/filters/filter.h>
 int poissonSurface_file(const std::string& inputfile,const std::string& outputfile){
 /////////***********
 	time_t t;
@@ -271,13 +272,14 @@ int poissonSurface_file(const std::string& inputfile,const std::string& outputfi
 	char* time_load=ctime(&t);
 	std::cerr << "end load time is: "<< time_load << " *****" << std::endl;
 /////////***********
-	pcl::MovingLeastSquaresOMP<pcl::PointXYZ, pcl::PointXYZ> mls;
-	mls.setNumberOfThreads(4);
+//	pcl::MovingLeastSquaresOMP<pcl::PointXYZ, pcl::PointXYZ> mls;
+	pcl::MovingLeastSquares<pcl::PointXYZ, pcl::PointXYZ> mls;
 	mls.setInputCloud (cloud);
 	mls.setSearchRadius (0.01);
 	mls.setPolynomialFit (true);
 	mls.setPolynomialOrder (2);
-	mls.setUpsamplingMethod(pcl::MovingLeastSquaresOMP<pcl::PointXYZ, pcl::PointXYZ>::SAMPLE_LOCAL_PLANE);
+//	mls.setUpsamplingMethod(pcl::MovingLeastSquaresOMP<pcl::PointXYZ, pcl::PointXYZ>::SAMPLE_LOCAL_PLANE);
+	mls.setUpsamplingMethod(pcl::MovingLeastSquares<pcl::PointXYZ, pcl::PointXYZ>::SAMPLE_LOCAL_PLANE);
 	mls.setUpsamplingRadius (0.005);
 	mls.setUpsamplingStepSize (0.003);
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_smoothed (new pcl::PointCloud<pcl::PointXYZ> ());
@@ -336,48 +338,56 @@ int poissonSurface_file(const std::string& inputfile,const std::string& outputfi
 	return 0; 
 }
 
-int poissonSurface(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud1,const std::string outputfile){
+int poissonSurface(pcl::PointCloud<pcl::PointXYZ> &cloud1,const std::string outputfile){
+	std::vector<int> indexes;
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
+	cloud->is_dense = false; 
+	pcl::removeNaNFromPointCloud(cloud1,*cloud,indexes);
 /////////***********
 	time_t t;
 	t=time(&t);
 	char* time_start=ctime(&t);
 	std::cerr << "strat time is: "<< time_start << " *****" << std::endl;	
 /////////***********
-	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ> ());
-	pcl::io::loadPCDFile ("c:\\wm_all_1.pcd", *cloud);
+	/*pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ> ());
+	pcl::io::loadPCDFile ("c:\\wm_all.pcd", *cloud);*/
 	t=time(&t);
 	char* time_load=ctime(&t);
 	std::cerr << "end load time is: "<< time_load << " *****" << std::endl;
 /////////***********
-	pcl::MovingLeastSquaresOMP<pcl::PointXYZ, pcl::PointXYZ> mls;
-	mls.setNumberOfThreads(0);
+//	pcl::MovingLeastSquaresOMP<pcl::PointXYZ, pcl::PointXYZ> mls;
+	pcl::MovingLeastSquares<pcl::PointXYZ, pcl::PointXYZ> mls;
+//	mls.setNumberOfThreads(4);
 	mls.setInputCloud (cloud);
 	mls.setSearchRadius (0.01);
 	mls.setPolynomialFit (true);
 	mls.setPolynomialOrder (2);
-	mls.setUpsamplingMethod(pcl::MovingLeastSquaresOMP<pcl::PointXYZ, pcl::PointXYZ>::SAMPLE_LOCAL_PLANE);
+	mls.setUpsamplingMethod(pcl::MovingLeastSquares<pcl::PointXYZ, pcl::PointXYZ>::SAMPLE_LOCAL_PLANE);
 	mls.setUpsamplingRadius (0.005);
 	mls.setUpsamplingStepSize (0.003);
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_smoothed (new pcl::PointCloud<pcl::PointXYZ> ());
-//	if(false==mls.initCompute){return 0;}
+	/*if(!mls.initCompute()){
+		return 0;
+	}*/
 /////////***********
-	t=time(&t);
-	char* time_MLS=ctime(&t);
-	std::cerr << "start process MovingLeastSquares time is: "<< time_MLS << " *****" << std::endl;
+//	t=time(&t);
+//	char* time_MLS=ctime(&t);
+//	std::cerr << "start process MovingLeastSquares time is: "<< time_MLS << " *****" << std::endl;
 /////////***********
 	
-	mls.process (*cloud_smoothed);
+	mls.process(*cloud_smoothed);
 /////////***********
 	t=time(&t);
 	char* time_MLS_end=ctime(&t);
 	std::cerr << "end process MovingLeastSquares time is: "<< time_MLS_end << " *****" << std::endl;
-/////////***********
+/////////***********0.0
 	t=time(&t);
 	char* time_Normal=ctime(&t);
 	std::cerr << "start Normal time is: "<< time_Normal<< " *****" << std::endl;
 /////////***********
-	pcl::NormalEstimationOMP<pcl::PointXYZ, pcl::Normal> ne;
-	ne.setNumberOfThreads (4);
+//	pcl::NormalEstimationOMP<pcl::PointXYZ, pcl::Normal> ne;
+	pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> ne;
+//	ne.setNumberOfThreads (4);
 	ne.setInputCloud (cloud_smoothed);
 //	ne.setRadiusSearch (0.01);
 	Eigen::Vector4f centroid;
@@ -404,9 +414,9 @@ int poissonSurface(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud1,const std::string 
 	pcl::Poisson<pcl::PointNormal> poisson;
 	poisson.setDepth (9);
 	poisson.setInputCloud(cloud_smoothed_normals);
-	pcl::PolygonMesh mesh;
-	poisson.reconstruct (mesh);
-	pcl::io::saveVTKFile (outputfile, mesh);
+	pcl::PolygonMesh::Ptr mesh(new pcl::PolygonMesh);
+	poisson.reconstruct (*mesh);
+	pcl::io::saveVTKFile(outputfile,*mesh);
 	/////////***********
 	t=time(&t);
 	char* time_poission=ctime(&t);

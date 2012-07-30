@@ -6,7 +6,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0500 */
-/* at Thu Jul 12 18:07:35 2012
+/* at Wed Jul 25 15:23:31 2012
  */
 /* Compiler settings for .\ScanPerson.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)
