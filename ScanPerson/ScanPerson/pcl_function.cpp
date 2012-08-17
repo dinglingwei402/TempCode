@@ -27,12 +27,11 @@
 #include <pcl/surface/concave_hull.h>
 
 int poissonSurface(pcl::PointCloud<pcl::PointXYZ> &cloud1,const std::string outputfile){
-	/*std::vector<int> indexes;
+std::vector<int> indexes;
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
 	cloud->is_dense = false; 
-	pcl::removeNaNFromPointCloud(cloud1,*cloud,indexes);*/
-
-	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ> ());
+	pcl::removeNaNFromPointCloud(cloud1,*cloud,indexes);
+	/*pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ> ());*/
 	pcl::io::loadPCDFile ("c:\\wm_all_1.pcd", *cloud);
 /////////***********
 	time_t t;

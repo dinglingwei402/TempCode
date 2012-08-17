@@ -9,6 +9,7 @@
 #include "KinectData.h"
 #include "VrmlData.h"
 #include "SingleControler.h"
+#include "keyObserver.h"
 
 /*typedef int tic_fun(void);
 
@@ -173,9 +174,14 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 	QuerySFNode(pEventNode,_T("useSingleDev"),IID_EventOutSFBool,&useSgl);
 	EventOutSFNode* faces;
 	QuerySFNode(pEventNode,_T("IndxFaceSet"),IID_EventOutSFNode,&faces);
+	EventOutSFInt32* key;
+	QuerySFNode(pEventNode,_T("key"),IID_EventOutSFInt32,&key);
 	kd->setChildren(children);
 	kd->setIndxFaceSet(faces);
 	kd->setUseSingleDev(useSgl);
+	kd->setKey(key);
+	KeyObserver* kyObvr=new KeyObserver();
+	key->advise(kyObvr,NULL);
 	VARIANT_BOOL b;
 	useSgl->getValue(&b);
 	if(num==1){

@@ -10,6 +10,9 @@ public:
 	void setChildren(EventOutMFNode* chr){
 		this->children=chr;
 	};
+	void setKey(EventOutSFInt32* keyIn){
+		this->key=keyIn;
+	}
 	EventOutSFBool* getUseSingleDev()const{
 		return this->useSingleDev;
 	};
@@ -19,10 +22,15 @@ public:
 	EventOutSFNode* getIndxFaceSet()const{
 		return this->IndxFaceSet;
 	};
+	EventOutSFInt32* getKey()const{
+		return this->key;
+	};
 private:
 	EventOutSFBool* useSingleDev;
 	EventOutMFNode* children;
 	EventOutSFNode* IndxFaceSet;
+	EventOutSFInt32* key;
+
 };
 
 

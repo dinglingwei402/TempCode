@@ -61,8 +61,8 @@ HRESULT STDMETHODCALLTYPE KeyObserver::callback(EventOut *value,double timeStamp
 	int keyVlu;
 	tmp_vlu->getValue(&keyVlu);
 	if(keyVlu==65){
-	//	MessageBoxW(L"at 0 degree ",);
-		m_func();
+		MessageBoxW(NULL,L"at 0 degree ",L"in keyobv",0);
+	//	m_func();
 	}
 	if(keyVlu==66){
 //		MessageBoxW(L"rotate to 120 degree ",);

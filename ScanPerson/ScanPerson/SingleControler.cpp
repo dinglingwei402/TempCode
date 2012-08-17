@@ -63,6 +63,7 @@ initStatus SingleControler::init(){
 	EventInMFColor* clr;
 	hr=DeepQueryNode(child,_T("color"),IID_EventInMFColor,&clr);
 	data1->color=clr;
+
 	depPix=getDevData().getData()[0].pDepthData;
 	imgPix=getDevData().getData()[0].pImageData;
 	sub_x=(int)(getDevData().getData()[0].xres/getXStep());
@@ -90,7 +91,7 @@ int SingleControler::update(){
 	rc=getDevData().getData()[0].depGen.WaitAndUpdateData();
 	if(rc==XN_STATUS_OK){
 		drawPointSet(lp_crd,lp_clr); 
-		createMesh();
+	//	createMesh();
 	}
 	return 0;
 }
