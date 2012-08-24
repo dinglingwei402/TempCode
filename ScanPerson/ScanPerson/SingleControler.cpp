@@ -23,6 +23,20 @@ void SingleControler::close(){
  int i=0;
 }
 
+HRESULT SingleControler::GetKeyEvents(int keyVlu){
+	if(keyVlu==65){
+		MessageBoxW(NULL,L"at 0 degree ",L"in keyobv",0);
+		
+	}
+	if(keyVlu==66){
+		//		MessageBoxW(L"rotate to 120 degree ",);
+	}
+	if(keyVlu==67){
+		//		MessageBoxW(L"rotate t0 240 degree ",);
+	}
+
+}
+
 void SingleControler::drawPointSet(XnPoint3D* crdPts,XnPoint3D* clrPts){
 	if (ini_stus==success)
 	{
@@ -74,10 +88,6 @@ initStatus SingleControler::init(){
 		this->ini_stus=fail;
 		return this->ini_stus;
 	}
-//	lp_clr=VirtualAlloc(NULL,blockSize*sizeof(XnPoint3D),MEM_COMMIT,PAGE_READWRITE);
-//	lp_crd=VirtualAlloc(NULL,blockSize*sizeof(XnPoint3D),MEM_COMMIT,PAGE_READWRITE);
-	//XnPoint3D* crdPts=(XnPoint3D*)lp_crd;
-	//XnPoint3D* clrPts=(XnPoint3D*)lp_clr;
 	lp_crd=new XnPoint3D[blockSize];
 	lp_clr=new XnPoint3D[blockSize];
 	drawPointSet(lp_crd,lp_clr);
@@ -86,29 +96,55 @@ initStatus SingleControler::init(){
 }
 
 
-int SingleControler::update(){
+void SingleControler::update(){
 	XnStatus rc;
 	rc=getDevData().getData()[0].depGen.WaitAndUpdateData();
 	if(rc==XN_STATUS_OK){
 		drawPointSet(lp_crd,lp_clr); 
 	//	createMesh();
 	}
-	return 0;
+//	return 0;
 }
 
 
 void SingleControler::createMesh(){
-	pcl::PointCloud<pcl::PointXYZ> cloud;
-	int blockSize1=200;
-	cloud.width=blockSize1;
-	cloud.height=1;
-	cloud.points.resize(blockSize1);
-	for(int i=0;i<blockSize1;i++){
-		cloud.points[i].x=lp_crd[i].X/1000.0;
-		cloud.points[i].y=lp_crd[i].Y/1000.0;
-		cloud.points[i].z=lp_crd[i].Z/1000.0;
+	HANDLE hRead;
+	HANDLE hWrite;
+	CreatePipe(&hRead,&hWrite,NULL,NULL);
+	WCHAR buf[]=L"sdfsdfsdfdsfsdf";
+	DWORD dwWrite;
+	if(!WriteFile(hWrite,buf,wcslen(buf)+2,&dwWrite,NULL)){
+		return;
 	}
-	pcl::PointCloud<pcl::PointXYZ>::Ptr cloudPtr(&cloud);
-	poissonSurface(cloud,("tst_7_7.pcd"));	
-
+	STARTUPINFO si;
+	PROCESS_INFORMATION pi;
+	ZeroMemory(&si,sizeof(STARTUPINFO));
+	si.cb=sizeof(STARTUPINFO);
+	si.dwFlags=STARTF_USESTDHANDLES;
+	si.hStdInput =hRead;
+	si.hStdOutput=hWrite;
+	si.hStdError=GetStdHandle(STD_ERROR_HANDLE);
+	if(!(CreateProcess(L"E:\\pcd_write_test.exe",NULL,NULL,
+		NULL,TRUE,0,NULL,NULL,&si,&pi)))
+	{
+		MessageBoxW(NULL,L"没有找到模块 ",L"in keyobv",0);
+		return;
+	}
 }
+
+
+
+	/*void SingleControler::createMesh1(){
+		pcl::PointCloud<pcl::PointXYZ> cloud;
+		int blockSize1=200;
+		cloud.width=blockSize1;
+		cloud.height=1;
+		cloud.points.resize(blockSize1);
+		for(int i=0;i<blockSize1;i++){
+			cloud.points[i].x=lp_crd[i].X/1000.0;
+			cloud.points[i].y=lp_crd[i].Y/1000.0;
+			cloud.points[i].z=lp_crd[i].Z/1000.0;
+		}
+		pcl::PointCloud<pcl::PointXYZ>::Ptr cloudPtr(&cloud);
+		poissonSurface(cloud,("tst_7_7.pcd"));
+	}*/

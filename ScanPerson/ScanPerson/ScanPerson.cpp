@@ -15,6 +15,7 @@
 
 tic_fun callback_fun;*/ 
 KinectControler* controler=NULL;
+typedef void (SingleControler::*update)();
 
 // 用于确定 DLL 是否可由 OLE 卸载
 STDAPI DllCanUnloadNow(void)
@@ -88,6 +89,7 @@ CScanPerson::CScanPerson()
 }
 CScanPerson::~CScanPerson(){
 	//	KinectClose();
+	OutputDebugString(L"~CScanPerson");
 }
 
 
@@ -112,7 +114,6 @@ HRESULT STDMETHODCALLTYPE CScanPerson::Init(
 	/* [in] */ Browser *pBrowser,
 	/* [retval][out] */ int *pDeviceNoUsed)
 {
-	int i=1;
 	DeviceNo=1;
 	*pDeviceNoUsed= 1;
 	return S_OK;
@@ -187,7 +188,8 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 	if(num==1){
 		SingleControler* single=new	SingleControler(*kd,*devData,3,3);
 		controler=single;
-		controler->start();		
+		controler->start();	
+		update Func=&SingleControler::update;
 	}else if(num>1&&(!b)){
 		//TODO:MULTIControler
 	}

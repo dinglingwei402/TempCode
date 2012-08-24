@@ -6,8 +6,9 @@ public:
 	SingleControler(const Vrml_PROTO_KinectDev& v_data,const KinectData& k_data,int x_step=1,int y_step=1);
 	~SingleControler(void);
 	void start();
-	int update();
+	void update();
 	void close();
+	HRESULT SingleControler::GetKeyEvents(int keyVlu);
 	void drawPointSet(XnPoint3D* crdPts,XnPoint3D* clrPts);
 	void createMesh();
 private:

@@ -15,7 +15,7 @@ public:
 	XnUInt32 getXStep()const;
 	XnUInt32 getYStep()const;
 	virtual void  start();
-	virtual int update();
+	virtual void update();
 	virtual initStatus init();
 	virtual void  close();
 protected:

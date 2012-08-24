@@ -43,7 +43,13 @@ public:
 		/* [out] */ EXCEPINFO *pExcepInfo,
 		/* [out] */ UINT *puArgErr);
 	HRESULT STDMETHODCALLTYPE callback(EventOut *value,double timeStamp,IDispatch *userData);
-	HRESULT STDMETHODCALLTYPE setMFunc(void (*func)());
+	template<class T>
+	HRESULT STDMETHODCALLTYPE setMFunc( void (T::*func)())
+	{
+		this->m_func=func;
+		return S_OK;
+	};
+
 	HRESULT STDMETHODCALLTYPE setMFunc1(void (*func)());
 	HRESULT STDMETHODCALLTYPE setMFunc2(void (*func)());
 	HRESULT STDMETHODCALLTYPE setMFunc3(void (*func)());

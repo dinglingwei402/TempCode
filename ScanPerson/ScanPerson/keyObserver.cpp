@@ -60,49 +60,9 @@ HRESULT STDMETHODCALLTYPE KeyObserver::callback(EventOut *value,double timeStamp
 	value->QueryInterface(IID_EventOutSFInt32,(void**)&tmp_vlu);
 	int keyVlu;
 	tmp_vlu->getValue(&keyVlu);
-	if(keyVlu==65){
-		MessageBoxW(NULL,L"at 0 degree ",L"in keyobv",0);
-	//	m_func();
-	}
-	if(keyVlu==66){
-//		MessageBoxW(L"rotate to 120 degree ",);
-		m_func1();
-	}
-	if(keyVlu==67){
-//		MessageBoxW(L"rotate t0 240 degree ",);
-		m_func2();
-	}
+	(SingleControler)userData->GetKeyEvents(keyVlu);
 	tmp_vlu->Release();
 	return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE KeyObserver::setMFunc( void (*func)())
-{
-	this->m_func=func;
-	return S_OK;
-}
 
-
-HRESULT STDMETHODCALLTYPE KeyObserver::setMFunc1( void (*func)())
-{
-	this->m_func1=func;
-	return S_OK;
-}
-
-HRESULT STDMETHODCALLTYPE KeyObserver::setMFunc2( void (*func)())
-{
-	this->m_func2=func;
-	return S_OK;
-}
-
-HRESULT STDMETHODCALLTYPE KeyObserver::setMFunc3( void (*func)())
-{
-	this->m_func3=func;
-	return S_OK;
-}
-
-HRESULT STDMETHODCALLTYPE KeyObserver::setMFunc4( void (*func)())
-{
-	this->m_func4=func;
-	return S_OK;
-}

@@ -12,10 +12,9 @@ initStatus KinectControler::init()
 	this->ini_stus=success;
 	return ini_stus;
 }
-
-int KinectControler::update()
+void KinectControler::update()
 {
-	return 0;
+//	return;
 }
 
 const KinectData& KinectControler::getDevData()const
