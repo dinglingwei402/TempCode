@@ -55,7 +55,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(OPEN_NI_INCLUDE)&quot;;&quot;C:\Program Files (x86)\PCL\include\pcl-1.7&quot;;&quot;C:\Program Files (x86)\PCL\include\pcl-1.7\pcl&quot;;&quot;C:\Program Files (x86)\PCL\3rdParty\Eigen\include&quot;;&quot;C:\Program Files (x86)\PCL\3rdParty\Boost\include&quot;;&quot;C:\Program Files (x86)\PCL\3rdParty\VTK\include\vtk-5.8&quot;;&quot;C:\Program Files (x86)\PCL\3rdParty\Flann\include&quot;;E:\Code\pcl\binary_file_inst\include"
+				AdditionalIncludeDirectories="&quot;$(OPEN_NI_INCLUDE)&quot;;&quot;C:\Program Files (x86)\PCL\include\pcl-1.7&quot;;&quot;C:\Program Files (x86)\PCL\3rdParty\Eigen\include&quot;;&quot;C:\Program Files (x86)\PCL\3rdParty\Boost\include&quot;;&quot;C:\Program Files (x86)\PCL\3rdParty\VTK\include\vtk-5.8&quot;;&quot;C:\Program Files (x86)\PCL\3rdParty\Flann\include&quot;;E:\Code\pcl\binary_file_inst\include"
 				PreprocessorDefinitions="_AFXDLL;NOMINMAX;WIN32;_WINDOWS;_DEBUG;_USRDLL;EIGEN_USE_NEW_STDVECTOR;EIGEN_YES_I_KNOW_SPARSE_MODULE_IS_NOT_STABLE_YET;BOOST_ALL_NO_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -86,7 +86,7 @@
 				UseUnicodeResponseFiles="false"
 				AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib ws2_32.lib comctl32.lib wsock32.lib opengl32.lib vfw32.lib &quot;C:\Program Files (x86)\PCL\3rdParty\Boost\lib\libboost_system-vc90-mt-gd-1_47.lib&quot; &quot;C:\Program Files (x86)\PCL\3rdParty\Boost\lib\libboost_filesystem-vc90-mt-gd-1_47.lib&quot; &quot;C:\Program Files (x86)\PCL\3rdParty\Boost\lib\libboost_thread-vc90-mt-gd-1_47.lib&quot; &quot;C:\Program Files (x86)\PCL\3rdParty\Boost\lib\libboost_date_time-vc90-mt-gd-1_47.lib&quot; &quot;C:\Program Files (x86)\PCL\3rdParty\Boost\lib\libboost_iostreams-vc90-mt-gd-1_47.lib&quot; &quot;C:\Program Files (x86)\PCL\3rdParty\VTK\lib\vtk-5.8\vtkCommon-gd.lib&quot; &quot;C:\Program Files (x86)\PCL\3rdParty\VTK\lib\vtk-5.8\vtkRendering-gd.lib&quot; &quot;C:\Program Files (x86)\PCL\3rdParty\VTK\lib\vtk-5.8\vtkHybrid-gd.lib&quot; &quot;C:\Program Files (x86)\PCL\3rdParty\VTK\lib\vtk-5.8\vtkGraphics-gd.lib&quot; &quot;C:\Program Files (x86)\PCL\3rdParty\VTK\lib\vtk-5.8\vtkverdict-gd.lib&quot; &quot;C:\Program Files (x86)\PCL\3rdParty\VTK\lib\vtk-5.8\vtkImaging-gd.lib&quot; &quot;C:\Program Files (x86)\PCL\3rdParty\VTK\lib\vtk-5.8\vtkIO-gd.lib&quot; &quot;C:\Program Files (x86)\PCL\3rdParty\VTK\lib\vtk-5.8\vtkFiltering-gd.lib&quot; &quot;C:\Program Files (x86)\PCL\3rdParty\VTK\lib\vtk-5.8\vtkDICOMParser-gd.lib&quot; &quot;C:\Program Files (x86)\PCL\3rdParty\VTK\lib\vtk-5.8\vtkNetCDF_cxx-gd.lib&quot; &quot;C:\Program Files (x86)\PCL\3rdParty\VTK\lib\vtk-5.8\vtkmetaio-gd.lib&quot; &quot;C:\Program Files (x86)\PCL\3rdParty\VTK\lib\vtk-5.8\vtksys-gd.lib&quot; &quot;C:\Program Files (x86)\PCL\3rdParty\VTK\lib\vtk-5.8\vtksqlite-gd.lib&quot; &quot;C:\Program Files (x86)\PCL\3rdParty\VTK\lib\vtk-5.8\vtkpng-gd.lib&quot; &quot;C:\Program Files (x86)\PCL\3rdParty\VTK\lib\vtk-5.8\vtktiff-gd.lib&quot; &quot;C:\Program Files (x86)\PCL\3rdParty\VTK\lib\vtk-5.8\vtkzlib-gd.lib&quot; &quot;C:\Program Files (x86)\PCL\3rdParty\VTK\lib\vtk-5.8\vtkjpeg-gd.lib&quot; &quot;C:\Program Files (x86)\PCL\3rdParty\VTK\lib\vtk-5.8\vtkexpat-gd.lib&quot; &quot;C:\Program Files (x86)\PCL\3rdParty\VTK\lib\vtk-5.8\vtkftgl-gd.lib&quot; &quot;C:\Program Files (x86)\PCL\3rdParty\VTK\lib\vtk-5.8\vtkfreetype-gd.lib&quot; &quot;C:\Program Files (x86)\PCL\3rdParty\VTK\lib\vtk-5.8\vtkexoIIc-gd.lib&quot; &quot;C:\Program Files (x86)\PCL\3rdParty\VTK\lib\vtk-5.8\vtkNetCDF-gd.lib&quot; &quot;C:\Program Files (x86)\OpenNI\Lib\openNI.lib&quot; &quot;C:\Program Files (x86)\PCL\lib\pcl_common_release.lib&quot; &quot;C:\Program Files (x86)\PCL\lib\pcl_io_release.lib&quot; &quot;C:\Program Files (x86)\PCL\lib\pcl_octree_release.lib&quot; &quot;C:\Program Files (x86)\PCL\lib\pcl_ml_release.lib&quot; &quot;C:\Program Files (x86)\PCL\lib\pcl_kdtree_release.lib&quot; &quot;C:\Program Files (x86)\PCL\lib\pcl_surface_release.lib&quot; &quot;C:\Program Files (x86)\PCL\lib\pcl_features_release.lib&quot; &quot;C:\Program Files (x86)\PCL\lib\pcl_search_release.lib&quot; &quot;C:\Program Files (x86)\PCL\lib\pcl_filters_release.lib&quot; &quot;C:\Program Files (x86)\PCL\lib\pcl_visualization_release.lib&quot; &quot;C:\Program Files (x86)\PCL\lib\pcl_segmentation_release.lib&quot;"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(open_NI_LIB)&quot;;&quot;C:\Program Files (x86)\PCL\lib&quot;;&quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\Eigen&quot;;&quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\Boost\lib&quot;;&quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\Qhull\lib&quot;;&quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\Flann\lib&quot;;&quot;C:\Program Files (x86)\PCL 1.5.1\3rdParty\VTK\lib\vtk-5.8&quot;"
+				AdditionalLibraryDirectories="&quot;$(open_NI_LIB)&quot;;&quot;C:\Program Files (x86)\PCL\lib&quot;;&quot;C:\Program Files (x86)\PCL\3rdParty\Eigen&quot;;&quot;C:\Program Files (x86)\PCL\3rdParty\Boost\lib&quot;;&quot;C:\Program Files (x86)\PCL\3rdParty\Qhull\lib&quot;;&quot;C:\Program Files (x86)\PCL\3rdParty\Flann\lib&quot;;&quot;C:\Program Files (x86)\PCL\3rdParty\VTK\lib\vtk-5.8&quot;"
 				AdditionalManifestDependencies=""
 				ModuleDefinitionFile=".\ScanPerson.def"
 				GenerateDebugInformation="true"
@@ -245,10 +245,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\keyObserver.h"
-				>
-			</File>
-			<File
 				RelativePath=".\KinectControler.cpp"
 				>
 			</File>
@@ -308,6 +304,10 @@
 			>
 			<File
 				RelativePath=".\dllmain.h"
+				>
+			</File>
+			<File
+				RelativePath=".\keyObserver.h"
 				>
 			</File>
 			<File

@@ -15,6 +15,8 @@ initStatus KinectControler::init()
 void KinectControler::update()
 {
 //	return;
+	int i=0;
+
 }
 
 const KinectData& KinectControler::getDevData()const

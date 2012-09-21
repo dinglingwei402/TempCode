@@ -15,7 +15,6 @@
 
 tic_fun callback_fun;*/ 
 KinectControler* controler=NULL;
-typedef void (SingleControler::*update)();
 
 // 用于确定 DLL 是否可由 OLE 卸载
 STDAPI DllCanUnloadNow(void)
@@ -189,7 +188,7 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 		SingleControler* single=new	SingleControler(*kd,*devData,3,3);
 		controler=single;
 		controler->start();	
-		update Func=&SingleControler::update;
+		kyObvr->setControler(controler);
 	}else if(num>1&&(!b)){
 		//TODO:MULTIControler
 	}

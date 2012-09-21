@@ -1,19 +1,15 @@
 #include "blaxxunVRML.h"
+#include "KinectControler.h"
 
 
 class KeyObserver : public EventOutObserver{
 public:
-	void (*m_func)();
-	void (*m_func1)();
-	void (*m_func2)();
-	void (*m_func3)();
-	void (*m_func4)();
 	STDMETHODCALLTYPE KeyObserver(void);
+	STDMETHODCALLTYPE KeyObserver(KinectControler* ctrl);
 	STDMETHODCALLTYPE ~KeyObserver(void);
 	HRESULT STDMETHODCALLTYPE QueryInterface( 
 		/* [in] */ REFIID riid,
 		/* [iid_is][out] */ __RPC__deref_out void __RPC_FAR *__RPC_FAR *ppvObject);
-
 	ULONG STDMETHODCALLTYPE AddRef( void);
 
 	ULONG STDMETHODCALLTYPE Release( void);
@@ -43,15 +39,7 @@ public:
 		/* [out] */ EXCEPINFO *pExcepInfo,
 		/* [out] */ UINT *puArgErr);
 	HRESULT STDMETHODCALLTYPE callback(EventOut *value,double timeStamp,IDispatch *userData);
-	template<class T>
-	HRESULT STDMETHODCALLTYPE setMFunc( void (T::*func)())
-	{
-		this->m_func=func;
-		return S_OK;
-	};
-
-	HRESULT STDMETHODCALLTYPE setMFunc1(void (*func)());
-	HRESULT STDMETHODCALLTYPE setMFunc2(void (*func)());
-	HRESULT STDMETHODCALLTYPE setMFunc3(void (*func)());
-	HRESULT STDMETHODCALLTYPE setMFunc4(void (*func)());
+	HRESULT STDMETHODCALLTYPE setControler(KinectControler* ctrl);
+private:
+	KinectControler* controler;
 };

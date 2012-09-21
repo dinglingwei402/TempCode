@@ -24,16 +24,6 @@ library blaxxunHID_Lib
     interface IbxxHID: IDispatch
     {
 
-
-
-
-
-
-
-
-
-
-
             [   id(1)
             ,   helpstring("Initialization method")
             ]
