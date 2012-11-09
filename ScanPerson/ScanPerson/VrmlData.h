@@ -72,4 +72,75 @@ public:
 	EventOutSFNode*	floor;
 	EventOutMFNode*	users;
 	EventOutMFNode*	hands;
+	EventOutSFNode* snapMesh;
+};
+
+
+
+class Vrml_PROTO_OpenNIUser{
+public:
+		Vrml_PROTO_OpenNIUser();
+		~Vrml_PROTO_OpenNIUser();
+		EventInSFBool*	enabled;
+		EventInSFInt32* id;
+		EventInSFBool* isTracking;
+		EventInSFBool* isCalibrating;
+		EventInSFBool* needPoseForCalibration;
+		EventInSFBool* isExit;
+		EventInSFVec3f* userCoM;
+		EventInSFVec3f* XN_SKEL_POS_HEAD; 
+		EventInSFVec3f* XN_SKEL_POS_NECK;  
+		EventInSFVec3f* XN_SKEL_POS_TORSO;  
+		EventInSFVec3f* XN_SKEL_POS_WAIST;  
+		EventInSFVec3f* XN_SKEL_POS_LEFT_COLLAR;  
+		EventInSFVec3f* XN_SKEL_POS_LEFT_SHOULDER;  
+		EventInSFVec3f* XN_SKEL_POS_LEFT_ELBOW;  
+		EventInSFVec3f* XN_SKEL_POS_LEFT_WRIST;  
+		EventInSFVec3f* XN_SKEL_POS_LEFT_HAND;  
+		EventInSFVec3f* XN_SKEL_POS_LEFT_FINGERTIP;  
+		EventInSFVec3f* XN_SKEL_POS_RIGHT_COLLAR;  
+		EventInSFVec3f* XN_SKEL_POS_RIGHT_SHOULDER;  
+		EventInSFVec3f* XN_SKEL_POS_RIGHT_ELBOW;  
+		EventInSFVec3f* XN_SKEL_POS_RIGHT_WRIST;  
+		EventInSFVec3f* XN_SKEL_POS_RIGHT_HAND;  
+		EventInSFVec3f* XN_SKEL_POS_RIGHT_FINGERTIP;  
+		EventInSFVec3f* XN_SKEL_POS_LEFT_HIP;  
+		EventInSFVec3f* XN_SKEL_POS_LEFT_KNEE;  
+		EventInSFVec3f* XN_SKEL_POS_LEFT_ANKLE;  
+		EventInSFVec3f* XN_SKEL_POS_LEFT_FOOT;  
+		EventInSFVec3f* XN_SKEL_POS_RIGHT_HIP;  
+		EventInSFVec3f* XN_SKEL_POS_RIGHT_KNEE;  
+		EventInSFVec3f* XN_SKEL_POS_RIGHT_ANKLE;  
+		EventInSFVec3f* XN_SKEL_POS_RIGHT_FOOT; 
+		EventInSFMatrix* XN_SKEL_ORI_HEAD;
+		EventInSFMatrix* XN_SKEL_ORI_NECK;
+		EventInSFMatrix* XN_SKEL_ORI_TORSO;
+		EventInSFMatrix* XN_SKEL_ORI_WAIST;
+		EventInSFMatrix* XN_SKEL_ORI_LEFT_COLLAR;
+		EventInSFMatrix* XN_SKEL_ORI_LEFT_SHOULDER;
+		EventInSFMatrix* XN_SKEL_ORI_LEFT_ELBOW;
+		EventInSFMatrix* XN_SKEL_ORI_LEFT_WRIST;
+		EventInSFMatrix* XN_SKEL_ORI_LEFT_HAND;
+		EventInSFMatrix* XN_SKEL_ORI_LEFT_FINGERTIP;
+		EventInSFMatrix* XN_SKEL_ORI_RIGHT_COLLAR;
+		EventInSFMatrix* XN_SKEL_ORI_RIGHT_SHOULDER;
+		EventInSFMatrix* XN_SKEL_ORI_RIGHT_ELBOW;
+		EventInSFMatrix* XN_SKEL_ORI_RIGHT_WRIST;
+		EventInSFMatrix* XN_SKEL_ORI_RIGHT_HAND;
+		EventInSFMatrix* XN_SKEL_ORI_RIGHT_FINGERTIP;
+		EventInSFMatrix* XN_SKEL_ORI_LEFT_HIP;
+		EventInSFMatrix* XN_SKEL_ORI_LEFT_KNEE;
+		EventInSFMatrix* XN_SKEL_ORI_LEFT_ANKLE;
+		EventInSFMatrix* XN_SKEL_ORI_LEFT_FOOT;
+		EventInSFMatrix* XN_SKEL_ORI_RIGHT_HIP;
+		EventInSFMatrix* XN_SKEL_ORI_RIGHT_KNEE;
+		EventInSFMatrix* XN_SKEL_ORI_RIGHT_ANKLE;
+		EventInSFMatrix* XN_SKEL_ORI_RIGHT_FOOT;
+		EventInSFNode* BodyMesh;
+
+		EventInSFMatrix* getXN_SKEL_ORI_RIGHT_FOOT() const { return XN_SKEL_ORI_RIGHT_FOOT; }
+		void setXN_SKEL_ORI_RIGHT_FOOT(EventInSFMatrix* val) { XN_SKEL_ORI_RIGHT_FOOT = val; }
+		EventInSFNode* getBodyMesh() const { return BodyMesh; }
+		void setBodyMesh(EventInSFNode* val) { BodyMesh = val; }
+		
 };

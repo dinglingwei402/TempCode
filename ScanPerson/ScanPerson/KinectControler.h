@@ -22,7 +22,7 @@ protected:
 	/*XnUInt32 blockSize;
 	XnPoint3D* depthPts;
 	XnPoint3D* clorPts;*/
-	initStatus ini_stus;	
+	initStatus _ini_stus;	
 	const KinectData& _devData;
 	const Vrml_PROTO_KinectDev& _vrmlData;
 private:	

@@ -3,14 +3,14 @@
 #include "KinectControler.h"
 using namespace xn;
 
-KinectControler::KinectControler(const Vrml_PROTO_KinectDev& v_data,const KinectData& k_data,int x_step,int y_step):_vrmlData(v_data),_devData(k_data),_xStep(x_step),_yStep(y_step),ini_stus(fail){}
+KinectControler::KinectControler(const Vrml_PROTO_KinectDev& v_data,const KinectData& k_data,int x_step,int y_step):_vrmlData(v_data),_devData(k_data),_xStep(x_step),_yStep(y_step),_ini_stus(fail){}
 
 KinectControler::~KinectControler(){}
 
 initStatus KinectControler::init()
 {
-	this->ini_stus=success;
-	return ini_stus;
+	this->_ini_stus=success;
+	return _ini_stus;
 }
 void KinectControler::update()
 {

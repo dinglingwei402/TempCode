@@ -51,6 +51,6 @@ private:
 	int _devNum;
 	NodeInfoList* _devicesList;
 	XnStatus checkDev();
-	initStatus ini_stus;
+	initStatus _ini_stus;
 };
 

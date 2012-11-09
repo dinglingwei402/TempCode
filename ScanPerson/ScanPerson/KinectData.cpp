@@ -6,20 +6,20 @@ using namespace xn;
 #define  RC_INI_STATUS(rc) 	\
 	if (rc != XN_STATUS_OK)	    \
 {					        \
-	this->ini_stus=initStatus::fail; \
+	this->_ini_stus=initStatus::fail; \
 	return initStatus::fail;\
 }
 #endif
 
-KinectData::KinectData():_data(NULL),_devNum(0),ini_stus(initStatus::fail){
+KinectData::KinectData():_data(NULL),_devNum(0),_ini_stus(initStatus::fail){
 	XnStatus rc;
 	rc=(_context).Init();
-	if(rc!=XN_STATUS_OK)this->ini_stus=initStatus::fail;
+	if(rc!=XN_STATUS_OK)this->_ini_stus=initStatus::fail;
 	_devicesList=new NodeInfoList();
 	rc=(_context).EnumerateProductionTrees(XN_NODE_TYPE_DEVICE,NULL,(*_devicesList));
-	if(rc!=XN_STATUS_OK)this->ini_stus=initStatus::fail;
+	if(rc!=XN_STATUS_OK)this->_ini_stus=initStatus::fail;
 	rc=checkDev();
-	if(rc!=XN_STATUS_OK)this->ini_stus=initStatus::fail;
+	if(rc!=XN_STATUS_OK)this->_ini_stus=initStatus::fail;
 }
 
 KinectData::~KinectData(){
@@ -39,8 +39,8 @@ XnStatus KinectData::checkDev(){
 initStatus KinectData::initData(){
 	XnStatus rc=XN_STATUS_OK;
 	if(_devNum==0){
-		this->ini_stus=fail;
-		return ini_stus;
+		this->_ini_stus=fail;
+		return _ini_stus;
 	}
 	if(!(_data==NULL)){
 		delete[] _data;
@@ -78,8 +78,8 @@ initStatus KinectData::initData(){
 		_data[i].pDepthData=depMD.Data();
 		_data[i].pImageData=imgMD.Data();
 	}
-	this->ini_stus=initStatus::success;
-	return this->ini_stus;
+	this->_ini_stus=initStatus::success;
+	return this->_ini_stus;
 }
 
 

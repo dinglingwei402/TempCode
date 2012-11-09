@@ -132,7 +132,6 @@ HRESULT STDMETHODCALLTYPE CScanPerson::Tick(
 {
 	if (controler!=NULL)
 	{
-		
 		controler->update();
 	}
 	return S_OK;

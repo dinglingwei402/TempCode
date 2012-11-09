@@ -253,10 +253,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\pcl_function.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource.h"
 				>
 			</File>
@@ -316,10 +312,6 @@
 			</File>
 			<File
 				RelativePath=".\KinectData.h"
-				>
-			</File>
-			<File
-				RelativePath=".\pcl_function.h"
 				>
 			</File>
 			<File
