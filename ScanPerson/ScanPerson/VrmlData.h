@@ -73,6 +73,7 @@ public:
 	EventOutMFNode*	users;
 	EventOutMFNode*	hands;
 	EventOutSFNode* snapMesh;
+	EventOutSFMatrix* devProjMtrx;
 };
 
 

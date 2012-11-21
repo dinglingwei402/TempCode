@@ -934,6 +934,22 @@ library blaxxunVRMLLib
 	};
 
 
+	[
+		object,
+		uuid(FB4842EE-7DA1-47BA-B5AA-71D1ACC2390D),
+		dual,
+		helpstring("EventOutSFMatrix Interface"),
+		pointer_default(unique)
+	]
+	interface EventOutSFMatrix : EventOut
+	{
+		import "oaidl.idl";
+		HRESULT getValue([in,out,size_is(16)] float* value);
+	};
+
+
+
+
 
 	[
 		object,

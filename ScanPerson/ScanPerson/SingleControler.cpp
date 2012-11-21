@@ -2,6 +2,9 @@
 #include "SingleControler.h"
 #include "QueryNode.h"
 #include <string>
+#include <math.h>
+#include "MatrixCalc.hpp"
+#include <d3d9types.h>
 
 #ifndef FILTER_CONDITION(rc, what)
 #define CHECK_RC(rc, what)  \
@@ -133,8 +136,44 @@ initStatus SingleControler::init(){
 	EventOutSFNode* snpMsh;
 	hr=DeepQueryNode(child,_T("snapMesh"),IID_EventOutSFNode,&snpMsh);
 	data1->snapMesh=snpMsh;
+	EventOutSFMatrix* devProjMtrx;
+	hr=DeepQueryNode(child,_T("devProjMtrx"),IID_EventOutSFMatrix,&devProjMtrx);
+	data1->devProjMtrx=devProjMtrx;
+	float mtrx[16];
+	memset(mtrx,16*sizeof(float),0);
+	devProjMtrx->getValue(mtrx);
 	depPix=getDevData().getData()[0].pDepthData;
-	imgPix=getDevData().getData()[0].pImageData;
+	XnFieldOfView fov;
+	getDevData().getData()[0].depGen.GetFieldOfView(fov);
+	float zoomx=cos(0.5*fov.fHFOV)/sin(0.5*fov.fHFOV);
+	float zoomy=cos(0.5*fov.fVFOV)/sin(0.5*fov.fVFOV);
+	float far_clip=10.0;
+	float near_clip=0.2;
+	mtrx[0]=zoomx;
+	mtrx[5]=zoomy;
+	mtrx[10]=(far_clip+near_clip)/(far_clip-near_clip);
+	mtrx[11]=1;
+	mtrx[14]=2*(near_clip+far_clip)/(near_clip-1);
+	int xres=getDevData().getData()[0].xres;
+	int yres=getDevData().getData()[0].yres;
+	float mtrx_scrn[16]={1/*0*/,0,0,0,0,1/*5*/,0,0,0,0,1/*10*/,0,1+0.5/xres/*12*/,1+0.5/yres/*13*/,0,1/*15*/};
+	float new_mtrx[16]={mtrx_scrn[0]*mtrx[0]/*0*/,0,0,0,0,mtrx_scrn[5]*mtrx[5]/*5*/,\
+		0,0,mtrx_scrn[12]/*8*/,mtrx_scrn[13]/*9*/,1/*10*/,1/*11*/,0,0,mtrx[14],0};
+	float mtrx_inv[16];
+	memcpy(mtrx_inv,new_mtrx,16*sizeof(float));
+	int n=4,i=0;
+	i=inv(mtrx_inv,n);
+	EventInSFMatrix* devProjMtrx_In;
+	devProjMtrx->QueryInterface(IID_EventInSFMatrix,(void**)&devProjMtrx_In);
+	devProjMtrx_In->setValue(mtrx_inv);
+	EventOutSFNode* imageBuffer;
+	DeepQueryNode(child,_T("imgBuf"),IID_EventOutSFNode,&imageBuffer);
+	data1->imgBuf=imageBuffer;
+	Node* node;
+	imageBuffer->getValue(&node);
+	CComQIPtr<IBufferTexture> imgBufVlu=node;
+	imgBufVlu->setFormat(xres,yres,0,D3DFMT_R8G8B8,0);
+	node->Release();
 	sub_x=(int)(getDevData().getData()[0].xres/getXStep());
 	sub_y=(int)(getDevData().getData()[0].yres/getYStep());
 	blockSize=sub_x*sub_y;
@@ -178,6 +217,17 @@ TCHAR* getCmdStr(TCHAR cmdPath[],TCHAR cmdArg[]){
 }
 
 void SingleControler::createMesh(){	
+	Node* node;
+	data1->imgBuf->getValue(&node);
+	CComQIPtr<IBufferTexture> imgBufVlu=node;
+	int xres=getDevData().getData()[0].xres;
+	int yres=getDevData().getData()[0].yres;
+	int pixSize =3;
+	imgPix=getDevData().getData()[0].pImageData;
+
+	imgBufVlu->setFormat(xres,yres,0,D3DFMT_R8G8B8,0);
+	imgBufVlu->setTextureEx(xres,yres,0,D3DFMT_R8G8B8,xres*yres*pixSize,(BYTE*)imgPix,xres*pixSize);
+	node->Release();
 //	_asm int 3;
 	std::vector<XnPoint3D> vec_crd;
 	getNonZeroPt(vec_crd);
@@ -187,7 +237,6 @@ void SingleControler::createMesh(){
 	TCHAR cmdAppArg[256];
 	_itot(ptsBuf,cmdAppArg,10);
 	TCHAR* cmdStr = getCmdStr(_T("\"E:\\Code\\pclwrite\\build\\Debug\\pcd_write_test.exe\" "),cmdAppArg);
-	
 	HANDLE hReadPipe1,hWritePipe1,hReadPipe2,hWritePipe2;
 	SECURITY_ATTRIBUTES sa;
 	sa.bInheritHandle=true;
@@ -232,33 +281,24 @@ void SingleControler::createMesh(){
 	char isFinished=(char)flag;
 	DWORD dwReadPipe2;
     char rdBuf[pipe2Buf];//read offset vlu,the offset record the len of points ,and the len of idx
-	for(;;){
-		if (!ReadFile(hReadPipe2,rdBuf,100,&dwReadPipe2,NULL))
-		{
-			MessageBoxW(NULL,L"readPipe2Error",L"in keyobv",0);	
-			break;
-		}else if(dwReadPipe2==0)
-		{
-			break;
-		}
+	
+	if (!ReadFile(hReadPipe2,rdBuf,pipe2Buf,&dwReadPipe2,NULL))
+	{
+		MessageBoxW(NULL,L"readPipe2Error",L"in keyobv",0);	
+	//	break;
 	}
-
 	size_t* offset=(size_t*)rdBuf;//use offset to find where is pts content and where is index
 	size_t ptsSetBuf=offset[0]*sizeof(XnPoint3D);
 	size_t indxSetBuf=offset[1]*sizeof(IdxSeq);
 	size_t totalSize=ptsSetBuf+indxSetBuf;
 	char* totalBuf=new char[totalSize];		
 	DWORD dwReadPipe1;
-	for(;;){
-		if(!ReadFile(hReadPipe1,totalBuf,totalSize,&dwReadPipe1,NULL))
-		{
-			MessageBoxW(NULL,L"readPipe1Error",L"in keyobv",0);	
-			break;
-		}else if(dwReadPipe1==0){
-			break;
-		}
+	
+	if(!ReadFile(hReadPipe1,totalBuf,totalSize,&dwReadPipe1,NULL))
+	{
+		MessageBoxW(NULL,L"readPipe1Error",L"in keyobv",0);		
 	}
-
+	
 //	SetStdHandle(STD_INPUT_HANDLE,hReadPipe2);
 	XnPoint3D* pts=(XnPoint3D*)totalBuf;
 	IdxSeq* idx=(IdxSeq*)(&totalBuf[ptsSetBuf]);

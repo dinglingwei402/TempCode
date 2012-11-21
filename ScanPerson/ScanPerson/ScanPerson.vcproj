@@ -253,6 +253,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MatrixCalc.hpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Resource.h"
 				>
 			</File>

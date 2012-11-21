@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0500 */
-/* at Tue Oct 16 10:55:33 2012
+/* at Thu Nov 15 13:55:06 2012
  */
 /* Compiler settings for .\blaxxunVRML.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)
@@ -327,6 +327,12 @@ typedef interface EventOutSFVec2f EventOutSFVec2f;
 #define __EventOutSFVec3f_FWD_DEFINED__
 typedef interface EventOutSFVec3f EventOutSFVec3f;
 #endif 	/* __EventOutSFVec3f_FWD_DEFINED__ */
+
+
+#ifndef __EventOutSFMatrix_FWD_DEFINED__
+#define __EventOutSFMatrix_FWD_DEFINED__
+typedef interface EventOutSFMatrix EventOutSFMatrix;
+#endif 	/* __EventOutSFMatrix_FWD_DEFINED__ */
 
 
 #ifndef __ScriptContainer_FWD_DEFINED__
@@ -8154,6 +8160,157 @@ EXTERN_C const IID IID_EventOutSFVec3f;
 
 
 #endif 	/* __EventOutSFVec3f_INTERFACE_DEFINED__ */
+
+
+#ifndef __EventOutSFMatrix_INTERFACE_DEFINED__
+#define __EventOutSFMatrix_INTERFACE_DEFINED__
+
+/* interface EventOutSFMatrix */
+/* [unique][helpstring][dual][uuid][object] */ 
+
+
+EXTERN_C const IID IID_EventOutSFMatrix;
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+    
+    MIDL_INTERFACE("FB4842EE-7DA1-47BA-B5AA-71D1ACC2390D")
+    EventOutSFMatrix : public EventOut
+    {
+    public:
+        virtual HRESULT STDMETHODCALLTYPE getValue( 
+            /* [size_is][out][in] */ float *value) = 0;
+        
+    };
+    
+#else 	/* C style interface */
+
+    typedef struct EventOutSFMatrixVtbl
+    {
+        BEGIN_INTERFACE
+        
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            EventOutSFMatrix * This,
+            /* [in] */ REFIID riid,
+            /* [iid_is][out] */ 
+            __RPC__deref_out  void **ppvObject);
+        
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            EventOutSFMatrix * This);
+        
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            EventOutSFMatrix * This);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetTypeInfoCount )( 
+            EventOutSFMatrix * This,
+            /* [out] */ UINT *pctinfo);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetTypeInfo )( 
+            EventOutSFMatrix * This,
+            /* [in] */ UINT iTInfo,
+            /* [in] */ LCID lcid,
+            /* [out] */ ITypeInfo **ppTInfo);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetIDsOfNames )( 
+            EventOutSFMatrix * This,
+            /* [in] */ REFIID riid,
+            /* [size_is][in] */ LPOLESTR *rgszNames,
+            /* [range][in] */ UINT cNames,
+            /* [in] */ LCID lcid,
+            /* [size_is][out] */ DISPID *rgDispId);
+        
+        /* [local] */ HRESULT ( STDMETHODCALLTYPE *Invoke )( 
+            EventOutSFMatrix * This,
+            /* [in] */ DISPID dispIdMember,
+            /* [in] */ REFIID riid,
+            /* [in] */ LCID lcid,
+            /* [in] */ WORD wFlags,
+            /* [out][in] */ DISPPARAMS *pDispParams,
+            /* [out] */ VARIANT *pVarResult,
+            /* [out] */ EXCEPINFO *pExcepInfo,
+            /* [out] */ UINT *puArgErr);
+        
+        HRESULT ( STDMETHODCALLTYPE *getType )( 
+            EventOutSFMatrix * This,
+            /* [retval][out] */ int *type);
+        
+        HRESULT ( STDMETHODCALLTYPE *advise )( 
+            EventOutSFMatrix * This,
+            /* [in] */ EventOutObserver *observer,
+            /* [in] */ IDispatch *userData);
+        
+        HRESULT ( STDMETHODCALLTYPE *unAdvise )( 
+            EventOutSFMatrix * This,
+            /* [in] */ EventOutObserver *observer);
+        
+        HRESULT ( STDMETHODCALLTYPE *toString )( 
+            EventOutSFMatrix * This,
+            /* [retval][out] */ BSTR *value);
+        
+        HRESULT ( STDMETHODCALLTYPE *getValue )( 
+            EventOutSFMatrix * This,
+            /* [size_is][out][in] */ float *value);
+        
+        END_INTERFACE
+    } EventOutSFMatrixVtbl;
+
+    interface EventOutSFMatrix
+    {
+        CONST_VTBL struct EventOutSFMatrixVtbl *lpVtbl;
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define EventOutSFMatrix_QueryInterface(This,riid,ppvObject)	\
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+
+#define EventOutSFMatrix_AddRef(This)	\
+    ( (This)->lpVtbl -> AddRef(This) ) 
+
+#define EventOutSFMatrix_Release(This)	\
+    ( (This)->lpVtbl -> Release(This) ) 
+
+
+#define EventOutSFMatrix_GetTypeInfoCount(This,pctinfo)	\
+    ( (This)->lpVtbl -> GetTypeInfoCount(This,pctinfo) ) 
+
+#define EventOutSFMatrix_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
+    ( (This)->lpVtbl -> GetTypeInfo(This,iTInfo,lcid,ppTInfo) ) 
+
+#define EventOutSFMatrix_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
+    ( (This)->lpVtbl -> GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId) ) 
+
+#define EventOutSFMatrix_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
+    ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
+
+
+#define EventOutSFMatrix_getType(This,type)	\
+    ( (This)->lpVtbl -> getType(This,type) ) 
+
+#define EventOutSFMatrix_advise(This,observer,userData)	\
+    ( (This)->lpVtbl -> advise(This,observer,userData) ) 
+
+#define EventOutSFMatrix_unAdvise(This,observer)	\
+    ( (This)->lpVtbl -> unAdvise(This,observer) ) 
+
+#define EventOutSFMatrix_toString(This,value)	\
+    ( (This)->lpVtbl -> toString(This,value) ) 
+
+
+#define EventOutSFMatrix_getValue(This,value)	\
+    ( (This)->lpVtbl -> getValue(This,value) ) 
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
+
+
+
+
+#endif 	/* __EventOutSFMatrix_INTERFACE_DEFINED__ */
 
 
 #ifndef __ScriptContainer_INTERFACE_DEFINED__
