@@ -8,6 +8,16 @@ typedef struct IndxSequence{
 	size_t indx_3;
 }IdxSeq;
 
+typedef struct XnPointXYZRGB
+{
+	XnFloat X;
+	XnFloat Y;
+	XnFloat Z;
+	XnUInt8 nRed;
+	XnUInt8 nGreen;
+	XnUInt8 nBlue;
+} XnPointXYZRGB;
+
 class SingleControler:public KinectControler{
 public:
 	SingleControler(const Vrml_PROTO_KinectDev& v_data,const KinectData& k_data,int x_step=1,int y_step=1);
@@ -16,8 +26,8 @@ public:
 	void update();
 	void close();
 	void drawPointSet(XnPoint3D* crdPts,XnPoint3D* clrPts);
-	void getNonZeroPt(std::vector<XnPoint3D>& vec_crd,std::vector<XnPoint3D>& vec_clr);
-	void getNonZeroPt( std::vector<XnPoint3D>& vec_crd);
+	void getNonZeroPt(std::vector<XnPointXYZRGB>& vec_clrPt);
+	void getNonZeroPt(std::vector<XnPoint3D>& vec_crd);
 	void createMesh();
 	void PclMesh2VrlMesh(size_t ptsCnt,XnPoint3D* pts,size_t idxCnt,IdxSeq* idx);
 private:

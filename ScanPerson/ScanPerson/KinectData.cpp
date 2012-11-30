@@ -66,6 +66,7 @@ initStatus KinectData::initData(){
 		b=_data[i].imgGen.GetMirrorCap().IsMirrored();
 		if(!b)_data[i].imgGen.GetMirrorCap().SetMirror(true);
 		rc=_data[i].depGen.GetAlternativeViewPointCap().SetViewPoint(_data[i].imgGen);
+	//	rc=_data[i].imgGen.GetAlternativeViewPointCap().SetViewPoint(_data[i].depGen);
 		RC_INI_STATUS(rc);
 		DepthMetaData depMD;
 		ImageMetaData imgMD;

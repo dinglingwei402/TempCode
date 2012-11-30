@@ -1,21 +1,21 @@
 #include"stdio.h" 
 #include"malloc.h"
 #include"math.h"  //数学函数
-//void main() 
-//{
-//	int inv(float *p,int n);
-//	float a[4][4]={{1,2,0,0},{2,5,0,0},{0,0,3,0},{0,0,0,1}} ,*ab;
-//	ab=a[0];
-//	int n=4,i=0,j;
-//	i=inv(ab,n);//调用矩阵求逆 
-//	if(i!=0)  //如果返回值不是0 
-//		for(i=0;i<n;i++)  //输出结果 :%s 
-//		{
-//			putchar('\n');
-//			for(j=0;j<n;j++) printf("%f  ",a[i][j]); 
-//		}
-//
-//}
+int mul4X4(float left[16],float right[16],float out[16]){
+	int k=0;
+	for(int i=0;i<4;i++){
+		int row_Start=i*4;
+		for(int j=0;j<4;j++){
+			int clmn_Start=j*4;
+			out[k]=left[row_Start]*right[clmn_Start]+	\
+				left[row_Start+1]*right[clmn_Start+1]+	\
+				left[row_Start+2]*right[clmn_Start+2]+	\
+				left[row_Start+3]*right[clmn_Start+3];
+			k++;
+		}
+	}
+	return 0;
+}
 int inv(float *p,int n) 
 {
 	void swap(float *a,float *b);
@@ -74,3 +74,99 @@ void swap(float *a,float *b)
 	*a=*b;
 	*b=c;
 }
+
+BOOL SaveBmp(HBITMAP hBitmap, const TCHAR *FileName)       
+{       
+	HDC     hDC;       
+	int     iBits;       
+	WORD     wBitCount;       
+	DWORD     dwPaletteSize=0,     dwBmBitsSize=0,     dwDIBSize=0,     dwWritten=0;      	BITMAP     Bitmap;               
+	BITMAPFILEHEADER     bmfHdr;               
+	BITMAPINFOHEADER     bi;               
+	LPBITMAPINFOHEADER     lpbi;               
+	HANDLE     fh,     hDib,     hPal,hOldPal=NULL;          
+	hDC     =     CreateDC(_T("DISPLAY"),     NULL,     NULL,     NULL);       
+	iBits     =     GetDeviceCaps(hDC,     BITSPIXEL) *GetDeviceCaps(hDC,     PLANES);       
+	DeleteDC(hDC);           
+	if (iBits <= 1) 
+	{
+		wBitCount = 1; 
+	}
+	else if (iBits <= 4)   
+	{
+		wBitCount = 4;         
+	}
+	else if (iBits <= 8)  
+	{
+		wBitCount = 8;  
+	}
+	else 
+	{
+		wBitCount = 24;
+	}
+
+	GetObject(hBitmap, sizeof(Bitmap), (LPSTR)&Bitmap);       
+	bi.biSize = sizeof(BITMAPINFOHEADER);       
+	bi.biWidth =  Bitmap.bmWidth;       
+	bi.biHeight = Bitmap.bmHeight;       
+	bi.biPlanes = 1;       
+	bi.biBitCount = wBitCount;       
+	bi.biCompression =  BI_RGB;       
+	bi.biSizeImage  =  0;       
+	bi.biXPelsPerMeter = 0;       
+	bi.biYPelsPerMeter   =   0;       
+	bi.biClrImportant = 0;       
+	bi.biClrUsed   = 0;      
+
+	dwBmBitsSize  = ((Bitmap.bmWidth     *     wBitCount     +     31)     /     32)     *     4     *     Bitmap.bmHeight;      
+	hDib     =     GlobalAlloc(GHND,dwBmBitsSize     +     dwPaletteSize     +     sizeof(BITMAPINFOHEADER));           
+	lpbi     =     (LPBITMAPINFOHEADER)GlobalLock(hDib);           
+	*lpbi     =     bi;          
+	hPal     =     GetStockObject(DEFAULT_PALETTE);           
+	if     (hPal)           
+	{           
+		hDC     =     ::GetDC(NULL);           
+		hOldPal     =     ::SelectPalette(hDC,     (HPALETTE)hPal,     FALSE);           
+		RealizePalette(hDC);           
+	}      
+	GetDIBits(hDC, 
+		hBitmap, 
+		0,   
+		(UINT)Bitmap.bmHeight,
+		(LPSTR)lpbi+sizeof(BITMAPINFOHEADER)+dwPaletteSize,
+		(BITMAPINFO *)lpbi, 
+		DIB_RGB_COLORS);          
+	if (hOldPal)           
+	{           
+		::SelectPalette(hDC,     (HPALETTE)hOldPal,     TRUE);           
+		RealizePalette(hDC);           
+		::ReleaseDC(NULL,     hDC);           
+	}          
+
+	fh  =  CreateFile((LPCWSTR)FileName,
+		GENERIC_WRITE,
+		0,     
+		NULL,    
+		CREATE_ALWAYS,           
+		FILE_ATTRIBUTE_NORMAL,
+		NULL);/*     FILE_FLAG_SEQUENTIAL_SCAN,     NULL);  */        
+
+	if     (fh == INVALID_HANDLE_VALUE) 
+	{
+		return     FALSE;  
+	}
+
+	bmfHdr.bfType     =     0x4D42;     //     "BM"           
+	dwDIBSize     =     sizeof(BITMAPFILEHEADER)     +     sizeof(BITMAPINFOHEADER)     +     dwPaletteSize     +     dwBmBitsSize;               
+	bmfHdr.bfSize     =     dwDIBSize;           
+	bmfHdr.bfReserved1     =     0;           
+	bmfHdr.bfReserved2     =     0;           
+	bmfHdr.bfOffBits     =     (DWORD)sizeof(BITMAPFILEHEADER)     +     (DWORD)sizeof(BITMAPINFOHEADER)     +     dwPaletteSize;           
+	WriteFile(fh,     (LPSTR)&bmfHdr,     sizeof(BITMAPFILEHEADER),     &dwWritten,     NULL);           
+	WriteFile(fh,     (LPSTR)lpbi,     dwDIBSize,     &dwWritten,     NULL);           
+	//清除               
+	GlobalUnlock(hDib);           
+	GlobalFree(hDib);           
+	CloseHandle(fh);          
+	return     TRUE;       
+}      
