@@ -253,7 +253,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MatrixCalc.hpp"
+				RelativePath=".\MatrixCalc.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MatrixCalc.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MultiControler.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MultiControler.h"
 				>
 			</File>
 			<File

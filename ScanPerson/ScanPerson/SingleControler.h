@@ -2,21 +2,6 @@
 #include "kinectcontroler.h"
 #include <vector>
 
-typedef struct IndxSequence{
-	size_t indx_1;
-	size_t indx_2;
-	size_t indx_3;
-}IdxSeq;
-
-typedef struct XnPointXYZRGB
-{
-	XnFloat X;
-	XnFloat Y;
-	XnFloat Z;
-	XnUInt8 nRed;
-	XnUInt8 nGreen;
-	XnUInt8 nBlue;
-} XnPointXYZRGB;
 
 class SingleControler:public KinectControler{
 public:
@@ -26,19 +11,16 @@ public:
 	void update();
 	void close();
 	void drawPointSet(XnPoint3D* crdPts,XnPoint3D* clrPts);
-	void getNonZeroPt(std::vector<XnPointXYZRGB>& vec_clrPt);
-	void getNonZeroPt(std::vector<XnPoint3D>& vec_crd);
 	void createMesh();
 	void PclMesh2VrlMesh(size_t ptsCnt,XnPoint3D* pts,size_t idxCnt,IdxSeq* idx);
+	void saveImage();
 private:
 	int sub_x;
 	int sub_y;
 	int blockSize;
-	Vrml_PROTO_KinectData* data1;
-	const XnDepthPixel* depPix;
-	const XnUInt8* imgPix;
-	XnPoint3D* lp_clr;
-	XnPoint3D* lp_crd;
+	Vrml_PROTO_KinectData* vrmlData;
+	//const XnDepthPixel* depPix;
+	//const XnUInt8* imgPix;
 private:
 	initStatus init();
 };

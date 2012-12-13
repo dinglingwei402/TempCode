@@ -3,7 +3,7 @@
 #include "QueryNode.h"
 #include <string>
 #include <math.h>
-#include "MatrixCalc.hpp"
+#include "MatrixCalc.h"
 #include <d3d9types.h>
 
 
@@ -18,25 +18,13 @@
 //#define colorMode 0
 
 
-//######## ######## ######## ######## ######## 
-void clearNullPoints(XnPoint3D* points,int cnt,std::vector<XnPoint3D>& vec){
-	for (int i=0;i<cnt;i++)
-	{ 
-		float allZero=std::abs(points[i].X)+std::abs(points[i].Y)+std::abs(points[i].Z);
-		if(allZero>0.05){
-			vec.push_back(points[i]);
-		}	
-	}
-}
 SingleControler::SingleControler(const Vrml_PROTO_KinectDev& v_data,const KinectData& k_data,int x_step,int y_step):KinectControler(v_data,k_data,x_step,y_step),blockSize(0),sub_x(0),sub_y(0)
 {
 	init();	
 }
 SingleControler::~SingleControler()
 {
-	if(this->data1)delete data1;
-	if(this->lp_crd)delete lp_crd;
-	if(this->lp_clr)delete lp_clr;
+	if(this->vrmlData)delete vrmlData;
 }
 
 void SingleControler::start(){
@@ -49,6 +37,8 @@ void SingleControler::close(){
 }
 
 void SingleControler::drawPointSet(XnPoint3D* crdPts,XnPoint3D* clrPts){
+	const XnUInt8* imgPix=getDevData().getData()[0].pImageData;
+	const XnDepthPixel* depPix=getDevData().getData()[0].pDepthData;
 	if (_ini_stus==success)
 	{
 		int len=0;
@@ -70,117 +60,60 @@ void SingleControler::drawPointSet(XnPoint3D* crdPts,XnPoint3D* clrPts){
 			}
 		}
 		getDevData().getData()[0].depGen.ConvertProjectiveToRealWorld(len,crdPts,crdPts);
-		data1->coord->setValue(blockSize*3,(float*)crdPts);
-		data1->color->setValue(blockSize*3,(float*)clrPts);
+		vrmlData->coord->setValue(blockSize*3,(float*)crdPts);
+		vrmlData->color->setValue(blockSize*3,(float*)clrPts);
 	}
 	//return 0;
 }
 
-void SingleControler::getNonZeroPt(std::vector<XnPointXYZRGB>& vec_clrPt)
-{
-	int width=getDevData().getData()[0].xres;
-	int height=getDevData().getData()[0].yres;
-	int cnt=width*height;
-	GenGrp* devData=getDevData().getData();
-	for(int i=1;i<height;i++){
-		for(int j=1;j<width;j++){
-			int bigX=j;
-			int bigY=i;
-			int idx=bigY*(devData[0].xres)+bigX;
-			if(depPix[idx]>devData[0].depGen.GetDeviceMaxDepth())continue; 
-			XnPoint3D PixCrd={bigX,bigY,depPix[idx]};
-			devData[0].depGen.ConvertProjectiveToRealWorld(1,&PixCrd,&PixCrd);
-			float allZero=std::abs(PixCrd.X)+std::abs(PixCrd.Y)+std::abs(PixCrd.Z);
-			if(allZero>0.01&&(PixCrd.Z>200&&PixCrd.Z<3000)){
-				XnPointXYZRGB pt;
-				pt.X=PixCrd.X;
-				pt.Y=PixCrd.Y;
-				pt.Z=PixCrd.Z;
-				pt.nRed=imgPix[idx*3];
-				pt.nGreen=imgPix[idx*3+1];
-				pt.nBlue=imgPix[idx*3+2];
-				vec_clrPt.push_back(pt);	
-			}
-		}
-	}
-}
-
-void SingleControler::getNonZeroPt( std::vector<XnPoint3D>& vec_crd)
-{
-	int width=getDevData().getData()[0].xres;
-	int height=getDevData().getData()[0].yres;
-	int cnt=width*height;
-	GenGrp* devData=getDevData().getData();
-	for(int i=1;i<height;i++){
-		for(int j=1;j<width;j++){
-			int bigX=j;
-			int bigY=i;
-			int idx=bigY*(devData[0].xres)+bigX;
-			if(depPix[idx]>devData[0].depGen.GetDeviceMaxDepth())continue; 
-			XnPoint3D PixCrd={bigX,bigY,depPix[idx]};
-			devData[0].depGen.ConvertProjectiveToRealWorld(1,&PixCrd,&PixCrd);
-			float allZero=std::abs(PixCrd.X)+std::abs(PixCrd.Y)+std::abs(PixCrd.Z);
-			if(allZero>0.01&&(PixCrd.Z>200&&PixCrd.Z<3000)){
-				vec_crd.push_back(PixCrd);
-			}
-		}
-	}
-}
-
 initStatus SingleControler::init(){
 	HRESULT hr;	
-	this->data1=new Vrml_PROTO_KinectData();
+	this->vrmlData=new Vrml_PROTO_KinectData();
 	Node* child;
 	hr=this->getVrmlData().getChildren()->get1Value(0,&child);
 	EventInMFVec3f* crd;
 	hr=DeepQueryNode(child,_T("coord"),IID_EventInMFVec3f,&crd);
-	data1->coord=crd;
+	vrmlData->coord=crd;
 	EventInMFColor* clr;
 	hr=DeepQueryNode(child,_T("color"),IID_EventInMFColor,&clr);
-	data1->color=clr;
+	vrmlData->color=clr;
 	EventOutSFNode* snpMsh;
 	hr=DeepQueryNode(child,_T("snapMesh"),IID_EventOutSFNode,&snpMsh);
-	data1->snapMesh=snpMsh;
+	vrmlData->snapMesh=snpMsh;
 	EventOutSFMatrix* devProjMtrx;
 	hr=DeepQueryNode(child,_T("devProjMtrx"),IID_EventOutSFMatrix,&devProjMtrx);
-	data1->devProjMtrx=devProjMtrx;
+	vrmlData->devProjMtrx=devProjMtrx;
 	float mxtr_view[16]={};
 	float mtrx_prj[16];
 	memset(mtrx_prj,16*sizeof(float),0);
 	devProjMtrx->getValue(mtrx_prj);
-	depPix=getDevData().getData()[0].pDepthData;
 	XnFieldOfView fov;
 	getDevData().getData()[0].depGen.GetFieldOfView(fov);
+	float far_clip=10;
+	float near_clip=2;	
 	float zoomx=cos(0.5*fov.fHFOV)/sin(0.5*fov.fHFOV);
 	float zoomy=cos(0.5*fov.fVFOV)/sin(0.5*fov.fVFOV);
-	float far_clip=10.0;
-	float near_clip=0.2;
-	mtrx_prj[0]=zoomx;
+	mtrx_prj[0]=-zoomx;
 	mtrx_prj[5]=zoomy;
-	mtrx_prj[10]=far_clip;//(far_clip+near_clip)/(far_clip-near_clip);
-	mtrx_prj[11]=-1;
-	mtrx_prj[14]=0;//2*(near_clip+far_clip)/(near_clip-1);
+	mtrx_prj[10]=(far_clip)/(far_clip-near_clip);
+	mtrx_prj[11]=1;
+	mtrx_prj[14]=(near_clip*far_clip)/(near_clip-far_clip);
 	mtrx_prj[15]=0;
 	int xres=getDevData().getData()[0].xres;
 	int yres=getDevData().getData()[0].yres;
-	float mtrx_scrn[16]={0.5/*0*/,0,0,0,0,-0.5/*5*/,0,0,0,0,1/*10*/,0,0.5/*12*/,0.5/*13*/,0,1/*15*/};
+	float mtrx_scrn[16]={0.5,0,0,0,0,0.5,0,0,0,0,1,0,0.5+0.5/xres,0.5+0.5/yres,0,1};
 	float new_mtrx[16];
 	mul4X4(mtrx_prj,mtrx_scrn,new_mtrx);
 	float mtrx_inv[16];
 	memcpy(mtrx_inv,new_mtrx,16*sizeof(float));
 	int n=4,i=0;
 	i=inv(mtrx_inv,n);
-	/*float mtrx_test[16]={
-			1.56995,0.0107065,0.0498174,0.0498124,	\
-			0.00135548,2.6597,-0.0973457,-0.097336,	\
-			0.0785419,-0.25991,-0.994104,-0.994004,	\
-			0.70573,-1.08401,4.76838,4.77645};*/
 	EventInSFMatrix* devProjMtrx_In;
 	devProjMtrx->QueryInterface(IID_EventInSFMatrix,(void**)&devProjMtrx_In);
 	devProjMtrx_In->setValue(new_mtrx);
 	EventOutSFNode* imageBuffer;
 	DeepQueryNode(child,_T("imgBuf"),IID_EventOutSFNode,&imageBuffer);
-	data1->imgBuf=imageBuffer;
+	vrmlData->imgBuf=imageBuffer;
 	Node* node;
 	imageBuffer->getValue(&node);
 	CComQIPtr<IBufferTexture> imgBufVlu=node;
@@ -194,9 +127,6 @@ initStatus SingleControler::init(){
 		this->_ini_stus=fail;
 		return this->_ini_stus;
 	}
-	lp_crd=new XnPoint3D[blockSize];
-	lp_clr=new XnPoint3D[blockSize];
-	drawPointSet(lp_crd,lp_clr);
 	this->_ini_stus=FAILED(hr)?fail:success;
 	return this->_ini_stus;
 }
@@ -255,33 +185,23 @@ void savePCDRGB(std::vector<XnPointXYZRGB>& vec_crd){
 }
 
 ///****end test fun
-
-
-
 void SingleControler::createMesh(){	
+	const XnUInt8* imgPix=getDevData().getData()[0].pImageData;
+	saveImage();
 	Node* node;
-	data1->imgBuf->getValue(&node);
+	vrmlData->imgBuf->getValue(&node);
 	CComQIPtr<IBufferTexture> imgBufVlu=node;
 	int xres=getDevData().getData()[0].xres;
 	int yres=getDevData().getData()[0].yres;
 	int pixSize =3;
-	imgPix=getDevData().getData()[0].pImageData;
-	/*HBITMAP map_clr=CreateBitmap(xres,yres,1,24,imgPix);
-	SaveBmp(map_clr,_T("c:\\ppp.bmp"));*/
 	imgBufVlu->setFormat(xres,yres,0,D3DFMT_R8G8B8,0);
 	imgBufVlu->setTextureEx(xres,yres,0,D3DFMT_R8G8B8,xres*yres*pixSize,(BYTE*)imgPix,xres*pixSize);
 	node->Release();
-//	_asm int 3;
-	/*std::vector<XnPoint3D> vec_crd;
-	std::vector<XnRGB24Pixel> vec_clr;*/
 	std::vector<XnPointXYZRGB> vec_crd;
-	getNonZeroPt(vec_crd);
+	getNonZeroPt(0,vec_crd);
 	if(vec_crd.empty())return;
 	int vec_sz=vec_crd.size();
-//	int vec_sz=5000;
 	savePCDRGB(vec_crd);
-//	return;
-
 	std::vector<XnPointXYZRGB>::iterator it=vec_crd.begin();
 	XnPoint3D* wrtBuf=new XnPoint3D[vec_sz];	
 	int indx=0;
@@ -293,7 +213,6 @@ void SingleControler::createMesh(){
 		indx++;
 		it++;
 	}
-
 	int ptsBuf=sizeof(XnPoint3D)*vec_sz;
 	TCHAR cmdAppArg[256];
 	_itot(ptsBuf,cmdAppArg,10);
@@ -303,7 +222,6 @@ void SingleControler::createMesh(){
 	sa.bInheritHandle=true;
 	sa.lpSecurityDescriptor=NULL;
 	sa.nLength=sizeof(SECURITY_ATTRIBUTES);
-
 	const size_t pipe2Buf=100;
 	BOOL pipe1Success=CreatePipe(&hReadPipe1,&hWritePipe1,&sa,ptsBuf);
 	BOOL pipe2Success=CreatePipe(&hReadPipe2,&hWritePipe2,&sa,pipe2Buf);
@@ -345,12 +263,10 @@ void SingleControler::createMesh(){
 	size_t totalSize=ptsSetBuf+indxSetBuf;
 	char* totalBuf=new char[totalSize];		
 	DWORD dwReadPipe1;
-	
 	if(!ReadFile(hReadPipe1,totalBuf,totalSize,&dwReadPipe1,NULL))
 	{
 		MessageBoxW(NULL,L"readPipe1Error",L"in keyobv",0);		
 	}
-	
 //	SetStdHandle(STD_INPUT_HANDLE,hReadPipe2);
 	XnPoint3D* pts=(XnPoint3D*)totalBuf;
 	IdxSeq* idx=(IdxSeq*)(&totalBuf[ptsSetBuf]);
@@ -365,14 +281,56 @@ void SingleControler::createMesh(){
 
 void SingleControler::PclMesh2VrlMesh(size_t ptsCnt,XnPoint3D* pts,size_t idxCnt,IdxSeq* idx){
 	Node* meshNode;
-	this->data1->snapMesh->getValue(&meshNode);
+	this->vrmlData->snapMesh->getValue(&meshNode);
 	EventInMFVec3f* points;
+
 	DeepQueryNode(meshNode,L"point",IID_EventInMFVec3f,&points);
 	points->setValue(ptsCnt*3,(float*)pts);
 	EventInMFInt32* ind;
 	DeepQueryNode(meshNode,L"index",IID_EventInMFInt32,&ind);
 	ind->setValue(idxCnt*3,(int*)idx);
 
+}
+void SingleControler::saveImage(){
+	HDC directdc=CreateCompatibleDC(NULL);
+	if(directdc){
+		HANDLE hFile=CreateFile(L"c:\\img.bmp",GENERIC_WRITE,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL|FILE_FLAG_SEQUENTIAL_SCAN,NULL);
+		BITMAP bm;
+		BITMAPINFO bmpInfoHeader;
+		int xres=getDevData().getData()[0].xres;
+		int yres=getDevData().getData()[0].yres;
+		ZeroMemory(&bmpInfoHeader,sizeof(BITMAPINFO));
+		bmpInfoHeader.bmiHeader.biSize=sizeof(BITMAPINFOHEADER);
+		bmpInfoHeader.bmiHeader.biWidth=xres;
+		bmpInfoHeader.bmiHeader.biHeight=yres;
+		bmpInfoHeader.bmiHeader.biBitCount=24;
+		UINT* ptPixel=(UINT*)getDevData().getData()[0].pImageData;
+		BITMAPFILEHEADER bmpFileHeader;
+		ZeroMemory(&bmpFileHeader,sizeof(bmpFileHeader));
+		bmpFileHeader.bfType='MB';
+		DWORD lBufferLen=xres*yres*8*3;
+		bmpFileHeader.bfSize=sizeof(bmpFileHeader)+lBufferLen+sizeof(BITMAPINFOHEADER);
+		bmpFileHeader.bfOffBits=sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER);
+		DWORD dwWritten=0;
+		bool bWrite=WriteFile(hFile,&bmpFileHeader,sizeof(bmpFileHeader),&dwWritten,NULL);
+		if(!bWrite)
+		{
+			MessageBox(0,TEXT("fail to write"),TEXT("Error"),MB_OK);
+		}
+		dwWritten=0;
+		bWrite=WriteFile(hFile,&bmpInfoHeader,sizeof(bmpInfoHeader),&dwWritten,NULL);
+		if(!bWrite)
+		{
+			MessageBox(0,TEXT("fail to write"),TEXT("Error"),MB_OK);
+		}
+		dwWritten=0;
+		bWrite=WriteFile(hFile,ptPixel,lBufferLen,&dwWritten,NULL);
+		if(!bWrite)
+		{
+			MessageBox(0,TEXT("fail to write"),TEXT("Error"),MB_OK);
+		}
+		CloseHandle(hFile);
+	}
 }
 
 

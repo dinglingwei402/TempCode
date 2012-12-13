@@ -9,6 +9,7 @@
 #include "KinectData.h"
 #include "VrmlData.h"
 #include "SingleControler.h"
+#include "MultiControler.h"
 #include "keyObserver.h"
 
 /*typedef int tic_fun(void);
@@ -186,10 +187,13 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 	if(num==1){
 		SingleControler* single=new	SingleControler(*kd,*devData,3,3);
 		controler=single;
-		controler->start();	
+		controler->start();
 		kyObvr->setControler(controler);
 	}else if(num>1&&(!b)){
-		//TODO:MULTIControler
+		MultiControler* mult=new MultiControler(*kd,*devData,3,3);
+		controler=mult;
+		controler->start();
+		kyObvr->setControler(controler);
 	}
 	if(ini!=initStatus::success)
 	{
