@@ -33,7 +33,11 @@ void SingleControler::start(){
 }
 
 void SingleControler::close(){
- int i=0;
+	int i=0;
+}
+
+void SingleControler::trigger(){
+	createMesh();
 }
 
 void SingleControler::drawPointSet(XnPoint3D* crdPts,XnPoint3D* clrPts){
@@ -136,8 +140,7 @@ void SingleControler::update(){
 	XnStatus rc;
 	rc=getDevData().getData()[0].depGen.WaitAndUpdateData();
 	if(rc==XN_STATUS_OK){
-	//	drawPointSet(lp_crd,lp_clr); 
-	//	createMesh();
+	//	drawPointSet(lp_crd,lp_clr);	
 	}
 //	return 0;
 }

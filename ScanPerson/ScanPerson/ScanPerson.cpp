@@ -11,7 +11,7 @@
 #include "SingleControler.h"
 #include "MultiControler.h"
 #include "keyObserver.h"
-
+const int maxDev=10;
 /*typedef int tic_fun(void);
 
 tic_fun callback_fun;*/ 
@@ -184,13 +184,23 @@ HRESULT STDMETHODCALLTYPE CScanPerson::AddDeviceSensor(
 	key->advise(kyObvr,NULL);
 	VARIANT_BOOL b;
 	useSgl->getValue(&b);
-	if(num==1){
+	Node* child[maxDev];
+	for (int i=0;i<num;i++)
+	{	
+		child[i]=NULL;
+		children->get1Value(i,&child[i]);
+		if(!child[i]){
+			num=std::min(i,num);
+			break;
+		}
+	}
+	if(num==1||b){
 		SingleControler* single=new	SingleControler(*kd,*devData,3,3);
 		controler=single;
 		controler->start();
 		kyObvr->setControler(controler);
 	}else if(num>1&&(!b)){
-		MultiControler* mult=new MultiControler(*kd,*devData,3,3);
+		MultiControler* mult=new MultiControler(*kd,*devData,3,3,num);
 		controler=mult;
 		controler->start();
 		kyObvr->setControler(controler);

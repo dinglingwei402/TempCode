@@ -7,6 +7,10 @@ KinectControler::KinectControler(const Vrml_PROTO_KinectDev& v_data,const Kinect
 
 KinectControler::~KinectControler(){}
 
+void KinectControler::start(){}
+
+void KinectControler::close(){}
+
 initStatus KinectControler::init()
 {
 	this->_ini_stus=success;
@@ -16,6 +20,31 @@ void KinectControler::update()
 {
 //	return;
 }
+
+void KinectControler::trigger(){}
+
+const KinectData& KinectControler::getDevData()const
+{
+	return this->_devData;
+}
+
+const Vrml_PROTO_KinectDev& KinectControler::getVrmlData()const
+{
+	return this->_vrmlData;
+}
+
+XnUInt32 KinectControler::getXStep()const
+{
+	return this->_xStep;
+}
+
+XnUInt32 KinectControler::getYStep()const
+{
+	return this->_yStep;
+}
+
+
+
 void KinectControler::getNonZeroPt(int dev_no,std::vector<XnPointXYZRGB>& vec_clrPt)
 {
 	const XnUInt8* imgPix=getDevData().getData()[dev_no].pImageData;
@@ -69,28 +98,4 @@ void KinectControler::getNonZeroPt(int dev_no,std::vector<XnPoint3D>& vec_crd)
 		}
 	}
 }
-
-
-const KinectData& KinectControler::getDevData()const
-{
-	return this->_devData;
-}
-
-const Vrml_PROTO_KinectDev& KinectControler::getVrmlData()const
-{
-	return this->_vrmlData;
-}
-
-XnUInt32 KinectControler::getXStep()const
-{
-	return this->_xStep;
-}
-
-XnUInt32 KinectControler::getYStep()const
-{
-	return this->_yStep;
-}
-
-void KinectControler::start(){}
-void KinectControler::close(){}
 

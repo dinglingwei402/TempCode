@@ -63,14 +63,9 @@ HRESULT STDMETHODCALLTYPE KeyObserver::callback(EventOut *value,double timeStamp
 	tmp_vlu->getValue(&keyVlu);
 	if(keyVlu==65){
 		MessageBoxW(NULL,L"at 0 degree ",L"in keyobv",0);
-		SingleControler* ctrl=(SingleControler*)controler;
-		ctrl->createMesh();
-	}
-	if(keyVlu==66){
-		//MessageBoxW(L"rotate to 120 degree ",);
-	}
-	if(keyVlu==67){
-		//MessageBoxW(L"rotate t0 240 degree ",);
+		/*SingleControler* ctrl=(SingleControler*)controler;
+		ctrl->createMesh();*/
+		this->controler->trigger();
 	}
 	tmp_vlu->Release();
 	return S_OK;
