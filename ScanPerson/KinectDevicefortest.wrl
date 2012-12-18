@@ -1,5 +1,30 @@
 #VRML V2.0 utf8
 
+EXTERNPROTO Rectangle [
+	exposedField SFVec2f size
+]
+["urn:inet:bitmanagement.de:node:Rectangle"]
+
+EXTERNPROTO MultiTexture [
+	exposedField SFBool materialColor
+	exposedField SFBool materialAlpha
+	exposedField SFBool materialSpecular
+	exposedField SFBool transparent
+	exposedField SFBool nomipmap
+	exposedField MFString mode
+	exposedField MFString source
+	exposedField MFString function
+	exposedField MFString type
+	exposedField MFNode texture
+	exposedField MFNode textureTransform
+	exposedField MFInt32 textureOp
+	exposedField SFColor color
+	exposedField SFFloat alpha
+	exposedField MFNode bumpTransform
+	exposedField SFNode metadata
+]
+["urn:inet:bitmanagement.de:node:MultiTexture"]
+
 EXTERNPROTO TextureMatrixTransform [
 	exposedField SFMatrix matrix
 ]
@@ -159,28 +184,25 @@ PROTO KinectData[
 	exposedField	MFInt32	 usersId []
 	exposedField	MFVec3f	 coord[]
 	exposedField	MFColor	 color[]
-	exposedField	SFNode   imgBuf NULL
-	exposedField	SFNode   dptBuf NULL 
+	exposedField	SFNode   imgBuf BufferTexture{}
+	exposedField	SFNode   dptBuf BufferTexture{}
 	exposedField	SFNode   floor NULL
 	exposedField	MFNode	 users	[]
 	exposedField	MFNode	 hands	[]
 	exposedField    SFMatrix devProjMtrx 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	field	SFNode   snapMesh IndexedTriangleSet {
-		coord  Coordinate {point []}
-		index []
-	}
-
+	field	SFNode  snapMesh IndexedTriangleSet {}
 ]{}
 
  PROTO  KinectDev[
-	exposedField SFBool	useSingleDev TRUE 
+	exposedField SFBool	useSingleDev TRUE
 	exposedField MFNode children[] 
-	exposedField SFNode  IndxFaceSet DEF mesh IndexedTriangleSet 
+	exposedField SFNode  IndxFaceSet DEF mergeMesh IndexedTriangleSet 
 	{
 		coord Coordinate{point [1 0 0 2 0 0  3 2 0]}
 		color Color	{color [1 0 0  0 1 0  0 0 1]}
 	    index [1 2 3]
 	}#hold current scene to this field.
+	exposedField MFNode mtrxToNO1Cam []
 	exposedField SFInt32 key 0		 #hold scene trigger	  
 ] {
 	Script {
@@ -196,20 +218,33 @@ PROTO KinectData[
 
 DEF	 data1 KinectData {
 	floor OpenNIFloor {ttt 1 10 1}
-	imgBuf DEF data1Buf	BufferTexture{repeatS TRUE repeatT TRUE }
+	imgBuf DEF data1Buf	BufferTexture{ }
 	snapMesh DEF  data1TriSet IndexedTriangleSet {
-		coord  Coordinate {point []}
+		coord  DEF coord_mesh  Coordinate {point []}
 		index []
+		texCoord MultiTextureCoordinate {
+			coord [
+			   # USE  coord_mesh
+	   			DEF TW3 TextureCoordGen { mode "WORLDSPACEPOSITION3" }
+			]
+
+	    }
 	}
 }
 
 DEF	 data2  KinectData {
 	floor OpenNIFloor {ttt 2 20 2}
+	imgBuf DEF data2Buf	BufferTexture{ }
+}
+
+DEF	data3  KinectData {
+	floor OpenNIFloor {ttt 2 20 2}
 }
 
 DEF kd1 KinectDev {	
+	useSingleDev FALSE
    children[
-		USE	 data1 USE	data2
+		USE	 data1 USE data2 USE data3
    ]
 }
 
@@ -219,9 +254,9 @@ DEF	ds DeviceSensor	{
 	event USE kd1
 }
 
-DEF	 ks KeySensor {
+DEF	 ks KeySensor {	 }
 
-}
+
 
 ROUTE ks.keyPress TO kd1.key
 
@@ -230,20 +265,112 @@ DEF	sss Shape {
 	geometry USE data1TriSet
 	appearance DEF app Appearance
 	{
-		texture USE	 data1Buf
-		textureTransform DEF txMatrix TextureMatrixTransform{}
+		texture
+		MultiTexture	{
+			texture ImageTexture {url "c:\\img.bmp" repeatS  TRUE  repeatT  TRUE }#USE	 data1Buf
+		 	textureTransform DEF txMatrix TextureMatrixTransform{}
+		}
 	}
 }
 ROUTE  data1.devProjMtrx TO	txMatrix.matrix
 #ROUTE data1.coord_changed TO testCoord.set_point
 #ROUTE data1.color_changed TO testColor.set_colord
 
+Viewpoint 
+{
+    position     216.240 275.358 4003.073
+    orientation  0.965 -0.251 0.081 0.100
+    fieldOfView  0.716
+}
 
-MatrixTransform	{ 
-#	matrix
+DEF	 visbleGroup Group {
 	children [
-DEF	box Shape {
-	appearance Appearance {texture USE data1Buf}
-	geometry Box {size  5 5 5}
-}				   
-]}
+		  
+	
+	]
+
+
+}
+Transform {
+	translation	-400 0 -500
+	children [
+	   DEF	 leftTouch TouchSensor {}
+	   DEF	 left Shape	{
+			geometry DEF rec Rectangle {
+				size 640,480
+			}
+			appearance Appearance {
+				texture ImageTexture {
+					repeatS	TRUE
+					repeatT	TRUE
+					url	"c:\\img_1.bmp"
+				}
+			}
+	   }	
+	]
+
+}
+
+ Transform {
+	translation	400 0 -500
+	children [
+		DEF	rightTouch TouchSensor {
+		}
+		DEF	 right Shape {
+			geometry  DEF rec1 Rectangle {
+				size 640,480
+			}
+			appearance Appearance {
+				texture ImageTexture {
+					repeatS	TRUE
+					repeatT	TRUE
+					url	"c:\\img_2.bmp"
+				}
+			}
+		}
+	]
+}
+
+
+
+   Viewpoint 
+{
+    position     0 0 0
+    orientation  0 1 0 3.14159
+    fieldOfView  0.716
+}
+
+
+DEF	 getHitPoint Script	{
+eventIn	SFVec2f getRightCoord 
+eventIn	SFVec2f getLeftCoord 
+eventOut SFMatrix getRigidTrans
+url	"javascript:
+function getRightCoord(v){
+   print('right is:'+v);
+}
+
+function getLeftCoord(v){
+   print('left is:'+v);
+}
+
+function getRigidTrans(){
+	var v =new VrmlMatrix();
+	return v;
+}
+
+function calc(){
+
+
+}
+	
+"
+
+}
+
+ROUTE leftTouch.hitTexCoord_changed TO	getHitPoint.getLeftCoord
+
+ROUTE rightTouch.hitTexCoord_changed TO	getHitPoint.getRightCoord
+
+
+ROUTE leftTouch.hitPoint_changed
