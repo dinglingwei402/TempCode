@@ -71,17 +71,53 @@ initStatus MultiControler::init(){
 		imageBuffer->getValue(&node);
 		CComQIPtr<IBufferTexture> imgBufVlu=node;
 		imgBufVlu->setFormat(xres,yres,0,D3DFMT_R8G8B8,0);
+		BYTE* buf=(BYTE*)(getDevData().getData()[i].pImageData);
+		imgBufVlu->setTextureEx(xres,yres,0,D3DFMT_R8G8B8,640*480*3,buf,xres*3);
 		node->Release();
 	}
 	return this->_ini_stus;
 }
-void MultiControler::start(){}
-void MultiControler::update(){}
+void MultiControler::start(){
+
+	XnStatus rc;
+	for(int i=0;i<this->validDevNum;i++){
+		rc=getDevData().getData()[i].depGen.StartGenerating();
+		rc=getDevData().getData()[i].imgGen.StartGenerating();
+	}
+}
+void MultiControler::update(){
+	XnStatus rc;
+	for(int i=0;i<this->validDevNum;i++){
+		rc=getDevData().getData()[i].depGen.WaitAndUpdateData();
+		int xres=getDevData().getData()[i].xres;
+		int yres=getDevData().getData()[i].yres;
+		Node* node;
+		vrmlData[i].imgBuf->getValue(&node);
+		CComQIPtr<IBufferTexture> imgBufVlu=node;
+		imgBufVlu->setFormat(xres,yres,0,D3DFMT_R8G8B8,0);
+		BYTE* buf=(BYTE*)(getDevData().getData()[i].pImageData);
+		imgBufVlu->setTextureEx(xres,yres,0,D3DFMT_R8G8B8,640*480*3,buf,xres*3);
+		node->Release();
+	}
+}
 void MultiControler::close(){}
 void MultiControler::createMesh(int dev_no){
 	
 }
 void MultiControler::trigger(){
 //	createMesh();
+	const XnUInt8* imgPix1=getDevData().getData()[0].pImageData;
+	const XnUInt8* imgPix2=getDevData().getData()[1].pImageData;
+	int xres=getDevData().getData()[0].xres;
+	int yres=getDevData().getData()[0].yres;
+	saveImage(xres,yres,(UINT*)imgPix1,L"c:\\img_1.bmp");
+	saveImage(xres,yres,(UINT*)imgPix2,L"c:\\img_2.bmp");
+	/*std::vector<XnPointXYZRGB> vec_crd;
+	std::vector<XnPointXYZRGB> vec_crd1;
+	getNonZeroPt(0,vec_crd);
+	getNonZeroPt(1,vec_crd1);
+	savePCDRGB(vec_crd1,"c:\\clor1.pcd");
+	savePCDRGB(vec_crd,"c:\\clor.pcd");	*/
 }
 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       

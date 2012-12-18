@@ -41,7 +41,6 @@ public:
 	const Vrml_PROTO_KinectDev& getVrmlData()const;
 	XnUInt32 getXStep()const;
 	XnUInt32 getYStep()const;
-
 	virtual void  start();
 	virtual void update();
 	virtual initStatus init();
@@ -58,3 +57,77 @@ private:
 	XnUInt32 _xStep;
 	XnUInt32 _yStep;
 };
+
+
+
+#include <pcl/point_types.h>
+#include <pcl/point_cloud.h>
+#include <pcl/io/pcd_io.h>
+inline void savePCDRGB(std::vector<XnPointXYZRGB>& vec_crd,std::string filename){
+	pcl::PointCloud<pcl::PointXYZRGB> cloud;
+	if (vec_crd.empty())return;
+	cloud.width=vec_crd.size();
+	cloud.height=1;
+	cloud.resize(vec_crd.size());
+	std::vector<XnPointXYZRGB>::iterator it=vec_crd.begin();
+	int i=0;
+	while (it!=vec_crd.end())
+	{
+		cloud.points[i].x=it->X/1000;
+		cloud.points[i].y=it->Y/1000;
+		cloud.points[i].z=it->Z/1000;
+		cloud.points[i].r=it->nRed;
+		cloud.points[i].g=it->nGreen;
+		cloud.points[i].b=it->nBlue;
+		i++;
+		it++;
+	}
+	pcl::io::savePCDFile(filename,cloud);
+};
+
+
+
+
+
+
+inline void saveImage(int xres,int yres,UINT* ptPixel,LPCTSTR filename){
+	HDC directdc=CreateCompatibleDC(NULL);
+	if(directdc){
+		HANDLE hFile=CreateFile(filename,GENERIC_WRITE,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL|FILE_FLAG_SEQUENTIAL_SCAN,NULL);
+		BITMAP bm;
+		BITMAPINFO bmpInfoHeader;
+		ZeroMemory(&bmpInfoHeader,sizeof(BITMAPINFO));
+		bmpInfoHeader.bmiHeader.biSize=sizeof(BITMAPINFOHEADER);
+		bmpInfoHeader.bmiHeader.biWidth=xres;
+		bmpInfoHeader.bmiHeader.biHeight=yres;
+		bmpInfoHeader.bmiHeader.biBitCount=24;
+		BITMAPFILEHEADER bmpFileHeader;
+		ZeroMemory(&bmpFileHeader,sizeof(bmpFileHeader));
+		bmpFileHeader.bfType='MB';
+		DWORD lBufferLen=xres*yres*8*3;
+		bmpFileHeader.bfSize=sizeof(bmpFileHeader)+lBufferLen+sizeof(BITMAPINFOHEADER);
+		bmpFileHeader.bfOffBits=sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER);
+		DWORD dwWritten=0;
+		bool bWrite=WriteFile(hFile,&bmpFileHeader,sizeof(bmpFileHeader),&dwWritten,NULL);
+		if(!bWrite)
+		{
+			MessageBox(0,TEXT("fail to write"),TEXT("Error"),MB_OK);
+		}
+		dwWritten=0;
+		bWrite=WriteFile(hFile,&bmpInfoHeader,sizeof(bmpInfoHeader),&dwWritten,NULL);
+		if(!bWrite)
+		{
+			MessageBox(0,TEXT("fail to write"),TEXT("Error"),MB_OK);
+		}
+		dwWritten=0;
+		bWrite=WriteFile(hFile,ptPixel,lBufferLen,&dwWritten,NULL);
+		if(!bWrite)
+		{
+			MessageBox(0,TEXT("fail to write"),TEXT("Error"),MB_OK);
+		}
+		CloseHandle(hFile);
+	}
+}
+
+
+

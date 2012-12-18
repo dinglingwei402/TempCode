@@ -99,3 +99,6 @@ void KinectControler::getNonZeroPt(int dev_no,std::vector<XnPoint3D>& vec_crd)
 	}
 }
 
+
+
+

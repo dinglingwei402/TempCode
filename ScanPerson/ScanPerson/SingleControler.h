@@ -14,7 +14,6 @@ public:
 	void drawPointSet(XnPoint3D* crdPts,XnPoint3D* clrPts);
 	void createMesh();
 	void PclMesh2VrlMesh(size_t ptsCnt,XnPoint3D* pts,size_t idxCnt,IdxSeq* idx);
-	void saveImage();
 private:
 	int sub_x;
 	int sub_y;

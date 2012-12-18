@@ -161,41 +161,15 @@ TCHAR* getCmdStr(TCHAR cmdPath[],TCHAR cmdArg[]){
 	return saveCmd;
 }
 
-///****just for test
-#include <pcl/point_types.h>
-#include <pcl/point_cloud.h>
-#include <pcl/io/pcd_io.h>
-void savePCDRGB(std::vector<XnPointXYZRGB>& vec_crd){
-	pcl::PointCloud<pcl::PointXYZRGB> cloud;
-	if (vec_crd.empty())return;
-	cloud.width=vec_crd.size();
-	cloud.height=1;
-	cloud.resize(vec_crd.size());
-	std::vector<XnPointXYZRGB>::iterator it=vec_crd.begin();
-	int i=0;
-	while (it!=vec_crd.end())
-	{
-		cloud.points[i].x=it->X/1000;
-		cloud.points[i].y=it->Y/1000;
-		cloud.points[i].z=it->Z/1000;
-		cloud.points[i].r=it->nRed;
-		cloud.points[i].g=it->nGreen;
-		cloud.points[i].b=it->nBlue;
-		i++;
-		it++;
-	}
-	pcl::io::savePCDFile("c:\\clor.pcd",cloud);
-}
-
 ///****end test fun
 void SingleControler::createMesh(){	
 	const XnUInt8* imgPix=getDevData().getData()[0].pImageData;
-	saveImage();
+	int xres=getDevData().getData()[0].xres;
+	int yres=getDevData().getData()[0].yres;
+	saveImage(xres,yres,(UINT*)imgPix,L"c:\\img.bmp");
 	Node* node;
 	vrmlData->imgBuf->getValue(&node);
 	CComQIPtr<IBufferTexture> imgBufVlu=node;
-	int xres=getDevData().getData()[0].xres;
-	int yres=getDevData().getData()[0].yres;
 	int pixSize =3;
 	imgBufVlu->setFormat(xres,yres,0,D3DFMT_R8G8B8,0);
 	imgBufVlu->setTextureEx(xres,yres,0,D3DFMT_R8G8B8,xres*yres*pixSize,(BYTE*)imgPix,xres*pixSize);
@@ -204,7 +178,7 @@ void SingleControler::createMesh(){
 	getNonZeroPt(0,vec_crd);
 	if(vec_crd.empty())return;
 	int vec_sz=vec_crd.size();
-	savePCDRGB(vec_crd);
+	savePCDRGB(vec_crd,"c:\\clor.pcd");
 	std::vector<XnPointXYZRGB>::iterator it=vec_crd.begin();
 	XnPoint3D* wrtBuf=new XnPoint3D[vec_sz];	
 	int indx=0;
@@ -294,46 +268,3 @@ void SingleControler::PclMesh2VrlMesh(size_t ptsCnt,XnPoint3D* pts,size_t idxCnt
 	ind->setValue(idxCnt*3,(int*)idx);
 
 }
-void SingleControler::saveImage(){
-	HDC directdc=CreateCompatibleDC(NULL);
-	if(directdc){
-		HANDLE hFile=CreateFile(L"c:\\img.bmp",GENERIC_WRITE,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL|FILE_FLAG_SEQUENTIAL_SCAN,NULL);
-		BITMAP bm;
-		BITMAPINFO bmpInfoHeader;
-		int xres=getDevData().getData()[0].xres;
-		int yres=getDevData().getData()[0].yres;
-		ZeroMemory(&bmpInfoHeader,sizeof(BITMAPINFO));
-		bmpInfoHeader.bmiHeader.biSize=sizeof(BITMAPINFOHEADER);
-		bmpInfoHeader.bmiHeader.biWidth=xres;
-		bmpInfoHeader.bmiHeader.biHeight=yres;
-		bmpInfoHeader.bmiHeader.biBitCount=24;
-		UINT* ptPixel=(UINT*)getDevData().getData()[0].pImageData;
-		BITMAPFILEHEADER bmpFileHeader;
-		ZeroMemory(&bmpFileHeader,sizeof(bmpFileHeader));
-		bmpFileHeader.bfType='MB';
-		DWORD lBufferLen=xres*yres*8*3;
-		bmpFileHeader.bfSize=sizeof(bmpFileHeader)+lBufferLen+sizeof(BITMAPINFOHEADER);
-		bmpFileHeader.bfOffBits=sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER);
-		DWORD dwWritten=0;
-		bool bWrite=WriteFile(hFile,&bmpFileHeader,sizeof(bmpFileHeader),&dwWritten,NULL);
-		if(!bWrite)
-		{
-			MessageBox(0,TEXT("fail to write"),TEXT("Error"),MB_OK);
-		}
-		dwWritten=0;
-		bWrite=WriteFile(hFile,&bmpInfoHeader,sizeof(bmpInfoHeader),&dwWritten,NULL);
-		if(!bWrite)
-		{
-			MessageBox(0,TEXT("fail to write"),TEXT("Error"),MB_OK);
-		}
-		dwWritten=0;
-		bWrite=WriteFile(hFile,ptPixel,lBufferLen,&dwWritten,NULL);
-		if(!bWrite)
-		{
-			MessageBox(0,TEXT("fail to write"),TEXT("Error"),MB_OK);
-		}
-		CloseHandle(hFile);
-	}
-}
-
-
