@@ -62,10 +62,18 @@ HRESULT STDMETHODCALLTYPE KeyObserver::callback(EventOut *value,double timeStamp
 	int keyVlu;
 	tmp_vlu->getValue(&keyVlu);
 	if(keyVlu==65){
-		MessageBoxW(NULL,L"at 0 degree ",L"in keyobv",0);
+		MessageBoxW(NULL,L"trigger",L"in keyobv",0);
 		/*SingleControler* ctrl=(SingleControler*)controler;
 		ctrl->createMesh();*/
 		this->controler->trigger();
+	}
+	if(keyVlu==66){
+		MessageBox(NULL,L"place devices around you According to the order number",L"attention!",0);
+		MessageBox(NULL,L"we will tell you the dev-number and refer the dev \r\nby stop blinking the led and turn it red ",L"attention!",0);
+		MessageBox(NULL,L"let 1st dev look on you then others by right-handwise",L"attention!",0);
+		/*SingleControler* ctrl=(SingleControler*)controler;
+		ctrl->createMesh();*/
+		this->controler->trigger1();
 	}
 	tmp_vlu->Release();
 	return S_OK;

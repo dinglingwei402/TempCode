@@ -166,7 +166,7 @@ void SingleControler::createMesh(){
 	const XnUInt8* imgPix=getDevData().getData()[0].pImageData;
 	int xres=getDevData().getData()[0].xres;
 	int yres=getDevData().getData()[0].yres;
-	saveImage(xres,yres,(UINT*)imgPix,L"c:\\img.bmp");
+	saveRGBImage(xres,yres,(UINT*)imgPix,L"c:\\img.bmp");
 	Node* node;
 	vrmlData->imgBuf->getValue(&node);
 	CComQIPtr<IBufferTexture> imgBufVlu=node;

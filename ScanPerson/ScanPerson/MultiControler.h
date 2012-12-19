@@ -1,6 +1,5 @@
 #pragma once
 #include "kinectcontroler.h"
-#include <vector>
 class MultiControler :
 	public KinectControler
 {
@@ -11,6 +10,7 @@ public:
 	void update();
 	void close();
 	void trigger();
+	void trigger1();
 	void drawPointSet(XnPoint3D* crdPts,XnPoint3D* clrPts);
 	void createMesh(int dev_no);
 	int validDevNum;

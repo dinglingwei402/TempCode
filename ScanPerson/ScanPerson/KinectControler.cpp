@@ -21,8 +21,6 @@ void KinectControler::update()
 //	return;
 }
 
-void KinectControler::trigger(){}
-
 const KinectData& KinectControler::getDevData()const
 {
 	return this->_devData;
@@ -43,7 +41,8 @@ XnUInt32 KinectControler::getYStep()const
 	return this->_yStep;
 }
 
-
+void KinectControler::trigger(){}
+void KinectControler::trigger1(){}
 
 void KinectControler::getNonZeroPt(int dev_no,std::vector<XnPointXYZRGB>& vec_clrPt)
 {

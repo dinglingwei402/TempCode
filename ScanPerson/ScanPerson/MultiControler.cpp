@@ -1,10 +1,12 @@
 #include "StdAfx.h"
 #include "MultiControler.h"
 #include "QueryNode.h"
-#include <string>
 #include <math.h>
 #include "MatrixCalc.h"
 #include <d3d9types.h>
+#include "XnUSB.h"
+#include "tchar.h"
+
 
 MultiControler::MultiControler(const Vrml_PROTO_KinectDev& v_data,const KinectData& k_data,int x_step,int y_step,int valid_dev_num):KinectControler(v_data,k_data,x_step,y_step),validDevNum(valid_dev_num),blockSize(0),sub_x(0),sub_y(0)
 {
@@ -110,14 +112,41 @@ void MultiControler::trigger(){
 	const XnUInt8* imgPix2=getDevData().getData()[1].pImageData;
 	int xres=getDevData().getData()[0].xres;
 	int yres=getDevData().getData()[0].yres;
-	saveImage(xres,yres,(UINT*)imgPix1,L"c:\\img_1.bmp");
-	saveImage(xres,yres,(UINT*)imgPix2,L"c:\\img_2.bmp");
+	saveRGBImage(xres,yres,(UINT*)imgPix1,L"c:\\img_1.bmp");
+	saveRGBImage(xres,yres,(UINT*)imgPix2,L"c:\\img_2.bmp");
+
+	const XnDepthPixel* depPix1=getDevData().getData()[0].pDepthData;
+	const XnDepthPixel* depPix2=getDevData().getData()[1].pDepthData;
+
+	saveGrayImage(xres,yres,(UINT*)depPix1,L"c:\\gray_1.bmp");
+	saveGrayImage(xres,yres,(UINT*)depPix2,L"c:\\gray_2.bmp");
+
 	/*std::vector<XnPointXYZRGB> vec_crd;
 	std::vector<XnPointXYZRGB> vec_crd1;
 	getNonZeroPt(0,vec_crd);
 	getNonZeroPt(1,vec_crd1);
 	savePCDRGB(vec_crd1,"c:\\clor1.pcd");
-	savePCDRGB(vec_crd,"c:\\clor.pcd");	*/
+	savePCDRGB(vec_crd,"c:\\clor.pc*/
+}
+
+
+
+void MultiControler::trigger1(){
+	XnStatus res;
+	XN_USB_DEV_HANDLE m_dev; 
+	const XnUSBConnectionString *paths; 
+	XnUInt32 count; 
+	res = xnUSBEnumerateDevices(0x045E /* VendorID */, 0x02B0 /*ProductID */, &paths, &count); 
+	for (int i=0;i<this->validDevNum;i++)
+	{	
+		res = xnUSBOpenDeviceByPath(paths[i], &m_dev);
+		res = xnUSBSendControl(m_dev,XN_USB_CONTROL_TYPE_VENDOR,/* 0x31*/0x06, /* angle*/2, 0x00, NULL, 0, 0);
+		TCHAR idx_c[4];
+		_itot(i+1,idx_c,10);
+		MessageBox(NULL,idx_c,_T(" "),0);
+		res = xnUSBSendControl(m_dev,XN_USB_CONTROL_TYPE_VENDOR,/* 0x31*/0x06, /* angle*/5, 0x00, NULL, 0, 0);
+	}
+
 }
 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        

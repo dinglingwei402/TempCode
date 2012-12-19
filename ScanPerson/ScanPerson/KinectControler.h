@@ -4,7 +4,6 @@
 #include "blaxxunVRML.h"
 #include "KinectData.h"
 #include "VrmlData.h"
-#include <vector>
 using namespace xn;
 
 typedef struct IndxSequence{
@@ -46,6 +45,7 @@ public:
 	virtual initStatus init();
 	virtual void  close();	
 	virtual void trigger();
+	virtual void trigger1();
 	void getNonZeroPt(int dev_no,std::vector<XnPointXYZRGB>& vec_clrPt);
 	void getNonZeroPt(int dev_no,std::vector<XnPoint3D>& vec_crd);
 
@@ -90,7 +90,7 @@ inline void savePCDRGB(std::vector<XnPointXYZRGB>& vec_crd,std::string filename)
 
 
 
-inline void saveImage(int xres,int yres,UINT* ptPixel,LPCTSTR filename){
+inline void saveRGBImage(int xres,int yres,UINT* ptPixel,LPCTSTR filename){
 	HDC directdc=CreateCompatibleDC(NULL);
 	if(directdc){
 		HANDLE hFile=CreateFile(filename,GENERIC_WRITE,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL|FILE_FLAG_SEQUENTIAL_SCAN,NULL);
@@ -105,6 +105,49 @@ inline void saveImage(int xres,int yres,UINT* ptPixel,LPCTSTR filename){
 		ZeroMemory(&bmpFileHeader,sizeof(bmpFileHeader));
 		bmpFileHeader.bfType='MB';
 		DWORD lBufferLen=xres*yres*8*3;
+		bmpFileHeader.bfSize=sizeof(bmpFileHeader)+lBufferLen+sizeof(BITMAPINFOHEADER);
+		bmpFileHeader.bfOffBits=sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER);
+		DWORD dwWritten=0;
+		bool bWrite=WriteFile(hFile,&bmpFileHeader,sizeof(bmpFileHeader),&dwWritten,NULL);
+		if(!bWrite)
+		{
+			MessageBox(0,TEXT("fail to write"),TEXT("Error"),MB_OK);
+		}
+		dwWritten=0;
+		bWrite=WriteFile(hFile,&bmpInfoHeader,sizeof(bmpInfoHeader),&dwWritten,NULL);
+		if(!bWrite)
+		{
+			MessageBox(0,TEXT("fail to write"),TEXT("Error"),MB_OK);
+		}
+		dwWritten=0;
+		bWrite=WriteFile(hFile,ptPixel,lBufferLen,&dwWritten,NULL);
+		if(!bWrite)
+		{
+			MessageBox(0,TEXT("fail to write"),TEXT("Error"),MB_OK);
+		}
+		CloseHandle(hFile);
+	}
+}
+
+
+
+;
+
+inline void saveGrayImage(int xres,int yres,UINT* ptPixel,LPCTSTR filename){
+	HDC directdc=CreateCompatibleDC(NULL);
+	if(directdc){
+		HANDLE hFile=CreateFile(filename,GENERIC_WRITE,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL|FILE_FLAG_SEQUENTIAL_SCAN,NULL);
+		BITMAP bm;
+		BITMAPINFO bmpInfoHeader;
+		ZeroMemory(&bmpInfoHeader,sizeof(BITMAPINFO));
+		bmpInfoHeader.bmiHeader.biSize=sizeof(BITMAPINFOHEADER);
+		bmpInfoHeader.bmiHeader.biWidth=xres;
+		bmpInfoHeader.bmiHeader.biHeight=yres;
+		bmpInfoHeader.bmiHeader.biBitCount=16;
+		BITMAPFILEHEADER bmpFileHeader;
+		ZeroMemory(&bmpFileHeader,sizeof(bmpFileHeader));
+		bmpFileHeader.bfType='MB';
+		DWORD lBufferLen=xres*yres*16;
 		bmpFileHeader.bfSize=sizeof(bmpFileHeader)+lBufferLen+sizeof(BITMAPINFOHEADER);
 		bmpFileHeader.bfOffBits=sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER);
 		DWORD dwWritten=0;
