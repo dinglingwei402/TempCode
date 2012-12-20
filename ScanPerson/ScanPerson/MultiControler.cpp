@@ -118,6 +118,9 @@ void MultiControler::trigger(){
 	const XnDepthPixel* depPix1=getDevData().getData()[0].pDepthData;
 	const XnDepthPixel* depPix2=getDevData().getData()[1].pDepthData;
 
+	
+
+
 	saveGrayImage(xres,yres,(UINT*)depPix1,L"c:\\gray_1.bmp");
 	saveGrayImage(xres,yres,(UINT*)depPix2,L"c:\\gray_2.bmp");
 
@@ -148,5 +151,7 @@ void MultiControler::trigger1(){
 	}
 
 }
+
+
 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
