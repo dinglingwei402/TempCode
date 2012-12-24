@@ -37,7 +37,77 @@ void SingleControler::close(){
 }
 
 void SingleControler::trigger(){
-	createMesh();
+//	createMesh();
+	int xres=getDevData().getData()[0].xres;
+	int yres=getDevData().getData()[0].yres;
+	const XnUInt8* imgPix=getDevData().getData()[0].pImageData;
+	saveRGBImage(xres,yres,(UINT*)imgPix,L"c:\\img_1.bmp");
+	std::string str_coord_start="#VRML V2.0 utf8 \r\n ";
+	str_coord_start+="DEF pt Shape{ \r\n ";
+	str_coord_start+=	"	geometry PointSet { \r\n";
+	std::string str_coord_end="]}\r\n";
+	str_coord_start+="		coord Coordinate {point [";
+	std::string str_color_start="		color Color{color [";
+	std::string str_color_end="]}}}";
+	std::stringstream strm_crd;
+	std::stringstream strm_clr;
+	const XnDepthPixel* depPix=getDevData().getData()[0].pDepthData;
+	int cnt=xres*yres;
+	GenGrp* devData=getDevData().getData();
+	for(int i=1;i<yres;i++){
+		for(int j=1;j<xres;j++){
+			int bigX=j;
+			int bigY=i;
+			int idx=bigY*(devData[0].xres)+bigX;
+			//if(depPix[idx]>devData[0].depGen.GetDeviceMaxDepth())continue; 
+			XnPoint3D PixCrd={bigX,bigY,depPix[idx]};
+			devData[0].depGen.ConvertProjectiveToRealWorld(1,&PixCrd,&PixCrd);
+			strm_crd<<PixCrd.X;
+			strm_crd<<" ";
+			strm_crd<<PixCrd.Y;
+			strm_crd<<" ";
+			strm_crd<<PixCrd.Z;
+			str_coord_start+=strm_crd.str();
+			strm_crd.str("");
+			strm_crd<<",";
+
+			strm_clr<<(float)(imgPix[idx*3]/255.0);
+			strm_clr<<" ";
+			strm_clr<<(float)(imgPix[idx*3+1]/255.0);
+			strm_clr<<" ";
+			strm_clr<<(float)(imgPix[idx*3+2]/255.0);
+			str_color_start+=strm_clr.str();
+			strm_clr.str("");
+			strm_clr<<",";
+		}
+	}
+	str_coord_start+=str_coord_end;
+	str_color_start+=str_color_end;
+	str_coord_start+=str_color_start;
+	FILE* stream;
+	if( (stream = fopen( "c:\\img_1.vrml", "w+t" )) != NULL) 
+	{ 
+		int numwritten = fwrite(str_coord_start.c_str(), sizeof( char ),str_coord_start.size(), stream ); 
+		printf( "Wrote %d items\n", numwritten ); 
+		fclose( stream ); 
+	}
+}
+
+
+
+void SingleControler::trigger1(){
+	//FILE* stream;
+	//if( (stream = fopen( "c:\\img.vrml", "w+t" )) != NULL ) 
+	//{ 
+	//	for (int i = 0; i < 25; i++ ) 
+	//		list[i] = (char)('z' - i); 
+	//	/* Write 25 characters to stream */ 
+	//	
+	//	int numwritten = fwrite( list, sizeof( char ), 25, stream ); 
+	//	printf( "Wrote %d items\n", numwritten ); 
+	//	fclose( stream ); 
+	//} 
+	
 }
 
 void SingleControler::drawPointSet(XnPoint3D* crdPts,XnPoint3D* clrPts){
@@ -92,7 +162,7 @@ initStatus SingleControler::init(){
 	memset(mtrx_prj,16*sizeof(float),0);
 	devProjMtrx->getValue(mtrx_prj);
 	XnFieldOfView fov;
-	getDevData().getData()[0].depGen.GetFieldOfView(fov);
+	getDevData().getData()[0].depGen.GetFieldOfView(fov); 
 	float far_clip=10;
 	float near_clip=2;	
 	float zoomx=cos(0.5*fov.fHFOV)/sin(0.5*fov.fHFOV);

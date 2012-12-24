@@ -5,6 +5,7 @@
 #include "KinectData.h"
 #include "VrmlData.h"
 #include <vector>
+#include <stdio.h>
 using namespace xn;
 
 typedef struct IndxSequence{
@@ -99,10 +100,12 @@ inline void saveRGBImage(int xres,int yres,UINT* ptPixel,LPCTSTR filename){
 		bmpInfoHeader.bmiHeader.biWidth=xres;
 		bmpInfoHeader.bmiHeader.biHeight=-yres;
 		bmpInfoHeader.bmiHeader.biBitCount=24;
+		bmpInfoHeader.bmiHeader.biCompression=BI_RGB;
+		bmpInfoHeader.bmiHeader.biSizeImage=xres*yres;
 		BITMAPFILEHEADER bmpFileHeader;
 		ZeroMemory(&bmpFileHeader,sizeof(bmpFileHeader));
-		bmpFileHeader.bfType='MB';
-		DWORD lBufferLen=xres*yres*8*3;
+		bmpFileHeader.bfType=0x4D42;
+		DWORD lBufferLen=xres*yres*3;
 		bmpFileHeader.bfSize=sizeof(bmpFileHeader)+lBufferLen+sizeof(BITMAPINFOHEADER);
 		bmpFileHeader.bfOffBits=sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER);
 		DWORD dwWritten=0;
@@ -136,14 +139,14 @@ inline void saveGrayImage(int xres,int yres,UINT* ptPixel,LPCTSTR filename){
 		BITMAPINFO bmpInfoHeader;
 		ZeroMemory(&bmpInfoHeader,sizeof(BITMAPINFO));
 		bmpInfoHeader.bmiHeader.biSize=sizeof(BITMAPINFOHEADER);
-		bmpInfoHeader.bmiHeader.biCompression=BI_BITFIELDS;
+	//	bmpInfoHeader.bmiHeader.biCompression=BI_BITFIELDS;
 		bmpInfoHeader.bmiHeader.biWidth=xres;
 		bmpInfoHeader.bmiHeader.biHeight=-yres;
 		bmpInfoHeader.bmiHeader.biBitCount=16;
 		BITMAPFILEHEADER bmpFileHeader;
 		ZeroMemory(&bmpFileHeader,sizeof(bmpFileHeader));
-		bmpFileHeader.bfType='MB';
-		DWORD lBufferLen=xres*yres*16;
+		bmpFileHeader.bfType=0x4d42;
+		DWORD lBufferLen=xres*yres*2;
 		bmpFileHeader.bfSize=sizeof(bmpFileHeader)+lBufferLen+sizeof(BITMAPINFOHEADER)+sizeof(dwMask);
 		bmpFileHeader.bfOffBits=sizeof(BITMAPFILEHEADER)+sizeof(dwMask)+sizeof(BITMAPINFOHEADER);
 		DWORD dwWritten=0;

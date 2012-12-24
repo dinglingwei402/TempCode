@@ -11,6 +11,7 @@ public:
 	void update();
 	void close();
 	void trigger();
+	void trigger1();
 	void drawPointSet(XnPoint3D* crdPts,XnPoint3D* clrPts);
 	void createMesh();
 	void PclMesh2VrlMesh(size_t ptsCnt,XnPoint3D* pts,size_t idxCnt,IdxSeq* idx);
