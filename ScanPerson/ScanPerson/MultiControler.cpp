@@ -112,17 +112,14 @@ void MultiControler::trigger(){
 	const XnUInt8* imgPix2=getDevData().getData()[1].pImageData;
 	int xres=getDevData().getData()[0].xres;
 	int yres=getDevData().getData()[0].yres;
-	saveRGBImage(xres,yres,(UINT*)imgPix1,L"c:\\img_1.bmp");
-	saveRGBImage(xres,yres,(UINT*)imgPix2,L"c:\\img_2.bmp");
+	saveRGBImage(xres,yres,(XnUInt8*)imgPix1,L"c:\\img_1.bmp");
+	saveRGBImage(xres,yres,(XnUInt8*)imgPix2,L"c:\\img_2.bmp");
 
 	const XnDepthPixel* depPix1=getDevData().getData()[0].pDepthData;
 	const XnDepthPixel* depPix2=getDevData().getData()[1].pDepthData;
 
-	
-
-
-	saveGrayImage(xres,yres,(UINT*)depPix1,L"c:\\gray_1.bmp");
-	saveGrayImage(xres,yres,(UINT*)depPix2,L"c:\\gray_2.bmp");
+	/*saveGrayImage(xres,yres,(UINT*)depPix1,L"c:\\gray_1.bmp");
+	saveGrayImage(xres,yres,(UINT*)depPix2,L"c:\\gray_2.bmp");*/
 
 	/*std::vector<XnPointXYZRGB> vec_crd;
 	std::vector<XnPointXYZRGB> vec_crd1;

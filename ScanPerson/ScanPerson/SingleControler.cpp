@@ -41,7 +41,7 @@ void SingleControler::trigger(){
 	int xres=getDevData().getData()[0].xres;
 	int yres=getDevData().getData()[0].yres;
 	const XnUInt8* imgPix=getDevData().getData()[0].pImageData;
-	saveRGBImage(xres,yres,(UINT*)imgPix,L"c:\\img_1.bmp");
+	saveRGBImage(xres,yres,(XnUInt8*)imgPix,L"c:\\img_1.bmp");
 	std::string str_coord_start="#VRML V2.0 utf8 \r\n ";
 	str_coord_start+="DEF pt Shape{ \r\n ";
 	str_coord_start+=	"	geometry PointSet { \r\n";
@@ -61,7 +61,7 @@ void SingleControler::trigger(){
 			int idx=bigY*(devData[0].xres)+bigX;
 			//if(depPix[idx]>devData[0].depGen.GetDeviceMaxDepth())continue; 
 			XnPoint3D PixCrd={bigX,bigY,depPix[idx]};
-			devData[0].depGen.ConvertProjectiveToRealWorld(1,&PixCrd,&PixCrd);
+ 			devData[0].depGen.ConvertProjectiveToRealWorld(1,&PixCrd,&PixCrd);
 			strm_crd<<PixCrd.X;
 			strm_crd<<" ";
 			strm_crd<<PixCrd.Y;
@@ -85,12 +85,18 @@ void SingleControler::trigger(){
 	str_color_start+=str_color_end;
 	str_coord_start+=str_color_start;
 	FILE* stream;
-	if( (stream = fopen( "c:\\img_1.vrml", "w+t" )) != NULL) 
+	if( (stream = fopen( "c:\\img_1.wrl", "w+t" )) != NULL) 
 	{ 
 		int numwritten = fwrite(str_coord_start.c_str(), sizeof( char ),str_coord_start.size(), stream ); 
 		printf( "Wrote %d items\n", numwritten ); 
 		fclose( stream ); 
 	}
+
+	std::vector<XnPointXYZRGB> vec_crd;
+	getNonZeroPt(0,vec_crd);
+	if(vec_crd.empty())return;
+	int vec_sz=vec_crd.size();
+	savePCDRGB(vec_crd,"c:\\clor.pcd");
 }
 
 
@@ -236,7 +242,7 @@ void SingleControler::createMesh(){
 	const XnUInt8* imgPix=getDevData().getData()[0].pImageData;
 	int xres=getDevData().getData()[0].xres;
 	int yres=getDevData().getData()[0].yres;
-	saveRGBImage(xres,yres,(UINT*)imgPix,L"c:\\img.bmp");
+	saveRGBImage(xres,yres,(XnUInt8*)imgPix,L"c:\\img.bmp");
 	Node* node;
 	vrmlData->imgBuf->getValue(&node);
 	CComQIPtr<IBufferTexture> imgBufVlu=node;

@@ -6,6 +6,7 @@
 #include "VrmlData.h"
 #include <vector>
 #include <stdio.h>
+#include <string.h>
 using namespace xn;
 
 typedef struct IndxSequence{
@@ -89,8 +90,9 @@ inline void savePCDRGB(std::vector<XnPointXYZRGB>& vec_crd,std::string filename)
 
 
 
-inline void saveRGBImage(int xres,int yres,UINT* ptPixel,LPCTSTR filename){
+inline void saveRGBImage(int xres,int yres,XnUInt8* ptPixel,LPCTSTR filename){
 	HDC directdc=CreateCompatibleDC(NULL);
+	int pixSize=xres*yres*3;
 	if(directdc){
 		HANDLE hFile=CreateFile(filename,GENERIC_WRITE,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL|FILE_FLAG_SEQUENTIAL_SCAN,NULL);
 		BITMAP bm;
@@ -98,14 +100,13 @@ inline void saveRGBImage(int xres,int yres,UINT* ptPixel,LPCTSTR filename){
 		ZeroMemory(&bmpInfoHeader,sizeof(BITMAPINFO));
 		bmpInfoHeader.bmiHeader.biSize=sizeof(BITMAPINFOHEADER);
 		bmpInfoHeader.bmiHeader.biWidth=xres;
-		bmpInfoHeader.bmiHeader.biHeight=-yres;
+		bmpInfoHeader.bmiHeader.biHeight=yres;
 		bmpInfoHeader.bmiHeader.biBitCount=24;
-		bmpInfoHeader.bmiHeader.biCompression=BI_RGB;
-		bmpInfoHeader.bmiHeader.biSizeImage=xres*yres;
+		bmpInfoHeader.bmiHeader.biPlanes=1;
 		BITMAPFILEHEADER bmpFileHeader;
 		ZeroMemory(&bmpFileHeader,sizeof(bmpFileHeader));
 		bmpFileHeader.bfType=0x4D42;
-		DWORD lBufferLen=xres*yres*3;
+		DWORD lBufferLen=pixSize;
 		bmpFileHeader.bfSize=sizeof(bmpFileHeader)+lBufferLen+sizeof(BITMAPINFOHEADER);
 		bmpFileHeader.bfOffBits=sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER);
 		DWORD dwWritten=0;
@@ -121,61 +122,68 @@ inline void saveRGBImage(int xres,int yres,UINT* ptPixel,LPCTSTR filename){
 			MessageBox(0,TEXT("fail to write"),TEXT("Error"),MB_OK);
 		}
 		dwWritten=0;
-		bWrite=WriteFile(hFile,ptPixel,lBufferLen,&dwWritten,NULL);
+		XnUInt8* ptPixel_mirror=new XnUInt8[pixSize];
+		int stride=xres*3;
+		for(int i=0;i<yres;i++){
+			memcpy(&ptPixel_mirror[i*stride],&ptPixel[pixSize-(i+1)*stride],stride*sizeof(XnUInt8));
+		}
+
+		bWrite=WriteFile(hFile,(UINT*)ptPixel_mirror,lBufferLen,&dwWritten,NULL);
 		if(!bWrite)
 		{
 			MessageBox(0,TEXT("fail to write"),TEXT("Error"),MB_OK);
 		}
 		CloseHandle(hFile);
+		delete[] ptPixel_mirror;
 	}
 };
 
-inline void saveGrayImage(int xres,int yres,UINT* ptPixel,LPCTSTR filename){
-	HDC directdc=CreateCompatibleDC(NULL);
-	if(directdc){
-		HANDLE hFile=CreateFile(filename,GENERIC_WRITE,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL|FILE_FLAG_SEQUENTIAL_SCAN,NULL);
-		const DWORD dwMask[] = { 0xF800, 0x07E0, 0x001F };//RGB 565 mask
-		BITMAP bm;
-		BITMAPINFO bmpInfoHeader;
-		ZeroMemory(&bmpInfoHeader,sizeof(BITMAPINFO));
-		bmpInfoHeader.bmiHeader.biSize=sizeof(BITMAPINFOHEADER);
-	//	bmpInfoHeader.bmiHeader.biCompression=BI_BITFIELDS;
-		bmpInfoHeader.bmiHeader.biWidth=xres;
-		bmpInfoHeader.bmiHeader.biHeight=-yres;
-		bmpInfoHeader.bmiHeader.biBitCount=16;
-		BITMAPFILEHEADER bmpFileHeader;
-		ZeroMemory(&bmpFileHeader,sizeof(bmpFileHeader));
-		bmpFileHeader.bfType=0x4d42;
-		DWORD lBufferLen=xres*yres*2;
-		bmpFileHeader.bfSize=sizeof(bmpFileHeader)+lBufferLen+sizeof(BITMAPINFOHEADER)+sizeof(dwMask);
-		bmpFileHeader.bfOffBits=sizeof(BITMAPFILEHEADER)+sizeof(dwMask)+sizeof(BITMAPINFOHEADER);
-		DWORD dwWritten=0;
-		bool bWrite=WriteFile(hFile,&bmpFileHeader,sizeof(bmpFileHeader),&dwWritten,NULL);
-		if(!bWrite)
-		{
-			MessageBox(0,TEXT("fail to write0"),TEXT("Error"),MB_OK);
-		}
-		dwWritten=0;
-		bWrite=WriteFile(hFile,&bmpInfoHeader,sizeof(bmpInfoHeader),&dwWritten,NULL);
-		if(!bWrite)
-		{
-			MessageBox(0,TEXT("fail to write1"),TEXT("Error"),MB_OK);
-		}
-		dwWritten=0;
-		bWrite=WriteFile(hFile, dwMask,sizeof(dwMask),&dwWritten,NULL);
-		if(!bWrite)
-		{
-			MessageBox(0,TEXT("fail to write3"),TEXT("Error"),MB_OK);
-		}
-		dwWritten=0;
-		bWrite=WriteFile(hFile,ptPixel,lBufferLen,&dwWritten,NULL);
-		if(!bWrite)
-		{
-			MessageBox(0,TEXT("fail to write4"),TEXT("Error"),MB_OK);
-		}
-		CloseHandle(hFile);
-	}
-}
+//inline void saveGrayImage(int xres,int yres,XnUInt8* ptPixel,LPCTSTR filename){
+//	HDC directdc=CreateCompatibleDC(NULL);
+//	if(directdc){
+//		HANDLE hFile=CreateFile(filename,GENERIC_WRITE,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL|FILE_FLAG_SEQUENTIAL_SCAN,NULL);
+//		const DWORD dwMask[] = { 0xF800, 0x07E0, 0x001F };//RGB 565 mask
+//		BITMAP bm;
+//		BITMAPINFO bmpInfoHeader;
+//		ZeroMemory(&bmpInfoHeader,sizeof(BITMAPINFO));
+//		bmpInfoHeader.bmiHeader.biSize=sizeof(BITMAPINFOHEADER);
+//		bmpInfoHeader.bmiHeader.biPlanes=1;
+//		bmpInfoHeader.bmiHeader.biWidth=xres;
+//		bmpInfoHeader.bmiHeader.biHeight=-yres;
+//		bmpInfoHeader.bmiHeader.biBitCount=16;
+//		BITMAPFILEHEADER bmpFileHeader;
+//		ZeroMemory(&bmpFileHeader,sizeof(bmpFileHeader));
+//		bmpFileHeader.bfType=0x4d42;
+//		DWORD lBufferLen=xres*yres*2;
+//		bmpFileHeader.bfSize=sizeof(bmpFileHeader)+lBufferLen+sizeof(BITMAPINFOHEADER)+sizeof(dwMask);
+//		bmpFileHeader.bfOffBits=sizeof(BITMAPFILEHEADER)+sizeof(dwMask)+sizeof(BITMAPINFOHEADER);
+//		DWORD dwWritten=0;
+//		bool bWrite=WriteFile(hFile,&bmpFileHeader,sizeof(bmpFileHeader),&dwWritten,NULL);
+//		if(!bWrite)
+//		{
+//			MessageBox(0,TEXT("fail to write0"),TEXT("Error"),MB_OK);
+//		}
+//		dwWritten=0;
+//		bWrite=WriteFile(hFile,&bmpInfoHeader,sizeof(bmpInfoHeader),&dwWritten,NULL);
+//		if(!bWrite)
+//		{
+//			MessageBox(0,TEXT("fail to write1"),TEXT("Error"),MB_OK);
+//		}
+//		dwWritten=0;
+//		bWrite=WriteFile(hFile, dwMask,sizeof(dwMask),&dwWritten,NULL);
+//		if(!bWrite)
+//		{
+//			MessageBox(0,TEXT("fail to write3"),TEXT("Error"),MB_OK);
+//		}
+//		dwWritten=0;
+//		bWrite=WriteFile(hFile,ptPixel,lBufferLen,&dwWritten,NULL);
+//		if(!bWrite)
+//		{
+//			MessageBox(0,TEXT("fail to write4"),TEXT("Error"),MB_OK);
+//		}
+//		CloseHandle(hFile);
+//	}
+//}
 
 
 
