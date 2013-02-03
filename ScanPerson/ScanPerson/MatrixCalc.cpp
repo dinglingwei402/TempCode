@@ -18,6 +18,22 @@ int mul4X4(float left[16],float right[16],float out[16]){
 	}
 	return 0;
 }
+
+void vecMulMatrx(float vec[4],float right[16],float out[3] ){
+	float out_temp[4]={0,0,0,0};
+	for (int i=0;i<4;i++)
+	{
+		for (int j=0;j<4;j++)
+		{
+			out_temp[i]+=vec[j]*right[i+j*4];
+		}
+	}
+	out[0]=out_temp[0]/out_temp[3];
+	out[1]=out_temp[1]/out_temp[3];
+	out[2]=out_temp[2]/out_temp[3];
+}
+
+
 int inv(float *p,int n) 
 {
 	void swap(float *a,float *b);

@@ -41,7 +41,7 @@ void SingleControler::trigger(){
 	int xres=getDevData().getData()[0].xres;
 	int yres=getDevData().getData()[0].yres;
 	const XnUInt8* imgPix=getDevData().getData()[0].pImageData;
-	saveRGBImage(xres,yres,(XnUInt8*)imgPix,L"c:\\img_1.bmp");
+	saveRGBImage(xres,yres,(XnUInt8*)imgPix,L"c:\\img_single.bmp");
 	std::string str_coord_start="#VRML V2.0 utf8 \r\n ";
 	str_coord_start+="DEF pt Shape{ \r\n ";
 	str_coord_start+=	"	geometry PointSet { \r\n";

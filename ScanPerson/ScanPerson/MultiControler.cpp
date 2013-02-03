@@ -108,25 +108,45 @@ void MultiControler::createMesh(int dev_no){
 }
 void MultiControler::trigger(){
 //	createMesh();
-	const XnUInt8* imgPix1=getDevData().getData()[0].pImageData;
-	const XnUInt8* imgPix2=getDevData().getData()[1].pImageData;
-	int xres=getDevData().getData()[0].xres;
-	int yres=getDevData().getData()[0].yres;
-	saveRGBImage(xres,yres,(XnUInt8*)imgPix1,L"c:\\img_1.bmp");
-	saveRGBImage(xres,yres,(XnUInt8*)imgPix2,L"c:\\img_2.bmp");
+	int devNum=getDevData().getDevNum();
+	std::vector<std::vector<XnPointXYZRGB>>vec;
+	for(int i=0;i<devNum;i++){
+		const XnUInt8* imgPix=getDevData().getData()[i].pImageData;
+		int xres=getDevData().getData()[i].xres;
+		int yres=getDevData().getData()[i].yres;
+		std::string  fileName_p="c:\\img_";
+		std::stringstream num;
+		num<<i;
+		std::string fileName=fileName_p+num.str()+".bmp";
+		saveRGBImage(xres,yres,(XnUInt8*)imgPix, CA2T(fileName.c_str()));
 
-	const XnDepthPixel* depPix1=getDevData().getData()[0].pDepthData;
-	const XnDepthPixel* depPix2=getDevData().getData()[1].pDepthData;
+	}
+	for(int i=1;i<devNum;i++)
+	{
+		getDevData().getData()[i].depGen.StopGenerating();
+	}
+	for(int i=0;i<devNum;i++)
+	{
+		std::vector<XnPointXYZRGB> vec_crd;
+		getNonZeroPt(i,vec_crd);
+		vec.push_back(vec_crd);
+		if (i+1<devNum)
+		{
+			getDevData().getData()[i+1].depGen.StartGenerating();
+		}
+		
+		getDevData().getData()[i].depGen.StopGenerating();
 
-	/*saveGrayImage(xres,yres,(UINT*)depPix1,L"c:\\gray_1.bmp");
-	saveGrayImage(xres,yres,(UINT*)depPix2,L"c:\\gray_2.bmp");*/
-
-	/*std::vector<XnPointXYZRGB> vec_crd;
-	std::vector<XnPointXYZRGB> vec_crd1;
-	getNonZeroPt(0,vec_crd);
-	getNonZeroPt(1,vec_crd1);
-	savePCDRGB(vec_crd1,"c:\\clor1.pcd");
-	savePCDRGB(vec_crd,"c:\\clor.pc*/
+	}
+	for(int i=0;i<devNum;i++)
+	{
+		std::string  fileName_p="c:\\cloud_";
+		std::stringstream num;
+		num<<i;
+		std::string fileName=fileName_p+num.str()+".pcd";
+		savePCDRGB(vec.at(i),fileName);	
+		getDevData().getData()[i].depGen.StartGenerating();
+	}
 }
 
 

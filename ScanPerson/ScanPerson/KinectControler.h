@@ -68,6 +68,7 @@ private:
 #include <pcl/io/pcd_io.h>
 inline void savePCDRGB(std::vector<XnPointXYZRGB>& vec_crd,std::string filename){
 	pcl::PointCloud<pcl::PointXYZRGB> cloud;
+	cloud.is_dense=true;
 	if (vec_crd.empty())return;
 	cloud.width=vec_crd.size();
 	cloud.height=1;
@@ -85,7 +86,9 @@ inline void savePCDRGB(std::vector<XnPointXYZRGB>& vec_crd,std::string filename)
 		i++;
 		it++;
 	}
-	pcl::io::savePCDFile(filename,cloud);
+	pcl::PCDWriter	wtr;
+	wtr.writeBinary(filename,cloud);
+//	pcl::io::savePCDFileASCII(filename,cloud);
 };
 
 
@@ -124,10 +127,17 @@ inline void saveRGBImage(int xres,int yres,XnUInt8* ptPixel,LPCTSTR filename){
 		dwWritten=0;
 		XnUInt8* ptPixel_mirror=new XnUInt8[pixSize];
 		int stride=xres*3;
-		for(int i=0;i<yres;i++){
+	/*	for(int i=0;i<yres;i++){
 			memcpy(&ptPixel_mirror[i*stride],&ptPixel[pixSize-(i+1)*stride],stride*sizeof(XnUInt8));
+		}*///因为位图默认不是rgb貌似是grb，这样存颜色不正确
+		int l_uit8=sizeof(XnUInt8);
+		for(int i=0;i<yres;i++){
+			for(int j=0;j<xres;j++){
+				memcpy(&ptPixel_mirror[i*stride+j*3],&ptPixel[pixSize-(i+1)*stride+j*3+1],l_uit8);
+				memcpy(&ptPixel_mirror[i*stride+j*3+1],&ptPixel[pixSize-(i+1)*stride+j*3],l_uit8);
+				memcpy(&ptPixel_mirror[i*stride+j*3+2],&ptPixel[pixSize-(i+1)*stride+j*3+2],l_uit8);
+			}
 		}
-
 		bWrite=WriteFile(hFile,(UINT*)ptPixel_mirror,lBufferLen,&dwWritten,NULL);
 		if(!bWrite)
 		{
@@ -138,52 +148,7 @@ inline void saveRGBImage(int xres,int yres,XnUInt8* ptPixel,LPCTSTR filename){
 	}
 };
 
-//inline void saveGrayImage(int xres,int yres,XnUInt8* ptPixel,LPCTSTR filename){
-//	HDC directdc=CreateCompatibleDC(NULL);
-//	if(directdc){
-//		HANDLE hFile=CreateFile(filename,GENERIC_WRITE,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL|FILE_FLAG_SEQUENTIAL_SCAN,NULL);
-//		const DWORD dwMask[] = { 0xF800, 0x07E0, 0x001F };//RGB 565 mask
-//		BITMAP bm;
-//		BITMAPINFO bmpInfoHeader;
-//		ZeroMemory(&bmpInfoHeader,sizeof(BITMAPINFO));
-//		bmpInfoHeader.bmiHeader.biSize=sizeof(BITMAPINFOHEADER);
-//		bmpInfoHeader.bmiHeader.biPlanes=1;
-//		bmpInfoHeader.bmiHeader.biWidth=xres;
-//		bmpInfoHeader.bmiHeader.biHeight=-yres;
-//		bmpInfoHeader.bmiHeader.biBitCount=16;
-//		BITMAPFILEHEADER bmpFileHeader;
-//		ZeroMemory(&bmpFileHeader,sizeof(bmpFileHeader));
-//		bmpFileHeader.bfType=0x4d42;
-//		DWORD lBufferLen=xres*yres*2;
-//		bmpFileHeader.bfSize=sizeof(bmpFileHeader)+lBufferLen+sizeof(BITMAPINFOHEADER)+sizeof(dwMask);
-//		bmpFileHeader.bfOffBits=sizeof(BITMAPFILEHEADER)+sizeof(dwMask)+sizeof(BITMAPINFOHEADER);
-//		DWORD dwWritten=0;
-//		bool bWrite=WriteFile(hFile,&bmpFileHeader,sizeof(bmpFileHeader),&dwWritten,NULL);
-//		if(!bWrite)
-//		{
-//			MessageBox(0,TEXT("fail to write0"),TEXT("Error"),MB_OK);
-//		}
-//		dwWritten=0;
-//		bWrite=WriteFile(hFile,&bmpInfoHeader,sizeof(bmpInfoHeader),&dwWritten,NULL);
-//		if(!bWrite)
-//		{
-//			MessageBox(0,TEXT("fail to write1"),TEXT("Error"),MB_OK);
-//		}
-//		dwWritten=0;
-//		bWrite=WriteFile(hFile, dwMask,sizeof(dwMask),&dwWritten,NULL);
-//		if(!bWrite)
-//		{
-//			MessageBox(0,TEXT("fail to write3"),TEXT("Error"),MB_OK);
-//		}
-//		dwWritten=0;
-//		bWrite=WriteFile(hFile,ptPixel,lBufferLen,&dwWritten,NULL);
-//		if(!bWrite)
-//		{
-//			MessageBox(0,TEXT("fail to write4"),TEXT("Error"),MB_OK);
-//		}
-//		CloseHandle(hFile);
-//	}
-//}
+
 
 
 

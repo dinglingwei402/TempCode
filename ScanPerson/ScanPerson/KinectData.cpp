@@ -77,7 +77,7 @@ initStatus KinectData::initData(){
 		_data[i].xres=depMD.XRes();
 		_data[i].yres=depMD.YRes();
 		_data[i].pDepthData=depMD.Data();
-		_data[i].pImageData=imgMD.Data();
+		_data[i].pImageData=(XnUInt8*)imgMD.RGB24Data();
 	}
 	this->_ini_stus=initStatus::success;
 	return this->_ini_stus;

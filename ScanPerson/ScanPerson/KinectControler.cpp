@@ -61,14 +61,14 @@ void KinectControler::getNonZeroPt(int dev_no,std::vector<XnPointXYZRGB>& vec_cl
 			XnPoint3D PixCrd={bigX,bigY,depPix[idx]};
 			devData[0].depGen.ConvertProjectiveToRealWorld(1,&PixCrd,&PixCrd);
 			float allZero=std::abs(PixCrd.X)+std::abs(PixCrd.Y)+std::abs(PixCrd.Z);
-			if(allZero>0.01&&(PixCrd.Z>200&&PixCrd.Z<3000)){
+			if(allZero>0.01/*&&(PixCrd.Z>200&&PixCrd.Z<3000)*/){
 				XnPointXYZRGB pt;
 				pt.X=PixCrd.X;
 				pt.Y=PixCrd.Y;
 				pt.Z=PixCrd.Z;
-				pt.nRed=imgPix[idx*3];
-				pt.nGreen=imgPix[idx*3+1];
 				pt.nBlue=imgPix[idx*3+2];
+				pt.nGreen=imgPix[idx*3+1];
+				pt.nRed=imgPix[idx*3];
 				vec_clrPt.push_back(pt);	
 			}
 		}
@@ -91,7 +91,7 @@ void KinectControler::getNonZeroPt(int dev_no,std::vector<XnPoint3D>& vec_crd)
 			XnPoint3D PixCrd={bigX,bigY,depPix[idx]};
 			devData[0].depGen.ConvertProjectiveToRealWorld(1,&PixCrd,&PixCrd);
 			float allZero=std::abs(PixCrd.X)+std::abs(PixCrd.Y)+std::abs(PixCrd.Z);
-			if(allZero>0.01&&(PixCrd.Z>200&&PixCrd.Z<3000)){
+			if(allZero>0.01/*&&(PixCrd.Z>200&&PixCrd.Z<3000)*/){
 				vec_crd.push_back(PixCrd);
 			}
 		}
